@@ -139,7 +139,7 @@
     "security-reviewer": {
       "description": "MUST delegate for auth, user input, API endpoints, secrets, payments, PII, or sensitive data. Read-only — reports vulnerabilities; orchestrator dispatches fixes to coder.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/security-reviewer.txt}",
       "tools": {
@@ -154,7 +154,7 @@
     "tdd-guide": {
       "description": "MUST delegate for new features, bug fixes, or refactors that need tests. Enforces RED-GREEN-REFACTOR and 80%+ coverage. Writes test files only; delegates implementation to coder.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/tdd-guide.txt}",
       "tools": {
@@ -176,7 +176,7 @@
     "build-error-resolver": {
       "description": "MUST delegate when build, typecheck, lint, or TypeScript errors occur. Fixes only those errors with minimal diffs.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/build-error-resolver.txt}",
       "tools": {
@@ -205,7 +205,7 @@
     "doc-updater": {
       "description": "MUST delegate for documentation, README updates, architecture notes, and codemaps. Keeps docs aligned with code changes.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/doc-updater.txt}",
       "tools": {
@@ -220,7 +220,7 @@
     "refactor-cleaner": {
       "description": "MUST delegate for dead code, unused exports, duplication, and consolidation cleanup. Preserves behavior and verifies safety.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/refactor-cleaner.txt}",
       "tools": {
@@ -235,8 +235,8 @@
     "database-reviewer": {
       "description": "MUST delegate for PostgreSQL, SQL, Supabase, RLS, migrations, schema design, query performance, or DB security.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
-      "prompt": "{.config/opencode/prompts/agents/database-reviewer.txt}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{file:./prompts/agents/database-reviewer.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -403,11 +403,6 @@
     "context7": {
       "type": "local",
       "command": ["npx", "-y", "@upstash/context7-mcp@latest"],
-      "enabled": false,
-    },
-    "wallaby": {
-      "type": "local",
-      "command": ["npx", "-y", "-c", "node ~/.wallaby/mcp/"],
       "enabled": false,
     },
     "Figma": {
