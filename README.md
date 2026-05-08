@@ -374,7 +374,7 @@ On-demand (loaded by description / by command):
 - `skills/tdd-workflow/SKILL.md` — full TDD methodology.
 - `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
 - `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.
-- `skills/dotnet-clean-architecture/SKILL.md` (+ playbooks) — .NET 8 BFF scaffolding.
+- `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — Fastify + Prisma + Zod scaffolding.
 - `skills/angular-clean-architecture/SKILL.md` (+ store, migration, testing) — Angular 18 standalone scaffolding.
 - `skills/angular-accessibility/SKILL.md` — Angular ARIA audit.
 - `skills/compress/SKILL.md` — context compression.
@@ -587,7 +587,7 @@ Skills sur demande (chargees par leur description / par une commande):
 - `skills/tdd-workflow/SKILL.md` — methode TDD detaillee.
 - `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — mode terse.
 - `skills/strategic-compact/SKILL.md` — compaction manuelle aux paliers logiques.
-- `skills/dotnet-clean-architecture/SKILL.md` (+ playbooks) — scaffold .NET 8 BFF.
+- `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — scaffold Fastify + Prisma + Zod.
 - `skills/angular-clean-architecture/SKILL.md` (+ store, migration, tests) — scaffold Angular 18 standalone.
 - `skills/angular-accessibility/SKILL.md` — audit ARIA Angular.
 - `skills/compress/SKILL.md` — compression de contexte.
