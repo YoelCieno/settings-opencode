@@ -1,14 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "autoupdate": true,
-  "default_agent": "build",
+  "default_agent": "plan",
   "instructions": [
     "{env:HOME}/.config/opencode/instructions/subagent-routing.md",
     "{env:HOME}/.config/opencode/skills/security-review/SKILL.md",
     "{env:HOME}/.config/opencode/skills/coding-standards/SKILL.md",
-    // "{env:HOME}/.config/opencode/instructions/serena.md", // disabled: MCP off
-    // "{env:HOME}/.config/opencode/skills/socratic-design/SKILL.md", // disabled: load on demand
-    // "{env:HOME}/.config/opencode/skills/git-workflow/SKILL.md", // disabled: load on demand
+    "{env:HOME}/.config/opencode/instructions/serena.md", // disabled: MCP off
+    "{env:HOME}/.config/opencode/skills/socratic-design/SKILL.md", // disabled: load on demand
+    "{env:HOME}/.config/opencode/skills/git-workflow/SKILL.md", // disabled: load on demand
   ],
   "agent": {
     "build": {
@@ -59,7 +59,7 @@
     "architect": {
       "description": "MUST delegate for architecture, system design, scalability, cross-module boundaries, or high-impact technical decisions.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/architect.txt}",
       "tools": {
@@ -72,7 +72,7 @@
     "coder": {
       "description": "MUST delegate for any non-test implementation work: writing new code, applying spec, scaffolding modules, porting code, implementing fixes. Pure implementation only — caller owns planning, architecture, and review.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "prompt": "{.config/opencode/prompts/agents/coder.txt}",
       "tools": {
@@ -154,7 +154,7 @@
     "e2e-runner": {
       "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "prompt": "{.config/opencode/prompts/agents/e2e-runner.txt}",
       "tools": {
         "read": true,
@@ -370,87 +370,4 @@
     },
   },
   "plugin": ["@tarquinen/opencode-dcp@latest", "opencode-skill-creator"],
-  "provider": {
-    "myMistral": {
-      "name": "myMistral",
-      "npm": "@ai-sdk/mistral", // override to fix wrong package version in OpenCode leading to fail tool calls
-      "options": {
-        "apiKey": "{env:MISTRAL_API_KEY}",
-      },
-      "models": {
-        "mistral-large-latest": {
-          "name": "Mistral Large (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "mistral-medium-latest": {
-          "name": "Mistral Medium (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "mistral-medium-2604": {
-          "name": "Mistral Medium 2604",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "mistral-small-latest": {
-          "name": "Mistral Small (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "codestral-latest": {
-          "name": "Codestral (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "magistral-medium-latest": {
-          "name": "Magistral Medium (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "ministral-8b-latest": {
-          "name": "Ministral 8B (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "ministral-3b-latest": {
-          "name": "Ministral 3B (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-        "pixtral-large-latest": {
-          "name": "Pixtral Large (latest)",
-          "tool_call": true,
-          "reasoning": true,
-          "options": {
-            "reasoning_effort": "high",
-          },
-        },
-      },
-    },
-  },
 }
