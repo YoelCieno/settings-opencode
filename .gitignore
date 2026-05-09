@@ -7,6 +7,9 @@ node_modules/
 antigravity-*
 .DS_Store
 
+# Python cache
+**/__pycache__/
+
 # Local environment files
 .env
 .env.*
