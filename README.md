@@ -155,7 +155,7 @@ The `agent` block in `opencode.jsonc` is parameterized via env vars so you can s
 # Required (OpenCode model identifiers — adjust to whatever provider you use)
 export OPENCODE_MODEL_PRIMARY="anthropic/claude-sonnet-4-6"
 export OPENCODE_MODEL_SUBAGENT_PLANNER="anthropic/claude-opus-4-7"
-export OPENCODE_MODEL_SUBAGENT_WORKER="anthropic/claude-sonnet-4-6"
+export OPENCODE_MODEL_SUBAGENT_PROGRAMMER="anthropic/claude-sonnet-4-6"
 export OPENCODE_MODEL_SUBAGENT_MINI="anthropic/claude-haiku-4-5"
 
 # Reasoning effort tiers
