@@ -55,7 +55,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-      "prompt": "{.config/opencode/prompts/agents/planner.txt}",
+      "prompt": "{file:./prompts/agents/planner.txt}",
       "tools": {
         "read": true,
         "bash": true,
@@ -68,7 +68,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/architect.txt}",
+      "prompt": "{file:./prompts/agents/architect.txt}",
       "tools": {
         "read": true,
         "bash": true,
@@ -81,7 +81,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/coder.txt}",
+      "prompt": "{file:./prompts/agents/coder.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -111,7 +111,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/code-reviewer.txt}",
+      "prompt": "{file:./prompts/agents/code-reviewer.txt}",
       "tools": {
         "read": true,
         "bash": true,
@@ -141,7 +141,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/security-reviewer.txt}",
+      "prompt": "{file:./prompts/agents/security-reviewer.txt}",
       "tools": {
         "read": true,
         "bash": true,
@@ -156,7 +156,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/tdd-guide.txt}",
+      "prompt": "{file:./prompts/agents/tdd-guide.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -178,7 +178,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/build-error-resolver.txt}",
+      "prompt": "{file:./prompts/agents/build-error-resolver.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -192,7 +192,7 @@
       "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-      "prompt": "{.config/opencode/prompts/agents/e2e-runner.txt}",
+      "prompt": "{file:./prompts/agents/e2e-runner.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -207,7 +207,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/doc-updater.txt}",
+      "prompt": "{file:./prompts/agents/doc-updater.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -222,7 +222,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/refactor-cleaner.txt}",
+      "prompt": "{file:./prompts/agents/refactor-cleaner.txt}",
       "tools": {
         "read": true,
         "write": true,
@@ -251,7 +251,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
       "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-      "prompt": "{.config/opencode/prompts/agents/git-specialist.txt}",
+      "prompt": "{file:./prompts/agents/git-specialist.txt}",
       "tools": {
         "bash": true,
         "read": true,
@@ -403,7 +403,7 @@
     "context7": {
       "type": "local",
       "command": ["npx", "-y", "@upstash/context7-mcp@latest"],
-      "enabled": false,
+      "enabled": true,
     },
     "Figma": {
       "type": "remote",
