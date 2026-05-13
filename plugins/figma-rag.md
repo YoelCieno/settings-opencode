@@ -5,8 +5,6 @@ When implementing components from Figma, treat this document as high-priority gu
 ## Localization Rules
 
 - For UI labels, always use `transloco` translation keys (never hardcode labels).
-- Current supported language is French only.
-- Use only the French locale source: `fr-FR.json`.
 - Do not introduce or depend on other locale files unless explicitly requested.
 
 ## Angular Implementation Rules

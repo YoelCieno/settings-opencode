@@ -16,7 +16,7 @@
       "description": "Primary orchestrator. Routes every task to the matching specialist subagent. CANNOT write or edit files directly — all writes go through writer (docs) or coder (code).",
       "mode": "primary",
       "model": "{env:OPENCODE_MODEL_PRIMARY}",
-      "prompt": "{.config/opencode/prompts/agents/conductor.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/conductor.txt",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "tools": {
         "*": true,
@@ -55,7 +55,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-      "prompt": "{file:./prompts/agents/planner.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/planner.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -68,7 +68,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/architect.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/architect.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -81,7 +81,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/coder.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/coder.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -94,9 +94,9 @@
     "writer": {
       "description": "MUST delegate for writing or editing non-code text artifacts: documentation, README, markdown, HTML reports, release notes, ADRs, prose, change logs. Forbidden from touching source code files.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-      "prompt": "{.config/opencode/prompts/agents/writer.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/writer.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -109,9 +109,9 @@
     "code-reviewer": {
       "description": "MUST delegate immediately after meaningful code changes or PR/pull request review requests. Reviews diffs for bugs, regressions, quality, maintainability, and tests. Read-only — findings only, no patches.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/code-reviewer.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/code-reviewer.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -124,9 +124,9 @@
     "merge-cop": {
       "description": "MUST delegate when user runs /cop-review or asks for pre-merge review of HEAD vs a target branch. Angular + TypeScript focused (signals, RxJS, clean architecture, flurryx, TS strict). Reads project AGENTS.md. Runs tsc + lint. Tiered output (junior/senior). Read-only — findings only.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_WORKER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{.config/opencode/prompts/agents/merge-cop.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/merge-cop.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -141,7 +141,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/security-reviewer.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/security-reviewer.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -156,7 +156,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/tdd-guide.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/tdd-guide.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -178,7 +178,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/build-error-resolver.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/build-error-resolver.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -192,7 +192,7 @@
       "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-      "prompt": "{file:./prompts/agents/e2e-runner.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/e2e-runner.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -207,7 +207,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/doc-updater.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/doc-updater.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -222,7 +222,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{file:./prompts/agents/refactor-cleaner.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/refactor-cleaner.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -236,7 +236,7 @@
       "description": "MUST delegate for PostgreSQL, SQL, Supabase, RLS, migrations, schema design, query performance, or DB security.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-      "prompt": "{file:./prompts/agents/database-reviewer.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/database-reviewer.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -251,7 +251,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
       "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-      "prompt": "{file:./prompts/agents/git-specialist.txt}",
+      "prompt": "{env:HOME}.config/opencode/prompts/agents/git-specialist.txt",
       "tools": {
         "bash": true,
         "read": true,

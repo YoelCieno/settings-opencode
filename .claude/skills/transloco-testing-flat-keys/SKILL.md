@@ -27,7 +27,7 @@ TranslocoTestingModule.forRoot({
     taxes: {
       create: {
         summary: {
-          calculation: { base: { kilogram: 'kilogrammes' } }
+          calculation: { base: { kilogram: 'kilograms' } }
         }
       }
     }
@@ -37,14 +37,14 @@ TranslocoTestingModule.forRoot({
 // CORRECT - works for both directives and translate() calls
 TranslocoTestingModule.forRoot({
   langs: {
-    'fr-FR': {
-      'taxes.create.summary.calculation.base.kilogram': 'kilogrammes',
-      'taxes.create.summary.calculation.base.liter': 'litres',
+    'en-US': {
+      'taxes.create.summary.calculation.base.kilogram': 'kilograms',
+      'taxes.create.summary.calculation.base.liter': 'liters',
     }
   },
   translocoConfig: {
-    availableLangs: ['fr-FR'],
-    defaultLang: 'fr-FR',
+    availableLangs: ['en-US'],
+    defaultLang: 'en-US',
   }
 })
 ```
