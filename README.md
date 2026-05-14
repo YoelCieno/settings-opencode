@@ -1,20 +1,49 @@
 # OpenCode + Claude Code Setup
 
-> My personal **OpenCode** and **Claude Code** configuration, kept public so I can sync it across machines — and so anyone curious can borrow what's useful. MIT licensed, fork freely. It evolves with my workflow, so treat it as a living reference rather than a stable distribution.
+> Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) — a hardened OpenCode config with Node.js-first stack, framework-agnostic frontend architecture, and stricter model alignment. MIT licensed, fork freely. Evolves with my workflow.
+>
+> **Big thanks to [@fmflurry](https://github.com/fmflurry)** for the original force behind this config. This fork adapts their solid foundation to a different stack and set of conventions.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![OpenCode](https://img.shields.io/badge/OpenCode-CLI-000)](https://opencode.ai)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-mirror-d97757)](https://claude.com/claude-code)
+[![Forked from fmflurry](https://img.shields.io/badge/fork-fmflurry/settings--opencode-blueviolet)](https://github.com/fmflurry/settings-opencode)
 
 ### Want to try it? Jump to **[Public install](#public-install)** — it takes about five minutes.
 
 ---
 
+## What's different from fmflurry's original
+
+This fork reorients the upstream config from a .NET + Angular shop toward a **Node.js + framework-agnostic frontend** stack:
+
+| Area | Upstream (fmflurry) | This fork |
+|------|-------------------|-----------|
+| **Backend architecture** | .NET 8 Clean Architecture (`dotnet-clean-architecture`) | Node.js Clean Architecture (`nodejs-clean-architecture`: Fastify + Prisma + Zod) |
+| **Frontend architecture** | Angular 18 standalone (`angular-clean-architecture` + store system) | Framework-agnostic Hexagonal Architecture (`frontend-hexagonal-architecture`: works with any framework) |
+| **Accessibility skill** | Angular-specific `angular-accessibility` (ARIA audit) | Framework-agnostic `frontend-accessibility` |
+| **State management** | flurryx store patterns (`flurryx` skill + merge-cop sub-pages) | Removed — no framework-specific state prescription |
+| **Pre-merge review** | Angular-specific (signals, RxJS, flurryx, clean-architecture sub-pages) | Framework-agnostic (TS strict, architecture, state management) |
+| **Domain-specific skill** | `flurryx` — custom state-management patterns | Not applicable; removed |
+| **Subagent model env vars** | `OPENCODE_MODEL_SUBAGENT_WORKER` | Renamed to `OPENCODE_MODEL_SUBAGENT_PROGRAMMER` |
+| **Autoskills** | None | `.agents/skills/`: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk` |
+| **Development patterns** | Not present | `instructions/patterns/`: KISSME, SINE, POLA, SoC+CQS, CDB |
+| **Verification gate** | Not present | `instructions/verification-gate.md`: build-verification enforcement before "done" |
+| **Config style** | `{.config/opencode/...}` path literals | `{env:OPENCODE_SRC_ROUTE}/opencode/...` — env-driven for portability |
+| **Skill reproducibility** | Not tracked | `skills-lock.json` — pins skill SHAs |
+| **Package manager** | `package-lock.json` only | `bun.lock` (Bun-first) + `mise.toml` |
+| **Env template** | Not present | `.env.example` — copy to `.env.local` and fill |
+| **Documentation** | English + French | English only (French section removed) |
+| **Install method** | Manual steps only | `install.sh` script (interactive or `--yes`) |
+
+---
+
 ## What's inside
 
-A primary `build` agent backed by **12 specialist sub-agents** (planner, architect, coder, code/security/database review, TDD, build-fix, e2e, doc, refactor, git), wired together by:
+A hardened primary `conductor` agent backed by **13 specialist sub-agents** (planner, architect, coder, writer, code/security/database review, TDD, build-fix, e2e, doc, refactor, git), wired together by:
 
-- **Automatic sub-agent delegation** from `build` via the Task tool when work matches specialist scope, with a first-tool gate for open-weight models.
+- **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer, plus a `tool.execute.before` hook that blocks bash redirects to source files (`> file.ts`, `tee`, `sed -i`, heredocs, `python -c open().write`). The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
+- **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
 - **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/code-review`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
 - **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap.
@@ -39,19 +68,6 @@ The two halves stand alone. Use the OpenCode side, the Claude Code mirror, or bo
   - [Continuous learning](#learning-en)
   - [Claude Code mirror](#claude-en)
   - [How it fits together](#flow-en)
-- [Français](#francais)
-  - [Objectif](#objectif-fr)
-  - [Structure du repo](#structure-fr)
-  - [Configuration](#config-fr)
-  - [Agents](#agents-fr)
-  - [Commandes slash](#commands-fr)
-  - [Skills](#skills-fr)
-  - [Plugins & hooks](#plugins-fr)
-  - [Outils custom](#tools-fr)
-  - [TUI plugins](#tui-fr)
-  - [Apprentissage continu](#learning-fr)
-  - [Mirror Claude Code](#claude-fr)
-  - [Comment tout s'emboite](#flow-fr)
 
 ---
 
@@ -71,7 +87,7 @@ The repo is designed to *become* (or symlink into) `~/.config/opencode/`, plus a
 ### Quick install (script)
 
 ```bash
-git clone https://github.com/fmflurry/settings-opencode.git ~/Workspace/settings-opencode
+git clone https://github.com/YoelCieno/settings-opencode.git ~/Workspace/settings-opencode
 cd ~/Workspace/settings-opencode
 ./install.sh
 ```
@@ -102,7 +118,7 @@ The script writes a fenced block to your shell rc (`~/.zshrc`, `~/.bashrc`, or `
 # Added by settings-opencode installer. Edit values to match your provider.
 export OPENCODE_MODEL_PRIMARY="anthropic/claude-sonnet-4-6"
 export OPENCODE_MODEL_SUBAGENT_PLANNER="anthropic/claude-opus-4-7"
-export OPENCODE_MODEL_SUBAGENT_WORKER="anthropic/claude-sonnet-4-6"
+export OPENCODE_MODEL_SUBAGENT_PROGRAMMER="anthropic/claude-sonnet-4-6"
 export OPENCODE_MODEL_SUBAGENT_MINI="anthropic/claude-haiku-4-5"
 export OPENCODE_REASONING_PRIMARY="high"
 export OPENCODE_REASONING_SECONDARY="medium"
@@ -128,14 +144,14 @@ OpenCode loads `~/.config/opencode/opencode.jsonc` at startup, so the simplest i
 mv ~/.config/opencode ~/.config/opencode.bak 2>/dev/null || true
 
 # Clone
-git clone https://github.com/fmflurry/settings-opencode.git ~/.config/opencode
+git clone https://github.com/YoelCieno/settings-opencode.git ~/.config/opencode
 cd ~/.config/opencode
 ```
 
 Prefer keeping the repo elsewhere? Symlink it instead:
 
 ```bash
-git clone https://github.com/fmflurry/settings-opencode.git ~/Workspace/settings-opencode
+git clone https://github.com/YoelCieno/settings-opencode.git ~/Workspace/settings-opencode
 ln -s ~/Workspace/settings-opencode ~/.config/opencode
 ```
 
@@ -241,7 +257,7 @@ If a new plugin shows up, OpenCode picks it up on the next restart. If an env va
 <a id="english"></a>
 ## English
 
-Dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a primary `build` agent, 12 specialist sub-agents, always-on skills, slash commands, OpenCode plugins (hooks, instincts, worktrees, auto-compact, caveman, figma RAG, notifications), custom tools, and a Claude Code mirror.
+Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) — dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a hardened primary `conductor` agent (no write/edit perms — must delegate), 13 specialist sub-agents, always-on skills, slash commands, OpenCode plugins (hooks, instincts, worktrees, auto-compact, caveman, figma RAG, notifications), custom tools, and a Claude Code mirror. Replaces .NET + Angular stack with Node.js + framework-agnostic frontend architecture.
 
 <a id="goals-en"></a>
 ### Goals
@@ -263,8 +279,11 @@ Dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a primary `build`
 - TUI plugins: `tui-plugins/*.tsx`.
 - Custom tools: `tools/*.ts`.
 - Mode notes: `contexts/*.md`.
-- Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`.
+- Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`, `instructions/verification-gate.md`.
+- Development patterns: `instructions/development-patterns.md` (+ `instructions/patterns/` — KISSME, SINE, POLA, SoC+CQS, CDB).
 - Scripts: `scripts/setup-package-manager.js`, `scripts/codemaps/generate.ts`.
+- Env template: `.env.example` (copy to `.env.local` and fill).
+- Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).
 - Claude mirror: `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/rules/`, `.claude/skills/`, `.claude/commands/`, `.claude/homunculus/`.
 - Intentional exclusions (`.gitignore`): `.serena/` local MCP state, `node_modules/`, `.instinct-digest-state.json`, `antigravity-*`, `.DS_Store`, local `.env*` files except `.env.example`.
 
@@ -280,7 +299,7 @@ Six concerns wired in one file:
    - `skills/security-review/SKILL.md` — OWASP checklist.
    - `skills/coding-standards/SKILL.md` — code conventions.
    - `skills/git-workflow/SKILL.md` — branches, commits, PRs.
-2. `default_agent`: `build`.
+2. `default_agent`: `conductor` (orchestrator-only — cannot write/edit).
 3. `agent`: sub-agent definitions (model + reasoning effort + prompt + tool allowlist). All models are env-driven (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`) — see [Public install § 4](#public-install).
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
 5. `mcp`: serena, context7, wallaby, Figma (disabled).
@@ -295,31 +314,36 @@ Defined in `opencode.jsonc` under `agent`:
 
 | Agent                  | Mode     | Role                                                                                |
 | ---------------------- | -------- | ----------------------------------------------------------------------------------- |
-| `build`                | primary  | Orchestrator. Delegates all source-code edits to `coder`. Keeps edit perm for non-code (config/prompts/docs). |
+| `conductor`            | primary  | Orchestrator. `write` + `edit` **denied** at the permission layer. Routes every change to a specialist via Task. Bash redirects to source files blocked by the ECC pre-tool hook. |
 | `planner`              | subagent | Plan + risks before large changes. Read+bash, no edit.                              |
 | `architect`            | subagent | System design / scalability decisions. Read+bash only.                              |
 | `coder`                | subagent | Pure non-test implementation. Mandatory build+lint+standards self-check before reporting done. Socratic ambiguity gate. |
+| `writer`               | subagent | Writes docs/markdown/HTML/text artifacts. Forbidden from touching source code — refuses out-of-scope files back to the conductor. |
 | `code-reviewer`        | subagent | Quality review over diffs and conventions. Read-only — findings only; fixes go to `coder`. |
 | `security-reviewer`    | subagent | OWASP/secrets/deps review. Read-only — reports vulnerabilities; remediation routed to `coder`. |
 | `tdd-guide`            | subagent | RED -> GREEN -> REFACTOR + 80% coverage. Writes tests; delegates GREEN impl to `coder` via scoped Task perm. |
 | `build-error-resolver` | subagent | Build/TS error fixes with minimal diffs.                                            |
 | `e2e-runner`           | subagent | Playwright E2E tests.                                                               |
-| `doc-updater`          | subagent | Documentation + codemaps.                                                           |
+| `doc-updater`          | subagent | Generated docs + codemaps.                                                          |
 | `refactor-cleaner`     | subagent | Dead-code removal + consolidation.                                                  |
 | `database-reviewer`    | subagent | PostgreSQL / Supabase schema, perf, security.                                       |
 | `git-specialist`       | subagent | Branches, commits, pushes, PRs (mini model).                                        |
 
-### Automatic sub-agent invocation
+### Hardened sub-agent orchestration
 
-OpenCode exposes subagents to primary agents through the Task tool. `instructions/subagent-routing.md` enforces a Task-first gate before direct inspection for matching requests, and `prompts/agents/build.txt` repeats the routing rules for the `build` agent. This helps less inference-heavy models delegate without waiting for a slash command.
+Delegation is enforced at **three layers**, so the same behavior holds whether the primary model is Claude, GPT, DeepSeek, or any open-weight runner that ignores prose hints:
+
+1. **Permissions** — `conductor` has `tools.write: false`, `tools.edit: false`, and `permission.edit/write: deny` in `opencode.jsonc`. The Task allowlist enumerates every legal specialist; `*: deny` blocks anything else. The orchestrator literally has no file-mutation tool.
+2. **Pre-tool hook (`plugins/ecc-hooks.ts`)** — defense in depth: blocks bash commands that would write to source files via shell redirect (`>`, `>>`), `tee`, `sed -i`, heredocs, or `python -c open().write`. Throws aborting the tool call with an explicit "delegate to coder/writer/tdd-guide" message. Applies globally — no subagent should be writing code through bash either.
+3. **Front-loaded prompt (`prompts/agents/conductor.txt`)** — hard rules in the first lines, routing table second, six worked few-shot examples showing User → `task` calls with explicit wrong-way contrasts. `instructions/subagent-routing.md` enforces a Task-first gate before direct inspection.
 
 Use these paths depending on how much control you want:
 
-- Plain request: lets `build` auto-delegate when routing rules match.
+- Plain request: `conductor` consults the routing table and dispatches the matching specialist via Task.
 - `@agent` mention: manually invokes a specific subagent in the conversation.
 - Slash command: forces a subtask with a configured template, e.g. `/plan`, `/tdd`, `/security`.
 
-Why this exists: GPT/Claude often infer delegation from short descriptions, but open-source/open-weight models are more literal and tend to inspect with `bash`/Serena first. The top-level first-tool gate, routing prompt, and stronger `MUST delegate` agent descriptions make the same behavior more model-agnostic.
+Why this exists: GPT/Claude often infer delegation from short descriptions, but open-source/open-weight models are more literal and tend to inspect or edit first. Permissions + the hook + the front-loaded gate make delegation **mechanically enforced** rather than instruction-dependent.
 
 <a id="commands-en"></a>
 ### Slash commands
@@ -355,7 +379,11 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 <a id="skills-en"></a>
 ### Skills
 
-Always-on (declared in `instructions`):
+Always-on:
+
+- `.agents/skills/` — autoskills loaded automatically by OpenCode: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk`.
+
+Declared in `instructions`:
 
 - `skills/socratic-design/SKILL.md` — evidence-first decision gating.
 - `skills/security-review/SKILL.md` — security checklist + scenarios.
@@ -369,10 +397,15 @@ On-demand (loaded by description / by command):
 - `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
 - `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.
 - `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — Fastify + Prisma + Zod scaffolding.
+<<<<<<< HEAD
 - `skills/angular-clean-architecture/SKILL.md` (+ store, migration, testing) — Angular 18 standalone scaffolding.
 - `skills/angular-accessibility/SKILL.md` — Angular ARIA audit.
+=======
+- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framework.
+- `skills/frontend-accessibility/SKILL.md` — Framework-agnostic a11y audit and fixes.
+- `skills/merge-cop/SKILL.md` — Pre-merge code review (architecture, TS strict checks).
+>>>>>>> dev
 - `skills/compress/SKILL.md` — context compression.
-- `skills/flurryx/SKILL.md` — domain-specific patterns.
 - `skills/continuous-learning/SKILL.md` — learned-draft schema.
 - `skills/learned/` — auto-generated drafts from the stop hook.
 
@@ -381,7 +414,7 @@ On-demand (loaded by description / by command):
 
 All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 
-- `plugins/ecc-hooks.ts` — Prettier on edited JS/TS, `console.log` detection, `tsc --noEmit` after edit, sensitive-command reminders (`git push` etc.).
+- `plugins/ecc-hooks.ts` — Prettier on edited JS/TS, `console.log` detection, sensitive-command reminders (`git push` etc.), and the **conductor hard-stop**: aborts bash redirects (`>`, `>>`, `tee`, `sed -i`, heredocs, `python -c open().write`) targeting source files so delegation cannot be bypassed via shell.
 - `plugins/instinct-injector.ts` — reads `~/.claude/homunculus`, filters by confidence, injects instincts into the system prompt (continuous-learning v2 read side).
 - `plugins/instinct-observer.ts` — captures `tool.execute.before/after` events and appends to `observations.jsonl` (write side).
 - `plugins/instinct-digest.ts` — session-start diff: surfaces new/updated instincts since last session.
@@ -439,10 +472,11 @@ Curation:
 
 1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `instinct-injector` preloads instincts -> `instinct-digest` produces a diff -> `caveman-server` adds caveman preamble if active.
 2. First user action: `startup-bootstrap` triggers `serena_activate_project`.
-3. Dev: `build` executes. `ecc-hooks` formats / type-checks / flags `console.log`. `instinct-observer` archives events.
-4. Workflow: `build` auto-delegates to specialists through Task; `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.
+3. Dev: `conductor` executes — it cannot write files; it dispatches Task calls to specialists. `ecc-hooks` formats / flags `console.log` / blocks bash-write bypasses. `instinct-observer` archives events.
+4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.
 5. Idle: `auto-compact` triggers when the tool-call threshold is reached; `notification` pings macOS.
 6. Stop: v1 hook writes a draft; v2 daemon clusters observations into instincts for the next session.
+<<<<<<< HEAD
 
 ---
 
@@ -651,3 +685,5 @@ Curation:
 4. Workflow: `build` auto-delegue aux specialistes via Task; `/plan`, `/tdd`, `/security`, etc. forcent explicitement le meme routage.
 5. Idle: `auto-compact` declenche un compact quand le seuil de tool calls est atteint. `notification` ping macOS.
 6. Stop: hook v1 produit un draft, hook v2 cluster les observations en instincts pour la session suivante.
+=======
+>>>>>>> dev

@@ -99,6 +99,76 @@ export const ECCHooksPlugin = async ({
       tool: string;
       args?: Record<string, unknown>;
     }) => {
+      // === HARD STOP: block conductor self-delegation ===
+      // Defense in depth on top of permission "conductor: deny" in opencode.jsonc.
+      // Weak open-weight models sometimes hallucinate task(subagent="conductor")
+      // because the conductor prompt references the name. That would loop forever.
+      // Check both arg names since the OpenCode task tool field is not in the
+      // public plugin SDK types.
+      if (input.tool === "task") {
+        const args = (input.args ?? {}) as {
+          subagent_type?: string;
+          agent?: string;
+          subagent?: string;
+        };
+        const target = args.subagent_type ?? args.agent ?? args.subagent;
+        if (target === "conductor") {
+          const msg =
+            "[ECC] BLOCKED: conductor cannot delegate to itself (infinite loop guard). Pick a specialist subagent.";
+          log("error", msg);
+          throw new Error(msg);
+        }
+      }
+
+      // === HARD STOP: block bash writes to source/code files ===
+      // Defense in depth on top of conductor's edit/write deny perm.
+      // Catches attempts to bypass via shell redirects, heredocs, sed -i,
+      // tee, or python -c open().write(). Applies globally — no subagent
+      // should be writing code through bash either.
+      if (input.tool === "bash") {
+        const cmd = String(
+          (input.args as { command?: string })?.command ?? input.args ?? "",
+        );
+
+        const CODE_EXT =
+          "(?:ts|tsx|js|jsx|mjs|cjs|py|go|rs|kt|java|swift|php|rb|cs|cpp|cc|hpp|h|c|sql|sh|bash|zsh|fish)";
+
+        const blockingPatterns: { re: RegExp; reason: string }[] = [
+          {
+            re: new RegExp(`>\\s*\\S+\\.${CODE_EXT}\\b`),
+            reason: "shell redirect (>) to source file",
+          },
+          {
+            re: new RegExp(`>>\\s*\\S+\\.${CODE_EXT}\\b`),
+            reason: "shell append (>>) to source file",
+          },
+          {
+            re: new RegExp(`\\btee\\s+(?:-a\\s+)?\\S+\\.${CODE_EXT}\\b`),
+            reason: "tee writing to source file",
+          },
+          {
+            re: new RegExp(`\\bsed\\s+-i\\b[^|;]*\\.${CODE_EXT}\\b`),
+            reason: "sed -i editing source file",
+          },
+          {
+            re: /<<\s*['"]?EOF['"]?[\s\S]*>\s*\S+\.(?:ts|tsx|js|py|go|rs)\b/,
+            reason: "heredoc writing to source file",
+          },
+          {
+            re: /python[0-9.]*\s+-c\s+["'][^"']*open\([^)]*\)\.write/,
+            reason: "python -c open().write bypass",
+          },
+        ];
+
+        for (const { re, reason } of blockingPatterns) {
+          if (re.test(cmd)) {
+            const msg = `[ECC] BLOCKED bash write to source code: ${reason}. Delegate to coder/writer/tdd-guide subagent instead. Command: ${cmd.slice(0, 200)}`;
+            log("error", msg);
+            throw new Error(msg);
+          }
+        }
+      }
+
       // Git push review reminder
       if (
         input.tool === "bash" &&

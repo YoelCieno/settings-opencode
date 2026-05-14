@@ -73,17 +73,6 @@ Rules:
 5. Stage only relevant files.
 6. Execute the requested git action safely.
 7. Verify the result with `git status` after commits or pushes.
-8. Use `gh` for pull request tasks and return the PR URL when a PR is created.
-
-## Pull Request Rules
-
-- Use `gh` for PR creation and inspection.
-- Push the current branch with upstream tracking before creating a PR when needed.
-- If a PR already exists for the branch, return that URL instead of creating a duplicate.
-- Choose the base branch from the repository default branch when available, otherwise prefer `main`, then `master`.
-- Use a concise PR title aligned with the branch purpose and commit intent.
-- Include a short `## Summary` section in the PR body.
-
 ## Safety Rules
 
 - Never change git config.
@@ -100,5 +89,4 @@ Return a short, practical summary with:
 - `Branch`: created, current, or proposed branch name
 - `Commit`: created or proposed commit message
 - `Push`: whether push happened
-- `PR`: URL when a pull request exists or was created, otherwise `n/a`
 - `Notes`: any relevant warning or blocker
