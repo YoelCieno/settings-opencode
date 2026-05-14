@@ -1,5 +1,5 @@
 ---
-description: Handle git tasks with enforced branch and commit naming conventions
+description: Handle git operations with enforced branch and commit conventions
 agent: git-specialist
 subtask: true
 ---
@@ -34,24 +34,30 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 <type>/<scope>-<short-description>
 ```
 
-`scope` is required for branches. If it is ambiguous, ask one short question before creating the branch.
+`scope` is required for branches. If scope is ambiguous, ask one short question before proposing.
 `scope` must be a single lowercase token with letters and numbers only. The first `-` after `/` separates `scope` from `short-description`.
 
-3. Use `git-specialist` workflow:
+3. Subcommands (first arg determines action):
 
-- inspect repository state first
-- use a compliant branch name for branch operations
-- use a compliant conventional commit message for commit operations
-- stage only relevant changes
-- avoid destructive commands unless explicitly requested
-- use `gh` and return the PR URL for pull request tasks
-- use the repository default branch as PR base when available, otherwise prefer `main`, then `master`
-- return an existing PR URL instead of creating a duplicate PR for the same branch
+| Short | Long | Action |
+|-------|------|--------|
+| `s` | `stage` | Stage relevant changes |
+| `c` | `commit` | Draft conventional commit message and commit |
+| `ps` | `push` | Push current branch to remote |
+| `scps` | `commit & push` | Stage + commit + push |
+| `b [name]` | `create branch [name]` | Create + switch branch. If no name given, auto-generate per convention. |
+
+4. Safety rules:
+- Never change git config
+- Never use destructive commands unless explicitly asked
+- Never force-push unless explicitly asked
+- Avoid `--amend` unless explicitly asked
+- Stage only relevant files for the requested task
+- If unrelated changes exist, stop and report
 
 ## Output
 
-- `Branch`: created, current, or proposed branch name
+- `Branch`: current or created branch name
 - `Commit`: created or proposed commit message
 - `Push`: yes or no
-- `PR`: URL when a pull request exists or was created, otherwise `n/a`
-- `Notes`: any ambiguity, blocker, or excluded changes
+- `Notes`: any blocker
