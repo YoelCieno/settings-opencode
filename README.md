@@ -1,12 +1,40 @@
 # OpenCode + Claude Code Setup
 
-> My personal **OpenCode** and **Claude Code** configuration, kept public so I can sync it across machines — and so anyone curious can borrow what's useful. MIT licensed, fork freely. It evolves with my workflow, so treat it as a living reference rather than a stable distribution.
+> Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) — a hardened OpenCode config with Node.js-first stack, framework-agnostic frontend architecture, and stricter model alignment. MIT licensed, fork freely. Evolves with my workflow.
+>
+> **Big thanks to [@fmflurry](https://github.com/fmflurry)** for the original force behind this config. This fork adapts their solid foundation to a different stack and set of conventions.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![OpenCode](https://img.shields.io/badge/OpenCode-CLI-000)](https://opencode.ai)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-mirror-d97757)](https://claude.com/claude-code)
+[![Forked from fmflurry](https://img.shields.io/badge/fork-fmflurry/settings--opencode-blueviolet)](https://github.com/fmflurry/settings-opencode)
 
 ### Want to try it? Jump to **[Public install](#public-install)** — it takes about five minutes.
+
+---
+
+## What's different from fmflurry's original
+
+This fork reorients the upstream config from a .NET + Angular shop toward a **Node.js + framework-agnostic frontend** stack:
+
+| Area | Upstream (fmflurry) | This fork |
+|------|-------------------|-----------|
+| **Backend architecture** | .NET 8 Clean Architecture (`dotnet-clean-architecture`) | Node.js Clean Architecture (`nodejs-clean-architecture`: Fastify + Prisma + Zod) |
+| **Frontend architecture** | Angular 18 standalone (`angular-clean-architecture` + store system) | Framework-agnostic Hexagonal Architecture (`frontend-hexagonal-architecture`: works with any framework) |
+| **Accessibility skill** | Angular-specific `angular-accessibility` (ARIA audit) | Framework-agnostic `frontend-accessibility` |
+| **State management** | flurryx store patterns (`flurryx` skill + merge-cop sub-pages) | Removed — no framework-specific state prescription |
+| **Pre-merge review** | Angular-specific (signals, RxJS, flurryx, clean-architecture sub-pages) | Framework-agnostic (TS strict, architecture, state management) |
+| **Domain-specific skill** | `flurryx` — custom state-management patterns | Not applicable; removed |
+| **Subagent model env vars** | `OPENCODE_MODEL_SUBAGENT_WORKER` | Renamed to `OPENCODE_MODEL_SUBAGENT_PROGRAMMER` |
+| **Autoskills** | None | `.agents/skills/`: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk` |
+| **Development patterns** | Not present | `instructions/patterns/`: KISSME, SINE, POLA, SoC+CQS, CDB |
+| **Verification gate** | Not present | `instructions/verification-gate.md`: build-verification enforcement before "done" |
+| **Config style** | `{.config/opencode/...}` path literals | `{env:OPENCODE_SRC_ROUTE}/opencode/...` — env-driven for portability |
+| **Skill reproducibility** | Not tracked | `skills-lock.json` — pins skill SHAs |
+| **Package manager** | `package-lock.json` only | `bun.lock` (Bun-first) + `mise.toml` |
+| **Env template** | Not present | `.env.example` — copy to `.env.local` and fill |
+| **Documentation** | English + French | English only (French section removed) |
+| **Install method** | Manual steps only | `install.sh` script (interactive or `--yes`) |
 
 ---
 
@@ -59,7 +87,7 @@ The repo is designed to *become* (or symlink into) `~/.config/opencode/`, plus a
 ### Quick install (script)
 
 ```bash
-git clone https://github.com/fmflurry/settings-opencode.git ~/Workspace/settings-opencode
+git clone https://github.com/YoelCieno/settings-opencode.git ~/Workspace/settings-opencode
 cd ~/Workspace/settings-opencode
 ./install.sh
 ```
@@ -90,7 +118,7 @@ The script writes a fenced block to your shell rc (`~/.zshrc`, `~/.bashrc`, or `
 # Added by settings-opencode installer. Edit values to match your provider.
 export OPENCODE_MODEL_PRIMARY="anthropic/claude-sonnet-4-6"
 export OPENCODE_MODEL_SUBAGENT_PLANNER="anthropic/claude-opus-4-7"
-export OPENCODE_MODEL_SUBAGENT_WORKER="anthropic/claude-sonnet-4-6"
+export OPENCODE_MODEL_SUBAGENT_PROGRAMMER="anthropic/claude-sonnet-4-6"
 export OPENCODE_MODEL_SUBAGENT_MINI="anthropic/claude-haiku-4-5"
 export OPENCODE_REASONING_PRIMARY="high"
 export OPENCODE_REASONING_SECONDARY="medium"
@@ -116,14 +144,14 @@ OpenCode loads `~/.config/opencode/opencode.jsonc` at startup, so the simplest i
 mv ~/.config/opencode ~/.config/opencode.bak 2>/dev/null || true
 
 # Clone
-git clone https://github.com/fmflurry/settings-opencode.git ~/.config/opencode
+git clone https://github.com/YoelCieno/settings-opencode.git ~/.config/opencode
 cd ~/.config/opencode
 ```
 
 Prefer keeping the repo elsewhere? Symlink it instead:
 
 ```bash
-git clone https://github.com/fmflurry/settings-opencode.git ~/Workspace/settings-opencode
+git clone https://github.com/YoelCieno/settings-opencode.git ~/Workspace/settings-opencode
 ln -s ~/Workspace/settings-opencode ~/.config/opencode
 ```
 
@@ -229,7 +257,7 @@ If a new plugin shows up, OpenCode picks it up on the next restart. If an env va
 <a id="english"></a>
 ## English
 
-Dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a hardened primary `conductor` agent (no write/edit perms — must delegate), 13 specialist sub-agents, always-on skills, slash commands, OpenCode plugins (hooks, instincts, worktrees, auto-compact, caveman, figma RAG, notifications), custom tools, and a Claude Code mirror.
+Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) — dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a hardened primary `conductor` agent (no write/edit perms — must delegate), 13 specialist sub-agents, always-on skills, slash commands, OpenCode plugins (hooks, instincts, worktrees, auto-compact, caveman, figma RAG, notifications), custom tools, and a Claude Code mirror. Replaces .NET + Angular stack with Node.js + framework-agnostic frontend architecture.
 
 <a id="goals-en"></a>
 ### Goals
@@ -443,4 +471,3 @@ Curation:
 4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.
 5. Idle: `auto-compact` triggers when the tool-call threshold is reached; `notification` pings macOS.
 6. Stop: v1 hook writes a draft; v2 daemon clusters observations into instincts for the next session.
-

@@ -398,13 +398,11 @@
     "serena": {
       "type": "local",
       "command": [
-        "uvx",
-        "--from",
-        "git+https://github.com/oraios/serena",
         "serena",
         "start-mcp-server",
+        "--context=ide"
       ],
-      "enabled": false,
+      "enabled": true,
     },
     "context7": {
       "type": "local",
