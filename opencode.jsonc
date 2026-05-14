@@ -416,5 +416,5 @@
       "enabled": false,
     },
   },
-  "plugin": ["@tarquinen/opencode-dcp@latest", "opencode-skill-creator"],
+  "plugin": ["@tarquinen/opencode-dcp@latest", "opencode-skill-creator", "opencode-agent-memory"],
 }

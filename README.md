@@ -46,7 +46,7 @@ A hardened primary `conductor` agent backed by **13 specialist sub-agents** (pla
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
 - **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/code-review`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
-- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap.
+- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
 - **A `.claude/` mirror** — hooks, rule packs, learned skills, and the shared homunculus store, so Claude Code benefits from the same guardrails.
 
@@ -303,7 +303,7 @@ Six concerns wired in one file:
 3. `agent`: sub-agent definitions (model + reasoning effort + prompt + tool allowlist). All models are env-driven (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`) — see [Public install § 4](#public-install).
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
 5. `mcp`: serena, context7, wallaby, Figma (disabled).
-6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`).
+6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`, `opencode-agent-memory`).
 
 `dcp.jsonc` configures the Dynamic Context Pruning plugin. `ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
@@ -391,18 +391,13 @@ Declared in `instructions`:
 - `skills/git-workflow/SKILL.md` — branches, conventional commits, push guards.
 - `instructions/serena.md` — connects Serena MCP per session.
 
-On-demand (loaded by description / by command):
+New skills on-demand (loaded by description / by command):
 
-- `skills/tdd-workflow/SKILL.md` — full TDD methodology.
-- `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
-- `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.
 - `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — Fastify + Prisma + Zod scaffolding.
-- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framework.
+- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framew- `skills/tdd-workflow/SKILL.md` — full TDD methodology.
+- `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
+- `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.ork.
 - `skills/frontend-accessibility/SKILL.md` — Framework-agnostic a11y audit and fixes.
-- `skills/merge-cop/SKILL.md` — Pre-merge code review (architecture, TS strict checks).
-- `skills/compress/SKILL.md` — context compression.
-- `skills/continuous-learning/SKILL.md` — learned-draft schema.
-- `skills/learned/` — auto-generated drafts from the stop hook.
 
 <a id="plugins-en"></a>
 ### Plugins & hooks
@@ -421,6 +416,7 @@ All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 - `plugins/worktree.ts` (+ `plugins/worktree/`) — creates an isolated git worktree for the session and spawns a terminal (mac/Win/Linux). Inspired by opencode-worktree-session.
 - `plugins/startup-bootstrap.ts` — runs `serena_activate_project` on the first tool call of a session.
 - `plugins/kdco-primitives/` — shared utilities (mutex, shell, terminal-detect, project-id resolver, types).
+- `opencode-agent-memory` *(external, declared in `opencode.jsonc › plugin`)* — Letta-style persistent memory blocks (`memory_list`, `memory_set`, `memory_replace`) + optional journal. Data in `~/.config/opencode/memory/*.md` (global) + `.opencode/memory/*.md` (project).
 - `@tarquinen/opencode-dcp@latest` *(external, declared in `opencode.jsonc › plugin`)* — Dynamic Context Pruning. Trims stale tool results and large files from the live context window so long sessions don't blow past the model's limit. Configured via `dcp.jsonc` at the repo root.
 
 <a id="tools-en"></a>
