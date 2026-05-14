@@ -1,17 +1,17 @@
 ---
-description: Pre-merge code review of HEAD vs a target branch (Angular + TypeScript focused)
+description: Pre-merge code review of HEAD vs a target branch
 agent: merge-cop
 subtask: true
 ---
 
 # /cop-review — Pre-Merge Review
 
-Review the current branch against a target branch before merging. Angular + TypeScript focused. Loads `AGENTS.md` from cwd. Runs `tsc --noEmit` + `npm run lint`. Emits tiered report.
+Review the current branch against a target branch before merging. Loads `AGENTS.md` from cwd. Runs `tsc --noEmit` + `npm run lint`. Emits tiered report.
 
 ## Usage
 
 ```
-/cop-review <target-branch> [--level=junior|senior] [--scope=signals,rxjs,arch,flurryx,ts,a11y] [--no-tools]
+/cop-review <target-branch> [--level=junior|senior] [--scope=arch,ts] [--no-tools]
 ```
 
 ## Arguments
@@ -39,7 +39,7 @@ Review the current branch against a target branch before merging. Angular + Type
 ```
 /cop-review main
 /cop-review develop --level=junior
-/cop-review release/2026.05 --scope=signals,flurryx --no-tools
+/cop-review release/2026.05 --scope=arch,ts --no-tools
 ```
 
 ## Output Contract

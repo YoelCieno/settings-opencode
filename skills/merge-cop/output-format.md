@@ -77,8 +77,7 @@ private buildLabel(user: User, locale: string): string {
 
 **References.**
 - Project rule: `AGENTS.md §Signals`
-- Skill: [[merge-cop-signals]]
-- Angular docs: https://angular.dev/guide/signals
+- Signal docs: https://angular.dev/guide/signals
 ```
 
 CRITICAL findings (🔴 / 🟠) always rendered in this block format even in senior mode.

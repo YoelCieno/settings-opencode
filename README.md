@@ -251,8 +251,11 @@ Dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a hardened primar
 - TUI plugins: `tui-plugins/*.tsx`.
 - Custom tools: `tools/*.ts`.
 - Mode notes: `contexts/*.md`.
-- Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`.
+- Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`, `instructions/verification-gate.md`.
+- Development patterns: `instructions/development-patterns.md` (+ `instructions/patterns/` — KISSME, SINE, POLA, SoC+CQS, CDB).
 - Scripts: `scripts/setup-package-manager.js`, `scripts/codemaps/generate.ts`.
+- Env template: `.env.example` (copy to `.env.local` and fill).
+- Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).
 - Claude mirror: `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/rules/`, `.claude/skills/`, `.claude/commands/`, `.claude/homunculus/`.
 - Intentional exclusions (`.gitignore`): `.serena/` local MCP state, `node_modules/`, `.instinct-digest-state.json`, `antigravity-*`, `.DS_Store`, local `.env*` files except `.env.example`.
 
@@ -348,7 +351,11 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 <a id="skills-en"></a>
 ### Skills
 
-Always-on (declared in `instructions`):
+Always-on:
+
+- `.agents/skills/` — autoskills loaded automatically by OpenCode: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk`.
+
+Declared in `instructions`:
 
 - `skills/socratic-design/SKILL.md` — evidence-first decision gating.
 - `skills/security-review/SKILL.md` — security checklist + scenarios.
@@ -362,10 +369,10 @@ On-demand (loaded by description / by command):
 - `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
 - `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.
 - `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — Fastify + Prisma + Zod scaffolding.
-- `skills/angular-clean-architecture/SKILL.md` (+ store, migration, testing) — Angular 18 standalone scaffolding.
-- `skills/angular-accessibility/SKILL.md` — Angular ARIA audit.
+- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framework.
+- `skills/frontend-accessibility/SKILL.md` — Framework-agnostic a11y audit and fixes.
+- `skills/merge-cop/SKILL.md` — Pre-merge code review (architecture, TS strict checks).
 - `skills/compress/SKILL.md` — context compression.
-- `skills/flurryx/SKILL.md` — domain-specific patterns.
 - `skills/continuous-learning/SKILL.md` — learned-draft schema.
 - `skills/learned/` — auto-generated drafts from the stop hook.
 

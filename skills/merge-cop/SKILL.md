@@ -1,17 +1,17 @@
 ---
 name: merge-cop
 description: >
-  Pre-merge code review for Angular + TypeScript pull requests. Diffs current branch
-  against a target branch, applies Angular-specific checklists (signals, RxJS, clean
-  architecture, flurryx, TS strict), runs lint + tsc, and emits a tiered report
-  (verbose for juniors, terse for seniors). Auto-loads project AGENTS.md rules.
+  Pre-merge code review. Diffs current branch against a target branch, applies
+  framework-agnostic checklists (TS strict, architecture, state management), runs
+  lint + tsc, and emits a tiered report (verbose for juniors, terse for seniors).
+  Auto-loads project AGENTS.md rules.
   Use when user runs /cop-review, says "pre-merge review", "review before merging",
   "check my PR against <branch>", or invokes the merge-cop agent.
 ---
 
 # merge-cop
 
-Pre-merge review. Compares HEAD vs `origin/<target>`. Angular-aware. Project-aware (reads `AGENTS.md`). Tooling-aware (runs lint + tsc).
+Pre-merge review. Compares HEAD vs `origin/<target>`. Project-aware (reads `AGENTS.md`). Tooling-aware (runs lint + tsc).
 
 ## When to Activate
 
@@ -26,7 +26,7 @@ Pre-merge review. Compares HEAD vs `origin/<target>`. Angular-aware. Project-awa
 |---|---|---|---|
 | `<target>` | yes | — | Target branch (e.g. `main`, `develop`, `release/x`) |
 | `--level` | no | auto | `junior` (verbose teaching) or `senior` (terse). Auto = senior. |
-| `--scope` | no | all | Comma list: `signals,rxjs,arch,flurryx,ts,a11y` |
+| `--scope` | no | all | Comma list: `arch,ts` |
 | `--no-tools` | no | false | Skip lint + tsc (static review only) |
 
 ## Hard Rules
@@ -35,7 +35,6 @@ Pre-merge review. Compares HEAD vs `origin/<target>`. Angular-aware. Project-awa
 2. **Diff window:** `git merge-base HEAD origin/<target>`..`HEAD`. Never review changes already on target.
 3. **Confidence ≥ 80%.** Skip uncertain findings. Use `❓ q:` instead of speculative `🔴 bug:`.
 4. **Project rules win.** `AGENTS.md` overrides this skill. Re-read on every run; do not cache between sessions.
-5. **flurryx ground truth:** load the [[flurryx]] skill before flagging state-management code. Do not invent APIs.
 6. **No fluff.** No "great work", no restating what the diff already shows.
 
 ## Pipeline
@@ -49,10 +48,7 @@ Pre-merge review. Compares HEAD vs `origin/<target>`. Angular-aware. Project-awa
 6. For each changed file:
      - Skim full file (not just hunk) for context
      - Apply relevant sub-checklists by extension/role:
-         *.component.ts / *.html  -> signals.md, rxjs.md, a11y
-         *.facade.ts / *.store.ts -> flurryx.md, clean-architecture.md
-         *.adapter.ts / *.port.ts -> clean-architecture.md
-         *.ts                     -> typescript-strict.md
+          *.ts                     -> typescript-strict.md
 7. If !--no-tools:
      - npm run lint -- --quiet (or eslint --quiet) on changed files
      - npx tsc --noEmit (full project; abort early on first 50 errors)
@@ -74,10 +70,6 @@ Promote to BLOCK if AGENTS.md flags the category as mandatory.
 
 ## Sub-pages (read on demand)
 
-- [[merge-cop-signals]] — Angular signals, change detection, OnPush, computed, no-method-in-template
-- [[merge-cop-rxjs]] — RxJS hygiene, takeUntilDestroyed, async pipe, leak patterns
-- [[merge-cop-clean-architecture]] — facade / use-case / port / adapter / store boundaries
-- [[merge-cop-flurryx]] — flurryx-specific rules (decorator order, keyed stores, no manual Record updates)
 - [[merge-cop-typescript-strict]] — no `any`, immutability, narrowing, no `!`, readonly
 - [[merge-cop-output-format]] — junior vs senior render templates
 

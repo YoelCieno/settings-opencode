@@ -3,20 +3,20 @@
   "autoupdate": true,
   "default_agent": "conductor",
   "instructions": [
-    "{env:HOME}/.config/opencode/instructions/subagent-routing.md",
-    "{env:HOME}/.config/opencode/instructions/verification-gate.md",
-    "{env:HOME}/.config/opencode/skills/security-review/SKILL.md",
-    "{env:HOME}/.config/opencode/skills/coding-standards/SKILL.md",
-    "{env:HOME}/.config/opencode/instructions/serena.md", // disabled: MCP off
-    "{env:HOME}/.config/opencode/skills/socratic-design/SKILL.md", // disabled: load on demand
-    "{env:HOME}/.config/opencode/skills/git-workflow/SKILL.md", // disabled: load on demand
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/subagent-routing.md",
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/verification-gate.md",
+    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/security-review/SKILL.md",
+    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/coding-standards/SKILL.md",
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/serena.md", // disabled: MCP off
+    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/socratic-design/SKILL.md", // disabled: load on demand
+    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/git-workflow/SKILL.md", // disabled: load on demand
   ],
   "agent": {
     "conductor": {
       "description": "Primary orchestrator. Routes every task to the matching specialist subagent. CANNOT write or edit files directly — all writes go through writer (docs) or coder (code).",
       "mode": "primary",
       "model": "{env:OPENCODE_MODEL_PRIMARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/conductor.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/conductor.txt",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "tools": {
         "*": true,
@@ -55,7 +55,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/planner.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/planner.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -68,7 +68,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/architect.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/architect.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -81,7 +81,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/coder.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/coder.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -96,7 +96,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/writer.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/writer.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -111,7 +111,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/code-reviewer.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/code-reviewer.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -122,11 +122,11 @@
       },
     },
     "merge-cop": {
-      "description": "MUST delegate when user runs /cop-review or asks for pre-merge review of HEAD vs a target branch. Angular + TypeScript focused (signals, RxJS, clean architecture, flurryx, TS strict). Reads project AGENTS.md. Runs tsc + lint. Tiered output (junior/senior). Read-only — findings only.",
+      "description": "MUST delegate when user runs /cop-review or asks for pre-merge review of HEAD vs a target branch. Loads AGENTS.md, runs tsc + lint, emits tiered output (junior/senior). Read-only.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/merge-cop.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/merge-cop.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -141,7 +141,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/security-reviewer.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/security-reviewer.txt",
       "tools": {
         "read": true,
         "bash": true,
@@ -156,7 +156,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/tdd-guide.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/tdd-guide.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -178,7 +178,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/build-error-resolver.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/build-error-resolver.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -192,7 +192,7 @@
       "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/e2e-runner.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/e2e-runner.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -207,7 +207,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/doc-updater.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/doc-updater.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -222,7 +222,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/refactor-cleaner.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/refactor-cleaner.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -236,7 +236,7 @@
       "description": "MUST delegate for PostgreSQL, SQL, Supabase, RLS, migrations, schema design, query performance, or DB security.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/database-reviewer.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/database-reviewer.txt",
       "tools": {
         "read": true,
         "write": true,
@@ -251,7 +251,7 @@
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
       "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-      "prompt": "{env:HOME}.config/opencode/prompts/agents/git-specialist.txt",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/git-specialist.txt",
       "tools": {
         "bash": true,
         "read": true,
@@ -294,7 +294,7 @@
       "subtask": true,
     },
     "cop-review": {
-      "description": "Pre-merge review of HEAD vs a target branch. Angular + TypeScript focused. Usage: /cop-review <target> [--level=junior|senior] [--scope=...] [--no-tools]",
+      "description": "Pre-merge review of HEAD vs a target branch. Frontend + TypeScript focused. Usage: /cop-review <target> [--level=junior|senior] [--scope=...] [--no-tools]",
       "template": "{file:commands/cop-review.md}\n\n$ARGUMENTS",
       "agent": "merge-cop",
       "subtask": true,
