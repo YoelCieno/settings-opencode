@@ -27,6 +27,7 @@ Do not use `bash`, `read`, `write`, `edit`, or MCP tools, including Serena, befo
 - Codemap or generated-doc updates -> `doc-updater`
 - Dead code, unused exports, duplication cleanup -> `refactor-cleaner`
 - SQL, PostgreSQL, Supabase, RLS, migrations -> `database-reviewer`
+- Research, investigate topics, compare technologies, multi-source analysis -> `researcher` (read-only for codebase; writes comparisons to thoughts/comparisons/)
 
 ## Conductor Cannot Write Directly
 

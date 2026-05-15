@@ -1,0 +1,26 @@
+[
+  {
+    "label": "validate:opencode.jsonc",
+    "command": "bun",
+    "args": ["run", "--eval", "const {parse} = require('jsonc-parser'); const fs=require('fs'); const e=parse(fs.readFileSync('opencode.jsonc','utf8')); console.log(e ? 'valid' : 'invalid')"],
+    "tags": ["validate"]
+  },
+  {
+    "label": "validate:all jsonc",
+    "command": "find",
+    "args": [".", "-name", "*.jsonc", "-not", "-path", "*/node_modules/*", "-exec", "sh", "-c", "bun run --eval \"const {parse}=require('jsonc-parser');const fs=require('fs');const r=fs.readFileSync('$1','utf8');const e=parse(r);if(e===undefined){console.log('FAIL: $1');process.exit(1)}else{console.log('OK: $1')}\" \"$1\" \\;"],
+    "tags": ["validate"]
+  },
+  {
+    "label": "install:deps",
+    "command": "bun",
+    "args": ["install"],
+    "tags": ["setup"]
+  },
+  {
+    "label": "git:status",
+    "command": "git",
+    "args": ["status", "--short"],
+    "tags": ["git"]
+  }
+]

@@ -32,6 +32,7 @@ Before ANY other tool call (read, bash, grep, glob), check if the user request m
 | Playwright, E2E browser flows                                        | `task` → `e2e-runner`   |
 | Dead code, duplication, consolidation cleanup                        | `task` → `refactor-cleaner` |
 | SQL, Postgres, Supabase, RLS, migrations                             | `task` → `database-reviewer` |
+| Research, investigate topics, compare technologies, multi-source analysis | `task` → `researcher` |
 | Codemap or doc generation/update                                     | `task` → `doc-updater`  |
 
 If two rules match, route the **writing/changing** work first; reviews/security run after.

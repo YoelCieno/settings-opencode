@@ -7,7 +7,7 @@
     "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/verification-gate.md",
     "{env:OPENCODE_SRC_ROUTE}/opencode/skills/security-review/SKILL.md",
     "{env:OPENCODE_SRC_ROUTE}/opencode/skills/coding-standards/SKILL.md",
-    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/serena.md", // disabled: MCP off
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/serena.md", // serena: code-tools only (memory via opencode-agent-memory)
     "{env:OPENCODE_SRC_ROUTE}/opencode/skills/socratic-design/SKILL.md", // disabled: load on demand
     "{env:OPENCODE_SRC_ROUTE}/opencode/skills/git-workflow/SKILL.md", // disabled: load on demand
   ],
@@ -45,6 +45,7 @@
           "doc-updater": "allow",
           "refactor-cleaner": "allow",
           "database-reviewer": "allow",
+          "researcher": "allow",
           "git-specialist": "allow",
           "merge-cop": "allow",
         },
@@ -261,6 +262,23 @@
         "glob": false,
       },
     },
+    "researcher": {
+      "description": "MUST delegate for research, investigate topics, compare technologies, multi-source analysis. Read-only for codebase; writes comparison artifacts to thoughts/comparisons/.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/researcher.txt",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": false,
+        "bash": true,
+        "grep": true,
+        "glob": true,
+        "webfetch": true,
+        "websearch": true,
+      },
+    },
   },
   "command": {
     "git": {
@@ -363,6 +381,12 @@
       "agent": "doc-updater",
       "subtask": true,
     },
+    "research": {
+      "description": "Conduct structured multi-source research with comparison output",
+      "template": "{file:commands/research.md}\n\n$ARGUMENTS",
+      "agent": "researcher",
+      "subtask": true,
+    },
     "test-coverage": {
       "description": "Analyze test coverage",
       "template": "{file:commands/test-coverage.md}\n\n$ARGUMENTS",
@@ -397,11 +421,7 @@
   "mcp": {
     "serena": {
       "type": "local",
-      "command": [
-        "serena",
-        "start-mcp-server",
-        "--context=ide"
-      ],
+      "command": ["serena", "start-mcp-server", "--context=ide"],
       "enabled": true,
     },
     "context7": {
@@ -416,5 +436,9 @@
       "enabled": false,
     },
   },
-  "plugin": ["@tarquinen/opencode-dcp@latest", "opencode-skill-creator", "opencode-agent-memory"],
+  "plugin": [
+    "@tarquinen/opencode-dcp@latest",
+    "opencode-skill-creator",
+    "opencode-agent-memory",
+  ],
 }
