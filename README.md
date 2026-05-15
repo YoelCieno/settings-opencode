@@ -27,7 +27,7 @@ This fork reorients the upstream config from a .NET + Angular shop toward a **No
 | **Domain-specific skill** | `flurryx` — custom state-management patterns | Not applicable; removed |
 | **Subagent model env vars** | `OPENCODE_MODEL_SUBAGENT_WORKER` | Renamed to `OPENCODE_MODEL_SUBAGENT_PROGRAMMER` |
 | **Autoskills** | None | `.agents/skills/`: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk` |
-| **Development patterns** | Not present | `instructions/patterns/`: KISSME, SINE, POLA, SoC+CQS, CDB |
+| **Development patterns** | Not present | `instructions/patterns/`: KISSME, SINE, POLA, SoC+CQS, CBD |
 | **Verification gate** | Not present | `instructions/verification-gate.md`: build-verification enforcement before "done" |
 | **Config style** | `{.config/opencode/...}` path literals | `{env:OPENCODE_SRC_ROUTE}/opencode/...` — env-driven for portability |
 | **Skill reproducibility** | Not tracked | `skills-lock.json` — pins skill SHAs |
@@ -280,7 +280,7 @@ Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-openco
 - Custom tools: `tools/*.ts`.
 - Mode notes: `contexts/*.md`.
 - Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`, `instructions/verification-gate.md`.
-- Development patterns: `instructions/development-patterns.md` (+ `instructions/patterns/` — KISSME, SINE, POLA, SoC+CQS, CDB).
+- Development patterns: `instructions/development-patterns.md` (+ `instructions/patterns/` — KISSME, SINE, POLA, SoC+CQS, CBD).
 - Scripts: `scripts/setup-package-manager.js`, `scripts/codemaps/generate.ts`.
 - Env template: `.env.example` (copy to `.env.local` and fill).
 - Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).

@@ -1,8 +1,8 @@
-# CDB (Compose Design Balance)
+# CBD (Compose Balanced Design)
 
 **Applies to:** `coder` subagent during implementation
 
-CDB = SRP + MCMC + Open/Closed + First-Class Modules, balanced to avoid over-engineering.
+CBD = SRP + MCMC + Open/Closed + First-Class Modules, balanced to avoid over-engineering.
 
 ---
 
@@ -129,13 +129,13 @@ const processOrder = withLogging(validateOrder);
 
 ---
 
-## When to use CDB
+## When to use CBD
 
 - Any module with 3+ functions sharing state or data
 - System design — draw component boundaries
 - Refactoring — extract until each function has one reason to change
 
-## When not to use CDB
+## When not to use CBD
 
 - Glue code, one-off scripts
 - Over-engineering: not every 3-line function needs an interface

@@ -14,9 +14,9 @@ These patterns apply primarily to **implementation work** — they are **binding
 | 2 | **SINE** | Simple Is Not Easy — choose simple over familiar | [`patterns/sine.md`](./patterns/sine.md) |
 | 3 | **POLA** | Principle Of Least Astonishment — don't surprise the caller | [`patterns/pola.md`](./patterns/pola.md) |
 | 4 | **SoC + CQS** | Separate Concerns + Commands vs Queries — mutators and readers never mix | [`patterns/soc-cqs.md`](./patterns/soc-cqs.md) |
-| 5 | **CDB** | Compose Design Balance — SRP + MCMC/OpenClosed + First-Class Citizens | [`patterns/cdb.md`](./patterns/cdb.md) |
+| 5 | **CBD** | Compose Balanced Design — SRP + MCMC/OpenClosed + First-Class Modules | [`patterns/cbd.md`](./patterns/cbd.md) |
 
 ## Relationship with Other Files
 
 - `subagent-routing.md` delegates implementation to `coder` — these patterns define *how* `coder` should implement
-- `coding-standards.md` complements these patterns with language-level conventions (naming, formatting, types)
+- `skills/coding-standards/SKILL.md` complements these patterns with language-level conventions (naming, formatting, types)
