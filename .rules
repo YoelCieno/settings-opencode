@@ -70,6 +70,11 @@ Types: feat, fix, docs, style, refactor, test, chore.
 Branch format: <type>/<scope>-<short-description>
 Scope required for branches (single lowercase token, letters+numbers only).
 
+Branch strategy (default):
+  - dev (working branch): individual commits, full history kept
+  - main (release branch): squash merge from dev via `git merge --squash dev`
+  - When starting a new project: present this default strategy and ask if user wants to customize.
+
 === PROFILE SWITCHING GUIDE ===
 Use these Zed profiles based on task type:
 - Default ("ask"): general conversation, quick looks
