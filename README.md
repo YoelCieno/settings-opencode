@@ -27,7 +27,7 @@ This fork reorients the upstream config from a .NET + Angular shop toward a **No
 | **Domain-specific skill** | `flurryx` — custom state-management patterns | Not applicable; removed |
 | **Subagent model env vars** | `OPENCODE_MODEL_SUBAGENT_WORKER` | Renamed to `OPENCODE_MODEL_SUBAGENT_PROGRAMMER` |
 | **Autoskills** | None | `.agents/skills/`: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk` |
-| **Development patterns** | Not present | `instructions/patterns/`: KISSME, SINE, POLA, SoC+CQS, CDB |
+| **Development patterns** | Not present | `instructions/patterns/`: KISSME, SINE, POLA, SoC+CQS, CBD |
 | **Verification gate** | Not present | `instructions/verification-gate.md`: build-verification enforcement before "done" |
 | **Config style** | `{.config/opencode/...}` path literals | `{env:OPENCODE_SRC_ROUTE}/opencode/...` — env-driven for portability |
 | **Skill reproducibility** | Not tracked | `skills-lock.json` — pins skill SHAs |
@@ -46,7 +46,7 @@ A hardened primary `conductor` agent backed by **13 specialist sub-agents** (pla
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
 - **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/code-review`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
-- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap.
+- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
 - **A `.claude/` mirror** — hooks, rule packs, learned skills, and the shared homunculus store, so Claude Code benefits from the same guardrails.
 
@@ -280,7 +280,7 @@ Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-openco
 - Custom tools: `tools/*.ts`.
 - Mode notes: `contexts/*.md`.
 - Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`, `instructions/verification-gate.md`.
-- Development patterns: `instructions/development-patterns.md` (+ `instructions/patterns/` — KISSME, SINE, POLA, SoC+CQS, CDB).
+- Development patterns: `instructions/development-patterns.md` (+ `instructions/patterns/` — KISSME, SINE, POLA, SoC+CQS, CBD).
 - Scripts: `scripts/setup-package-manager.js`, `scripts/codemaps/generate.ts`.
 - Env template: `.env.example` (copy to `.env.local` and fill).
 - Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).
@@ -303,7 +303,7 @@ Six concerns wired in one file:
 3. `agent`: sub-agent definitions (model + reasoning effort + prompt + tool allowlist). All models are env-driven (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`) — see [Public install § 4](#public-install).
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
 5. `mcp`: serena, context7, wallaby, Figma (disabled).
-6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`).
+6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`, `opencode-agent-memory`).
 
 `dcp.jsonc` configures the Dynamic Context Pruning plugin. `ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
@@ -391,23 +391,13 @@ Declared in `instructions`:
 - `skills/git-workflow/SKILL.md` — branches, conventional commits, push guards.
 - `instructions/serena.md` — connects Serena MCP per session.
 
-On-demand (loaded by description / by command):
+New skills on-demand (loaded by description / by command):
 
-- `skills/tdd-workflow/SKILL.md` — full TDD methodology.
-- `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
-- `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.
 - `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — Fastify + Prisma + Zod scaffolding.
-<<<<<<< HEAD
-- `skills/angular-clean-architecture/SKILL.md` (+ store, migration, testing) — Angular 18 standalone scaffolding.
-- `skills/angular-accessibility/SKILL.md` — Angular ARIA audit.
-=======
-- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framework.
+- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framew- `skills/tdd-workflow/SKILL.md` — full TDD methodology.
+- `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
+- `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.ork.
 - `skills/frontend-accessibility/SKILL.md` — Framework-agnostic a11y audit and fixes.
-- `skills/merge-cop/SKILL.md` — Pre-merge code review (architecture, TS strict checks).
->>>>>>> dev
-- `skills/compress/SKILL.md` — context compression.
-- `skills/continuous-learning/SKILL.md` — learned-draft schema.
-- `skills/learned/` — auto-generated drafts from the stop hook.
 
 <a id="plugins-en"></a>
 ### Plugins & hooks
@@ -426,6 +416,7 @@ All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 - `plugins/worktree.ts` (+ `plugins/worktree/`) — creates an isolated git worktree for the session and spawns a terminal (mac/Win/Linux). Inspired by opencode-worktree-session.
 - `plugins/startup-bootstrap.ts` — runs `serena_activate_project` on the first tool call of a session.
 - `plugins/kdco-primitives/` — shared utilities (mutex, shell, terminal-detect, project-id resolver, types).
+- `opencode-agent-memory` *(external, declared in `opencode.jsonc › plugin`)* — Letta-style persistent memory blocks (`memory_list`, `memory_set`, `memory_replace`) + optional journal. Data in `~/.config/opencode/memory/*.md` (global) + `.opencode/memory/*.md` (project).
 - `@tarquinen/opencode-dcp@latest` *(external, declared in `opencode.jsonc › plugin`)* — Dynamic Context Pruning. Trims stale tool results and large files from the live context window so long sessions don't blow past the model's limit. Configured via `dcp.jsonc` at the repo root.
 
 <a id="tools-en"></a>
@@ -476,214 +467,3 @@ Curation:
 4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.
 5. Idle: `auto-compact` triggers when the tool-call threshold is reached; `notification` pings macOS.
 6. Stop: v1 hook writes a draft; v2 daemon clusters observations into instincts for the next session.
-<<<<<<< HEAD
-
----
-
-<a id="francais"></a>
-## Français
-
-Depot "dotfiles" pour OpenCode + la partie stable de `~/.claude`. Embarque un agent principal `build`, douze sous-agents specialises, des skills toujours actives, des commandes slash, des plugins (hooks, instincts, worktrees, auto-compact, caveman, figma RAG), des outils custom et un mirror Claude Code.
-
-<a id="objectif-fr"></a>
-### Objectif
-
-- Reproductibilite: meme comportement entre machines/sessions.
-- Qualite: TDD a la demande, verification reguliere, conventions centralisees.
-- Securite: skill `security-review` chargee par defaut + hooks pre-tool-use.
-- Apprentissage continu: capture automatique des "instincts" dans `~/.claude/homunculus`, surface dans le system prompt a la session suivante.
-
-<a id="structure-fr"></a>
-### Structure du repo
-
-- Configs: `opencode.jsonc`, `dcp.jsonc` (dynamic context pruning), `ocx.jsonc` (registries OCX), `tui.json` (theme TUI).
-- Profils: `profiles/<name>/` (override `opencode.jsonc` + `AGENTS.md` par profil, lance via `ocx opencode -p <name>`).
-- Skills: `skills/*/SKILL.md` (+ ressources auxiliaires).
-- Prompts agents: `prompts/agents/*.txt`.
-- Commandes slash: `commands/*.md`.
-- Plugins OpenCode: `plugins/*.{ts,js}` (+ `plugins/kdco-primitives/`, `plugins/worktree/`).
-- TUI plugins: `tui-plugins/*.tsx` (sidebar React rendue par OpenCode).
-- Outils custom: `tools/*.ts`.
-- Contextes (memos de mode): `contexts/*.md`.
-- Instructions globales: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`.
-- Scripts: `scripts/setup-package-manager.js`, `scripts/codemaps/generate.ts`.
-- Mirror Claude Code: `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/rules/`, `.claude/skills/`, `.claude/commands/`, `.claude/homunculus/`.
-- Exclusions volontaires (`.gitignore`): etat MCP local `.serena/`, `node_modules/`, `.instinct-digest-state.json`, `antigravity-*`, `.DS_Store`, fichiers locaux `.env*` sauf `.env.example`.
-
-<a id="config-fr"></a>
-### Configuration: `opencode.jsonc`
-
-Le fichier orchestre six choses:
-
-1. `instructions`: skills toujours chargees au demarrage. Aujourd'hui:
-   - `instructions/subagent-routing.md` -> gate Task-first pour delegation sous-agent.
-   - `instructions/serena.md` -> active Serena MCP apres le gate de routage quand la delegation specialiste ne s'applique pas.
-   - `skills/socratic-design/SKILL.md` -> gating evidence-first sur les decisions design.
-   - `skills/security-review/SKILL.md` -> checklist OWASP.
-   - `skills/coding-standards/SKILL.md` -> conventions code.
-   - `skills/git-workflow/SKILL.md` -> branches, commits, PRs.
-2. `default_agent`: `build`.
-3. `agent`: definitions des sous-agents (modele + reasoning effort + prompt + outils autorises). Tous les modeles passent par variables d'environnement (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`).
-4. `command`: mappe `/<name>` -> template + sous-agent + `subtask` (delegation).
-5. `mcp`: serena, context7, wallaby, Figma (desactive par defaut).
-6. `plugin`: marketplace plugins externes (`@tarquinen/opencode-dcp@latest`).
-
-`dcp.jsonc` configure le plugin Dynamic Context Pruning. `ocx.jsonc` declare les registries pour le wrapper [OCX](https://ocx.kdco.dev).
-
-<a id="agents-fr"></a>
-### Agents
-
-Definis dans `opencode.jsonc` (champ `agent`):
-
-| Agent                  | Mode      | Role                                                                                  |
-| ---------------------- | --------- | ------------------------------------------------------------------------------------- |
-| `build`                | primary   | Orchestrateur. Delegue toute ecriture de code source au `coder`. Garde l'edit pour non-code (config/prompts/docs). |
-| `planner`              | subagent  | Plan + risques avant grosse modif. Read+bash, pas d'edit.                             |
-| `architect`            | subagent  | Decisions de design / scalabilite. Read+bash uniquement.                              |
-| `coder`                | subagent  | Implementation pure (hors tests). Verification build+lint+standards obligatoire avant de rendre. Gate socratique en cas d'ambiguite. |
-| `code-reviewer`        | subagent  | Revue qualite (diff, conventions, tests). Read-only — findings seulement; les fixes passent par `coder`. |
-| `security-reviewer`    | subagent  | Revue OWASP/secrets/deps. Read-only — rapporte les vulnerabilites; remediation routee vers `coder`. |
-| `tdd-guide`            | subagent  | RED -> GREEN -> REFACTOR + 80% coverage. Ecrit les tests; delegue le GREEN au `coder` via permission Task ciblee. |
-| `build-error-resolver` | subagent  | Fix build/TS errors avec diff minimal.                                                |
-| `e2e-runner`           | subagent  | Tests E2E Playwright.                                                                 |
-| `doc-updater`          | subagent  | Documentation et codemaps.                                                            |
-| `refactor-cleaner`     | subagent  | Suppression code mort + consolidation.                                                |
-| `database-reviewer`    | subagent  | PostgreSQL / Supabase: schema, perfs, securite.                                       |
-| `git-specialist`       | subagent  | Branches, commits, push, PRs (modele mini).                                           |
-
-### Invocation automatique des sous-agents
-
-OpenCode expose les sous-agents aux agents primaires via le Task tool. `instructions/subagent-routing.md` impose un gate Task-first avant inspection directe quand une demande matche un specialiste, et `prompts/agents/build.txt` repete les regles pour l'agent `build`.
-
-Chemins possibles:
-
-- Requete normale: `build` auto-delegue quand une regle de routage matche.
-- Mention `@agent`: invoque manuellement un sous-agent precis.
-- Commande slash: force un subtask avec template configure, par ex. `/plan`, `/tdd`, `/security`.
-
-Pourquoi: GPT/Claude inferent souvent la delegation depuis des descriptions courtes, mais les modeles open-source/open-weight sont plus litteraux et inspectent souvent avec `bash`/Serena avant de deleguer. Le gate top-level, le prompt de routage, et les descriptions `MUST delegate` rendent le comportement plus portable entre modeles.
-
-<a id="commands-fr"></a>
-### Commandes slash
-
-Templates dans `commands/`. La plupart sont `subtask: true` -> elles s'executent dans un sous-agent isolé.
-
-| Commande              | Sous-agent          | But                                                |
-| --------------------- | ------------------- | -------------------------------------------------- |
-| `/git`                | git-specialist      | Operations git encadrees (branche/commit).         |
-| `/push-changes`       | git-specialist      | Commit + push (avec garde sur upstream).           |
-| `/plan`               | planner             | Plan d'implementation.                             |
-| `/tdd`                | tdd-guide           | Cycle TDD avec coverage.                           |
-| `/code-review`        | code-reviewer       | Revue qualite.                                     |
-| `/security`           | security-reviewer   | Audit securite.                                    |
-| `/build-fix`          | build-error-resolver | Resolution build/TS errors.                       |
-| `/e2e`                | e2e-runner          | Generation/run tests E2E.                          |
-| `/refactor-clean`     | refactor-cleaner    | Nettoyage code mort.                               |
-| `/orchestrate`        | planner             | Orchestration multi-agents.                        |
-| `/update-docs`        | doc-updater         | Mise a jour de la doc.                             |
-| `/update-codemaps`    | doc-updater         | Genere `docs/CODEMAPS/`.                           |
-| `/test-coverage`      | tdd-guide           | Analyse coverage.                                  |
-| `/learn`              | (primary)           | Extrait patterns reutilisables de la session.      |
-| `/checkpoint`         | (primary)           | Sauvegarde verification + progress.                |
-| `/verify`             | (primary)           | Boucle de verification.                            |
-| `/eval`               | (primary)           | Evaluation contre criteres.                        |
-| `/setup-pm`           | (primary)           | Configure le package manager.                      |
-| `/skill-create`       | (primary)           | Genere une skill depuis l'historique git.          |
-| `/instinct-status`    | (primary)           | Affiche les instincts appris.                      |
-| `/instinct-import`    | (primary)           | Import d'instincts.                                |
-| `/instinct-export`    | (primary)           | Export d'instincts.                                |
-| `/evolve`             | (primary)           | Cluster instincts -> skills.                       |
-
-<a id="skills-fr"></a>
-### Skills
-
-Skills toujours actives (declared dans `instructions`):
-
-- `skills/socratic-design/SKILL.md` — decision-gating "evidence-first".
-- `skills/security-review/SKILL.md` — checklist securite + scenarios.
-- `skills/coding-standards/SKILL.md` — naming, immutabilite, taille fichier, error handling.
-- `skills/git-workflow/SKILL.md` — branches, conventional commits, garde-fous push.
-- `instructions/serena.md` — connecte Serena MCP a chaque session.
-
-Skills sur demande (chargees par leur description / par une commande):
-
-- `skills/tdd-workflow/SKILL.md` — methode TDD detaillee.
-- `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — mode terse.
-- `skills/strategic-compact/SKILL.md` — compaction manuelle aux paliers logiques.
-- `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — scaffold Fastify + Prisma + Zod.
-- `skills/angular-clean-architecture/SKILL.md` (+ store, migration, tests) — scaffold Angular 18 standalone.
-- `skills/angular-accessibility/SKILL.md` — audit ARIA Angular.
-- `skills/compress/SKILL.md` — compression de contexte.
-- `skills/flurryx/SKILL.md` — patterns specifiques.
-- `skills/continuous-learning/SKILL.md` — schema des drafts learned.
-- `skills/learned/` — drafts produits par le stop-hook.
-
-<a id="plugins-fr"></a>
-### Plugins & hooks
-
-Tous les plugins TypeScript utilisent `@opencode-ai/plugin@1.4.6`.
-
-- `plugins/ecc-hooks.ts` — Prettier sur fichiers JS/TS edites, detection `console.log`, `tsc --noEmit` post-edit, rappels sur commandes sensibles (`git push` etc.).
-- `plugins/instinct-injector.ts` — lit `~/.claude/homunculus`, filtre par confidence, injecte les instincts dans le system prompt (continuous-learning v2 read-side).
-- `plugins/instinct-observer.ts` — capture les events `tool.execute.before/after` et append dans `observations.jsonl` (write-side).
-- `plugins/instinct-digest.ts` — diff session-start: surface les instincts nouveaux/modifies depuis la derniere session.
-- `plugins/continuous-learning-stop-hook.js` — stop hook v1 (legacy) qui appelle `skills/continuous-learning/bin/evaluate-session.js` pour produire un draft dans `skills/learned/`.
-- `plugins/auto-compact.js` — auto-compaction quand `OC_COMPACT_THRESHOLD` est atteint, en idle uniquement.
-- `plugins/notification.js` — notification macOS (osascript + Glass.aiff) sur `session.idle`.
-- `plugins/caveman-server.ts` + `tui-plugins/caveman.tsx` — injecte les instructions caveman dans le system prompt + sidebar TUI qui affiche le mode actif.
-- `plugins/figma-mcp-trigger.js` — RAG figma: lit `figma-rag.md` (ou `OPENCODE_FIGMA_RAG_PATHS`) et injecte des snippets quand des designs sont referencés.
-- `plugins/worktree.ts` (+ `plugins/worktree/`) — cree un git worktree isolé pour la session et spawn un terminal (mac/Win/Linux). Inspiré d'opencode-worktree-session.
-- `plugins/startup-bootstrap.ts` — declenche `serena_activate_project` la premiere fois qu'un outil est appelé dans la session.
-- `plugins/kdco-primitives/` — utilities partages (mutex, shell, terminal-detect, project-id resolver, types).
-- `@tarquinen/opencode-dcp@latest` *(externe, declare dans `opencode.jsonc › plugin`)* — Dynamic Context Pruning. Coupe les tool results stagnants et les gros fichiers dans la fenetre de contexte pour que les sessions longues ne depassent pas la limite modele. Configure via `dcp.jsonc` a la racine du repo.
-
-<a id="tools-fr"></a>
-### Outils custom (`tools/`)
-
-Outils OpenCode reutilisables exposes via `tools/index.ts`:
-
-- `tools/run-tests.ts` — detecte package manager + framework et construit la commande de test.
-- `tools/check-coverage.ts` — lit les rapports coverage et compare a un seuil.
-- `tools/security-audit.ts` — scan deps + secrets + patterns a risque.
-
-<a id="tui-fr"></a>
-### TUI plugins
-
-`tui-plugins/caveman.tsx` — sidebar React qui affiche un badge "CAVEMAN ULTRA" quand le mode est actif (drapeau ecrit par `caveman-server.ts`).
-
-<a id="learning-fr"></a>
-### Apprentissage continu
-
-Deux pipelines coexistent (compatibilite ascendante):
-
-1. **v1 (legacy)** — `plugins/continuous-learning-stop-hook.js` -> `skills/continuous-learning/stop.sh` -> `skills/continuous-learning/bin/evaluate-session.js` ecrit au plus un draft dans `skills/learned/`.
-2. **v2 (homunculus, partagé avec Claude Code)** — `plugins/instinct-observer.ts` ecrit dans `~/.claude/homunculus/projects/<id>/observations.jsonl`. Un daemon (cote ECC) cluster les observations en "instincts". `plugins/instinct-injector.ts` les injecte dans le system prompt. `plugins/instinct-digest.ts` produit un diff session-start.
-
-Curation:
-
-- `/curate-learned-skills` (cote Claude Code) — relit les drafts dans `learned/` et promeut les bons en vraies skills.
-- `/instinct-status` / `/evolve` — inspecte et fait evoluer les instincts en skills.
-
-<a id="claude-fr"></a>
-### Mirror Claude Code (`.claude/`)
-
-- `CLAUDE.md` — instructions globales (no `any`, facade != UseCase).
-- `settings.json` — permissions allow/deny, env vars (`API_TIMEOUT_MS=3000000`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`, `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`), hooks `PreToolUse` / `PostToolUse` / `Stop`.
-- `hooks/pre-tool-use.sh` — warnings sur commandes/fichiers sensibles (warn only).
-- `hooks/stop.sh` — stop hook Claude Code.
-- `rules/common/*.md` + `rules/typescript/*.md` — packs de regles (style, tests, securite, patterns, hooks, agents).
-- `commands/{create-pull-request,curate-learned-skills,update-codemaps}.md` — commandes Claude.
-- `skills/**` — catalogue de skills "learned" (debugging, project-specific, user-corrections).
-- `homunculus/{instincts,evolved,observations.archive}` — store partagé avec OpenCode.
-
-<a id="flow-fr"></a>
-### Comment tout s'emboite
-
-1. Demarrage: OpenCode charge `opencode.jsonc` -> instructions globales -> plugin `instinct-injector` injecte les instincts -> `instinct-digest` produit un diff -> `caveman-server` ajoute le preamble si actif.
-2. Premiere action utilisateur: `startup-bootstrap` declenche `serena_activate_project`.
-3. Dev: `build` execute. `ecc-hooks` formate / type-check / loue les `console.log`. `instinct-observer` archive les events.
-4. Workflow: `build` auto-delegue aux specialistes via Task; `/plan`, `/tdd`, `/security`, etc. forcent explicitement le meme routage.
-5. Idle: `auto-compact` declenche un compact quand le seuil de tool calls est atteint. `notification` ping macOS.
-6. Stop: hook v1 produit un draft, hook v2 cluster les observations en instincts pour la session suivante.
-=======
->>>>>>> dev

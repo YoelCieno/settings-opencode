@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: Universal coding standards, best practices, and patterns for TypeScript, JavaScript, React, and Node.js development.
+description: Universal coding standards, best practices, and patterns for TypeScript and JavaScript development.
 ---
 
 # Coding Standards & Best Practices
@@ -18,33 +18,10 @@ Universal coding standards applicable across all projects.
 
 ## Code Quality Principles
 
-### 1. Readability First
+Architectural and design patterns are covered separately:
+- See [`instructions/development-patterns.md`] for KISSME, SINE, POLA, SoC+CQS, CBD
 
-- Code is read more than written
-- Clear variable and function names
-- Self-documenting code preferred over comments
-- Consistent formatting
-
-### 2. KISS (Keep It Simple, Stupid)
-
-- Simplest solution that works
-- Avoid over-engineering
-- No premature optimization
-- Easy to understand > clever code
-
-### 3. DRY (Don't Repeat Yourself)
-
-- Extract common logic into functions
-- Create reusable components
-- Share utilities across modules
-- Avoid copy-paste programming
-
-### 4. YAGNI (You Aren't Gonna Need It)
-
-- Don't build features before they're needed
-- Avoid speculative generality
-- Add complexity only when required
-- Start simple, refactor when needed
+The sections below define language-level conventions for writing clean, maintainable code.
 
 ## TypeScript/JavaScript Standards
 
@@ -196,10 +173,11 @@ See Codemaps in DOCS/CODEMAPS
 ### File Naming
 
 ```
-components/Button.tsx          # PascalCase for components
-hooks/useAuth.ts              # camelCase with 'use' prefix
-lib/formatDate.ts             # camelCase for utilities
-types/market.types.ts         # camelCase with .types suffix
+services/user.service.ts          # camelCase for service modules
+controllers/auth.controller.ts    # camelCase for controller modules
+utils/formatDate.ts               # camelCase for utility modules
+types/user.types.ts               # camelCase with .types suffix
+constants/api.ts                  # camelCase for constants
 ```
 
 ## Comments & Documentation
@@ -226,23 +204,25 @@ name = user.name;
 
 ````typescript
 /**
- * Searches markets using semantic similarity.
+ * Calculates the total price including tax and discounts.
  *
- * @param query - Natural language search query
- * @param limit - Maximum number of results (default: 10)
- * @returns Array of markets sorted by similarity score
- * @throws {Error} If OpenAI API fails or Redis unavailable
+ * @param basePrice - Item base price in cents
+ * @param taxRate - Tax rate as decimal (e.g. 0.21 for 21%)
+ * @param discountCode - Optional discount code
+ * @returns Total price in cents
+ * @throws {Error} If discount code is invalid or expired
  *
  * @example
  * ```typescript
- * const results = await searchMarkets('election', 5)
- * console.log(results[0].name) // "Trump vs Biden"
+ * const total = calculateTotal(1999, 0.21, 'SAVE10');
+ * // Returns 2159 (1999 + 420 tax - 260 discount)
  * ```
  */
-export async function searchMarkets(
-  query: string,
-  limit: number = 10,
-): Promise<Market[]> {
+export function calculateTotal(
+  basePrice: number,
+  taxRate: number,
+  discountCode?: string
+): number {
   // Implementation
 }
 ````
@@ -252,33 +232,41 @@ export async function searchMarkets(
 ### Memoization
 
 ```typescript
-import { useMemo, useCallback } from "react";
+// ✅ GOOD: Cache expensive results (memoization)
+const cache = new Map<string, Result>();
 
-// ✅ GOOD: Memoize expensive computations
-const sortedMarkets = useMemo(() => {
-  return markets.sort((a, b) => b.volume - a.volume);
-}, [markets]);
+function computeExpensiveValue(key: string): Result {
+  if (cache.has(key)) return cache.get(key)!;
+  const result = expensiveComputation(key);
+  cache.set(key, result);
+  return result;
+}
 
-// ✅ GOOD: Memoize callbacks
-const handleSearch = useCallback((query: string) => {
-  setSearchQuery(query);
-}, []);
+// ✅ GOOD: Debounce rapid successive calls
+let debounceTimer: ReturnType<typeof setTimeout>;
+function handleRapidInput(query: string) {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => processSearch(query), 300);
+}
 ```
 
 ### Lazy Loading
 
 ```typescript
-import { lazy, Suspense } from 'react'
+// ✅ GOOD: Lazy initialize expensive resources
+let databaseConnection: Database | null = null;
 
-// ✅ GOOD: Lazy load heavy components
-const HeavyChart = lazy(() => import('./HeavyChart'))
+function getDb(): Database {
+  if (!databaseConnection) {
+    databaseConnection = new Database(connectionConfig);
+  }
+  return databaseConnection;
+}
 
-export function Dashboard() {
-  return (
-    <Suspense fallback={<Spinner />}>
-      <HeavyChart />
-    </Suspense>
-  )
+// ✅ GOOD: Dynamic imports for deferred loading
+async function loadPlugin(name: string) {
+  const plugin = await import(`./plugins/${name}`);
+  return plugin.initialize();
 }
 ```
 
@@ -286,13 +274,16 @@ export function Dashboard() {
 
 ```typescript
 // ✅ GOOD: Select only needed columns
-const { data } = await supabase
-  .from("markets")
-  .select("id, name, status")
-  .limit(10);
+db.query("SELECT id, name, status FROM users WHERE id = $1", [userId]);
 
-// ❌ BAD: Select everything
-const { data } = await supabase.from("markets").select("*");
+// ❌ BAD: SELECT * fetches unnecessary data
+db.query("SELECT * FROM users WHERE id = $1", [userId]);
+
+// ✅ GOOD: Use parameterized queries (prevents SQL injection)
+const result = await db.query(
+  "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id",
+  [name, email]
+);
 ```
 
 ## Testing Standards
@@ -300,16 +291,15 @@ const { data } = await supabase.from("markets").select("*");
 ### Test Structure (AAA Pattern)
 
 ```typescript
-test("calculates similarity correctly", () => {
+test("returns formatted date string for valid input", () => {
   // Arrange
-  const vector1 = [1, 0, 0];
-  const vector2 = [0, 1, 0];
+  const input = new Date("2026-01-15");
 
   // Act
-  const similarity = calculateCosineSimilarity(vector1, vector2);
+  const result = formatDate(input);
 
   // Assert
-  expect(similarity).toBe(0);
+  expect(result).toBe("2026-01-15");
 });
 ```
 
@@ -317,13 +307,13 @@ test("calculates similarity correctly", () => {
 
 ```typescript
 // ✅ GOOD: Descriptive test names
-test("returns empty array when no markets match query", () => {});
-test("throws error when OpenAI API key is missing", () => {});
-test("falls back to substring search when Redis unavailable", () => {});
+test("returns empty array when no matching records found", () => {});
+test("throws validation error when email format is invalid", () => {});
+test("falls back to default config when environment variable is missing", () => {});
 
 // ❌ BAD: Vague test names
 test("works", () => {});
-test("test search", () => {});
+test("test function", () => {});
 ```
 
 ## Code Smell Detection
