@@ -6,7 +6,7 @@ These examples show how to apply the framework‑agnostic steps in specific fram
 
 **Step 1: Define domain models**
 ```typescript
-// core/models/product.ts
+// domain/models/product.ts
 export interface Product {
   id: string
   name: string
@@ -17,7 +17,7 @@ export interface Product {
 
 **Step 2: Define ports (abstract contracts)**
 ```typescript
-// core/ports/get-products.port.ts
+// domain/ports/get-products.port.ts
 export abstract class GetProductsPort {
   abstract execute(category?: string): Promise<Product[]>;
 }
@@ -25,7 +25,7 @@ export abstract class GetProductsPort {
 
 **Step 3: Add business rules (if needed)**
 ```typescript
-// core/rules/product-pricing.rules.ts
+// domain/rules/product-pricing.rules.ts
 export const MINIMUM_PRICE = 0;
 export const MAXIMUM_DISCOUNT = 0.9; // 90% off
 
@@ -39,7 +39,7 @@ export function calculateFinalPrice(basePrice: number, discount: number): number
 **Step 4: Implement adapter**
 ```typescript
 // infra/adapters/get-products.adapter.ts
-import { GetProductsPort } from '../../core/ports/get-products.port';
+import { GetProductsPort } from '../../domain/ports/get-products.port';
 import { apiClient } from '../http/api-client';
 
 export class GetProductsAdapter implements GetProductsPort {
@@ -56,9 +56,9 @@ export class GetProductsAdapter implements GetProductsPort {
 **Step 5: Create HTTP client wrapper**
 ```typescript
 // infra/http/api-client.ts
-import axios from 'axios';
+import oftech from 'oftech';
 
-export const apiClient = axios.create({
+export const apiClient = oftech.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 });
@@ -81,7 +81,7 @@ export interface ProductDto {
 **Step 7: Register infrastructure bindings**
 ```typescript
 // apps/{APP_NAME}/src/App.tsx
-import { GetProductsPort } from '../../core/ports/get-products.port';
+import { GetProductsPort } from '../../domain/ports/get-products.port';
 import { GetProductsAdapter } from '../../infra/adapters/get-products.adapter';
 import { apiClient } from '../../infra/http/api-client';
 
@@ -97,7 +97,7 @@ const getProductsPort = new GetProductsPort(
 ```typescript
 // apps/{APP_NAME}/src/components/ProductList.tsx
 import { useEffect, useState } from 'react';
-import { GetProductsPort } from '../../../core/ports/get-products.port';
+import { GetProductsPort } from '../../../domain/ports/get-products.port';
 
 interface ProductListProps {
   productsPort: GetProductsPort;
@@ -134,7 +134,7 @@ export function ProductList({ productsPort, category }: ProductListProps) {
 
 **Step 1: Define domain models**
 ```typescript
-// core/models/user.ts
+// domain/models/user.ts
 export interface User {
   id: string
   name: string
@@ -145,7 +145,7 @@ export interface User {
 
 **Step 2: Define ports (abstract contracts)**
 ```typescript
-// core/ports/get-user-by-id.port.ts
+// domain/ports/get-user-by-id.port.ts
 export abstract class GetUserByIdPort {
   abstract execute(id: string): Promise<User | null>;
 }
@@ -153,7 +153,7 @@ export abstract class GetUserByIdPort {
 
 **Step 3: Add business rules (if needed)**
 ```typescript
-// core/rules/user-validation.rules.ts
+// domain/rules/user-validation.rules.ts
 export const MIN_PASSWORD_LENGTH = 8;
 export const MAX_NAME_LENGTH = 50;
 
@@ -169,7 +169,7 @@ export function isValidPassword(password: string): boolean {
 **Step 4: Implement adapter**
 ```typescript
 // infra/adapters/get-user-by-id.adapter.ts
-import { GetUserByIdPort } from '../../core/ports/get-user-by-id.port';
+import { GetUserByIdPort } from '../../domain/ports/get-user-by-id.port';
 import { httpClient } from '../http/http-client';
 
 export class GetUserByIdAdapter implements GetUserByIdPort {
@@ -190,9 +190,9 @@ export class GetUserByIdAdapter implements GetUserByIdPort {
 **Step 5: Create HTTP client wrapper**
 ```typescript
 // infra/http/http-client.ts
-import axios from 'axios';
+import oftech from 'oftech';
 
-export const httpClient = axios.create({
+export const httpClient = oftech.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
@@ -218,7 +218,7 @@ export interface UserDto {
 // apps/{APP_NAME}/src/App.vue
 <script setup lang="ts">
 import { provide } from 'vue';
-import { GetUserByIdPort } from '../../core/ports/get-user-by-id.port';
+import { GetUserByIdPort } from '../../domain/ports/get-user-by-id.port';
 import { GetUserByIdAdapter } from '../../infra/adapters/get-user-by-id.adapter';
 import { httpClient } from '../../infra/http/http-client';
 
@@ -245,7 +245,7 @@ provide('getUserByIdPort', getUserByIdPort);
 
 <script setup lang="ts">
 import { inject } from 'vue';
-import { GetUserByIdPort } from '../../../core/ports/get-user-by-id.port';
+import { GetUserByIdPort } from '../../../domain/ports/get-user-by-id.port';
 import { ref } from 'vue';
 
 const getUserByIdPort = inject<GetUserByIdPort>('getUserByIdPort');
@@ -275,7 +275,7 @@ fetchUser('current-user-id');
 
 **Step 1: Define domain models**
 ```typescript
-// core/models/order.ts
+// domain/models/order.ts
 export interface Order {
   id: string
   customerId: string
@@ -294,7 +294,7 @@ export interface OrderItem {
 
 **Step 2: Define ports (abstract contracts)**
 ```typescript
-// core/ports/save-order.port.ts
+// domain/ports/save-order.port.ts
 export abstract class SaveOrderPort {
   abstract execute(order: Order): Promise<Order>;
 }
@@ -302,7 +302,7 @@ export abstract class SaveOrderPort {
 
 **Step 3: Add business rules (if needed)**
 ```typescript
-// core/rules/order-validation.rules.ts
+// domain/rules/order-validation.rules.ts
 export const MIN_ORDER_AMOUNT = 0.01;
 export const MAX_ITEMS_PER_ORDER = 100;
 
@@ -333,7 +333,7 @@ export function validateOrder(order: Order): boolean[] {
 **Step 4: Implement adapter**
 ```typescript
 // infra/adapters/save-order.adapter.ts
-import { SaveOrderPort } from '../../core/ports/save-order.port';
+import { SaveOrderPort } from '../../domain/ports/save-order.port';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
@@ -398,7 +398,7 @@ export interface OrderItemDto {
 ```typescript
 // apps/{APP_NAME}/src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { SaveOrderPort } from '../../core/ports/save-order.port';
+import { SaveOrderPort } from '../../domain/ports/save-order.port';
 import { SaveOrderAdapter } from '../../infra/adapters/save-order.adapter';
 
 export const routes: Routes = [
@@ -416,7 +416,7 @@ export const routes: Routes = [
 ```typescript
 // apps/{APP_NAME}/src/app/orders/orders.component.ts
 import { Component } from '@angular/core';
-import { SaveOrderPort } from '../../../core/ports/save-order.port';
+import { SaveOrderPort } from '../../../domain/ports/save-order.port';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
