@@ -1,6 +1,6 @@
 ---
 name: frontend-hexagonal-architecture
-description: Hexagonal Architecture (Ports & Adapters) applied to any frontend project — regardless of framework or library. Provides a universal folder structure (core / infra / apps) and adapts to Angular, React, Vue, Svelte, Solid, or any other UI technology. Asks about the target framework before generating concrete code.
+description: Hexagonal Architecture (Ports & Adapters) applied to any frontend project — regardless of framework or library. Provides a universal folder structure (domain / infra / apps) and adapts to Angular, React, Vue, Svelte, Solid, or any other UI technology. Asks about the target framework before generating concrete code.
 compatibility: Node.js >= 18, any modern frontend framework / library
 metadata:
   version: "1.0"
@@ -9,7 +9,7 @@ metadata:
     - hexagonal architecture
     - ports and adapters frontend
     - clean architecture frontend
-    - core / infra / apps structure
+    - domain / infra / apps structure
     - domain layer frontend
 ---
 
@@ -37,22 +37,22 @@ Hexagonal Architecture — also called **Ports & Adapters** — separates pure b
 
 | Layer | Folder | Contains | Depends on |
 |-------|--------|----------|------------|
-| **Core** (domain) | `core/` | Models, ports (abstract contracts), pure business rules | Nothing external |
-| **Infrastructure** | `infra/` | Adapters, HTTP clients, repositories, store implementations | Only `core/` |
-| **Apps** | `apps/` | One sub‑folder per app (e.g., `{APP_NAME}`) | `core/` and `infra/` |
+| **Domain** | `domain/` | Models, ports (abstract contracts), pure business rules | Nothing external |
+| **Infrastructure** | `infra/` | Adapters, HTTP clients, repositories, store implementations | Only `domain/` |
+| **Apps** | `apps/` | One sub‑folder per app (e.g., `{APP_NAME}`) | `domain/` and `infra/` |
 
 ### Folder Structure
 
 ```
 src/
-├── core/
+├── domain/
 │   ├── models/               # Plain TypeScript types / interfaces
 │   ├── ports/                # interfaces  or abstract classes (contracts)
 │   └── rules/                # Pure validation functions & constants (only when needed)
 ├── infra/
 │   ├── adapters/             # Port implementations
 │   ├── repositories/         # Data-access implementations
-│   ├── http/                 # HTTP client wrappers (fetch, axios, etc.)
+│   ├── http/                 # HTTP client wrappers (fetch, oftech, etc.)
 │   ├── store/                # State-management adapters (implements StorePort)
 │   ├── dto/                  # Data Transfer Objects (API response/request shapes)
 │   └── mocks/                # Mock data providers
@@ -63,24 +63,24 @@ src/
 ### Dependency Direction (CRITICAL)
 
 ```
-apps  ──→  core  ←──  infra
+apps  ──→  domain  ←──  infra
             (Zero external dependencies)
 
-- Core NEVER imports from infra or apps.
-- Infra implements what core defines.
+- Domain NEVER imports from infra or apps.
+- Infra implements what domain defines.
 - Apps wire everything together and render the UI.
 ```
 
-This is the essence of the **Dependency Inversion Principle**: the inner circle (`core`) owns the contracts; the outer circles (`infra`, `apps`) implement them.
+This is the essence of the **Dependency Inversion Principle**: the inner circle (`domain`) owns the contracts; the outer circles (`infra`, `apps`) implement them.
 
 ---
 
 ## Layer Templates
 
-### 1. Core — Models
+### 1. Domain — Models
 
 ```typescript
-// core/models/Product.ts
+// domain/models/Product.ts
 export interface Product {
   id: string
   title: string
@@ -90,10 +90,10 @@ export interface Product {
 
 **Rules**: use `type`, never `any` (use `unknown` if truly unknown), optional `?:` props, group by entity.
 
-### 2. Core — Ports (Abstract Contracts)
+### 2. Domain — Ports (Abstract Contracts)
 
 ```typescript
-// core/ports/get-products.port.ts
+// domain/ports/get-products.port.ts
 export interface GetProductsPort {
   execute(filters?: ProductFilters): Promise<Product[]>;
 }
@@ -103,10 +103,10 @@ export interface GetProductsPort {
 
 > For frameworks using RxJS (e.g., Angular), return `Observable<T>` instead of `Promise<T>`. For others, `Promise<T>` is the standard.
 
-### 3. Core — Business Rules (Only When Needed)
+### 3. Domain — Business Rules (Only When Needed)
 
 ```typescript
-// core/rules/cart.rules.ts
+// domain/rules/cart.rules.ts
 export const MAX_CART_ITEMS = 5;
 export const MAX_CART_PRICE = 100;
 
@@ -124,7 +124,7 @@ export function canAddToCart(cart: Cart, product: Product): boolean {
 
 ```typescript
 // infra/adapters/get-products.ts
-import { GetProductsPort } from '../../core/ports/get-products.port';
+import { GetProductsPort } from '../../domain/ports/get-products.port';
 import { HttpClient } from '../http/http-client';
 
 export class GetProductsAdapter implements GetProductsPort {
@@ -144,7 +144,7 @@ export class GetProductsAdapter implements GetProductsPort {
 To keep state management framework‑agnostic, define an abstract contract:
 
 ```typescript
-// core/ports/store.port.ts
+// domain/ports/store.port.ts
 export interface StorePort<T> {
   getState(): T;
   setState(partial: Partial<T>): void;
@@ -165,7 +165,7 @@ The concrete implementation goes in `infra/store/`:
 
 ### 6. Apps — Framework‑Specific Entry Points
 
-Inside `apps/`, each sub‑folder is a complete application that depends on the same `core/` and `infra/` layers:
+Inside `apps/`, each sub‑folder is a complete application that depends on the same `domain/` and `infra/` layers:
 
 ```
 apps/
@@ -174,7 +174,6 @@ apps/
 │       ├── App.tsx   # or App.vue for Vue, app.component.ts for Angular
 │       └── components/
 ```
-
 ---
 
 ## Minimal Start (KISSME Philosophy)
@@ -188,42 +187,41 @@ It has just one external call (e.g., fetch a list) and one UI component.
 
 ```
 src/
-├── core/
+├── domain/
 │   └── models/
 │       └── product.ts          # Plain type definition
 ├── infra/
 │   └── adapters/
 │       └── get-products.adapter.ts  # Direct fetch, implements contract inline
 └── apps/
-    └── <APP_NAME>/         # e.g., react-ui/
-        └── ProductsPage.tsx    # One component, consumes adapter directly
+    └── <APP_NAME>/         # e.g., vue-ui/
+        └── ProductsPage.vue    # One component, consumes adapter directly
 ```
 
-**Key point**: at this stage there is **no port** – the component receives the adapter instance directly (or via a simple DI function). The adapter still lives in `infra/`, so the `core/` remains untouched by framework code.
+**Key point**: at this stage there is **no port** – the component receives the adapter instance directly (or via a simple DI function). The adapter still lives in `infra/`, so the `domain/` remains untouched by framework code.
 
 #### When to add a Port
 
 As soon as **more than one adapter** could exist (e.g., a mock for tests, a real HTTP adapter), extract an abstract contract:
 
 ```
-core/
+domain/
 └── ports/
-    └── get-products.port.ts    # abstract class or interface
+    └── get-products.port.ts    # abstract interface class or abstract base class
 ```
 
 Now both adapters implement the port, and the component depends on the port (injected).
 
 ### Phase 1 – Ports and Use Cases
 
-Once business rules appear (e.g., filter out products that are out of stock), add a use case so the logic stays in `application/`:
+Once business rules appear (e.g., filter out products that are out of stock), add a use case so the logic stays in `domain/`:
 
 ```
 src/
-├── core/
+├── domain/
 │   ├── models/
 │   ├── ports/
 │   └── rules/                  # optional pure functions
-├── application/
 │   └── use-cases/
 │       └── list-available-products.use-case.ts
 ├── infra/
@@ -237,7 +235,7 @@ Components now use the **use case**, not the port directly.
 
 Add a store **only when** the UI needs to share state across multiple components.
 
-- Define a `StorePort` in `core/ports/`
+- Define a `StorePort` in `domain/ports/`
 - Implement it in `infra/store/` using your chosen framework library
 - Inject the store into the use case (or into a facade if you choose to use one)
 
@@ -250,10 +248,10 @@ Define a `ContextRegistry` in `infra/context/` (or `shared/`) and map each domai
 
 | Project State | Files You Need |
 |---------------|----------------|
-| Just started, one data fetch | `core/models`, `infra/adapters`, `apps/<framework-ui>/[page]` |
-| Need tests / multiple implementations | add `core/ports` |
-| Business logic appears | add `application/use-cases` |
-| State shared across components | add `core/ports/store.port` + `infra/store` |
+| Just started, one data fetch | `domain/models`, `infra/adapters`, `apps/<framework-ui>/[page]` |
+| Need tests / multiple implementations | add `domain/ports` |
+| Business logic appears | add `domain/use-cases` |
+| State shared across components | add `domain/ports/store.port` + `infra/store` |
 | Two or more domains interact | add `infra/context/` |
 
 This progressive model respects **hexagonal boundaries** while keeping the codebase lean and maintainable. Never add a layer until its benefit is clear.
@@ -274,10 +272,10 @@ See [implementation-playbook-agnostic.md](./implementation-playbook-agnostic.md)
 
 ## Checklist
 
-- [ ] Core layer (`core/`) has **zero** framework or infrastructure imports
+- [ ] Domain layer (`domain/`) has **zero** framework or infrastructure imports
 - [ ] Ports are abstract and technology‑agnostic
 - [ ] Adapters implement ports (never the reverse)
-- [ ] UI components (`apps/`) only reference `core/` and `infra/` — never the opposite
+- [ ] UI components (`apps/`) only reference `domain/` and `infra/` — never the opposite
 - [ ] No `any` type used; `unknown` allowed when absolutely necessary
 - [ ] Immutable state updates (spread operator, no mutation)
 - [ ] Business rules are pure functions with no side effects
