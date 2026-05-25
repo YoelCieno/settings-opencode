@@ -263,7 +263,7 @@
       },
     },
     "researcher": {
-      "description": "MUST delegate for research, investigate topics, compare technologies, multi-source analysis. Read-only for codebase; writes comparison artifacts to thoughts/comparisons/.",
+      "description": "MUST delegate for research, investigate topics, compare technologies, multi-source analysis. Read-only for codebase; writes comparison artifacts to .opencode/thoughts/comparisons/.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
