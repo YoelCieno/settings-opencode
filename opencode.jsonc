@@ -35,6 +35,7 @@
           "conductor": "deny",
           "planner": "allow",
           "architect": "allow",
+          "ask": "allow",
           "coder": "allow",
           "writer": "allow",
           "code-reviewer": "allow",
@@ -279,6 +280,32 @@
         "websearch": true,
       },
     },
+    "ask": {
+      "description": "General-purpose Q&A agent. Answers questions about the editor, project, technologies (Context7), research topics, or plan improvements. Read-only — delegates file writes to writer/researcher.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/ask.txt",
+      "tools": {
+        "read": true,
+        "bash": true,
+        "grep": true,
+        "glob": true,
+        "webfetch": true,
+        "websearch": true,
+        "write": false,
+        "edit": false,
+        "task": true,
+      },
+      "permission": {
+        "task": {
+          "*": "deny",
+          "researcher": "allow",
+          "planner": "allow",
+          "writer": "allow",
+        },
+      },
+    },
   },
   "command": {
     "git": {
@@ -385,6 +412,12 @@
       "description": "Conduct structured multi-source research with comparison output",
       "template": "{file:commands/research.md}\n\n$ARGUMENTS",
       "agent": "researcher",
+      "subtask": true,
+    },
+    "ask": {
+      "description": "Ask questions about the project, editor, technologies, or improve plans",
+      "template": "{file:commands/ask.md}\n\n$ARGUMENTS",
+      "agent": "ask",
       "subtask": true,
     },
     "test-coverage": {
