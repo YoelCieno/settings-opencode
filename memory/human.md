@@ -19,3 +19,7 @@ Always ask before committing and pushing. Never auto-commit even for trivial cha
 ## Communication style
 
 Prefers condensed, factual responses. Cuts fluff. Responds in caveman mode unless security/irreversible/warnings require clarity.
+
+## Git summaries
+
+Always include the commit message in git summaries — user reviews commits from git graph and needs the message there.

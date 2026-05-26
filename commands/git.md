@@ -47,7 +47,8 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 | `scps` | `commit & push` | Stage + commit + push |
 | `b [name]` | `create branch [name]` | Create + switch branch. If no name given, auto-generate per convention. |
 | `a [message]` | `amend [message]` | Amend last commit. If message arg given, update it. Like `c` for commit — assumes already staged. |
-| `as [message]` | `stage+amend [message]` | Stage + amend last commit. Like `scps` — stages then amends. |
+| `sa [message]` | `stage+amend [message]` | Stage + amend last commit. Like `sc` — stages then amends. |
+| `saps [message]` | `stage+amend+push [message]` | Stage + amend + push. Like `scps` — stages, amends, then pushes. |
 | `bcl` | `branch-clean` | Delete local merged branches (safe: skips worktree, current, master/main/dev) |
 
 4. Safety rules:
@@ -85,16 +86,17 @@ Used when subcommand is `bcl`.
 
 ## a (amend) Workflow
 
-Used when subcommand is `a` / `amend` or `as` / `stage+amend`.
+Used when subcommand is `a` / `amend`, `sa` / `stage+amend`, or `saps` / `stage+amend+push`.
 
 ### Behavior
 
-| Short | Stage? | Action |
-|-------|--------|--------|
-| `a` | No | Amend last commit (assumes already staged) — like `c` |
-| `as` | Yes | Stage + amend last commit — like `scps` |
+| Short | Stage? | Push? | Action |
+|-------|--------|-------|--------|
+| `a` | No | No | Amend last commit (assumes already staged) — like `c` |
+| `sa` | Yes | No | Stage + amend last commit — like `sc` |
+| `saps` | Yes | Yes | Stage + amend + push — like `scps` |
 
-With message arg: both `a "msg"` and `as "msg"` pass `-m "msg"` to also update the message.
+With message arg: `a "msg"`, `sa "msg"`, or `saps "msg"` pass `-m "msg"` to update the message.
 
 ### Steps (`a`)
 
@@ -104,18 +106,28 @@ With message arg: both `a "msg"` and `as "msg"` pass `-m "msg"` to also update t
 4. No message arg → `git commit --amend --no-edit`
 5. Verify: `git log --oneline -1`
 
-### Steps (`as`)
+### Steps (`sa`)
 
-1. `git status` — check for any changes
-2. No changes → report "nothing to amend", exit
-3. `git add .` — stage all relevant changes
-4. Same as `a` step 3-5 above
+1. `git add .` — stage all changes
+2. `git status` — confirm what's staged
+3. Message arg? → `git commit --amend -m "<message>"`
+4. No message arg → `git commit --amend --no-edit`
+5. Verify: `git log --oneline -1`
+
+### Steps (`saps`)
+
+1. `git add .` — stage all changes
+2. `git status` — confirm what's staged
+3. Message arg? → `git commit --amend -m "<message>"`
+4. No message arg → `git commit --amend --no-edit`
+5. `git push` — push to remote
+6. Verify: `git log --oneline -1`
 
 ### Important
 
-- Amend rewrites commit hash. If already pushed, may need force-push (ask user first before `as` or message-change amend).
+- Amend rewrites commit hash. If already pushed, may need force-push (ask user first before `sa` or message-change amend).
 - Do NOT amend if last commit shared with others unless user confirms.
-- `as` stages ALL changes via `git add .`. For selective staging, use `s` then `a`.
+- `sa` stages ALL changes via `git add .`. For selective staging, use `s` then `a`.
 
 ## Output
 

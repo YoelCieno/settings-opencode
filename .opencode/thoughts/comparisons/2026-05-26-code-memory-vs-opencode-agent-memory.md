@@ -189,3 +189,35 @@ code-memory:
 4. **Snapshot CI cost** — GitHub Actions runner would need NVIDIA GPU + TEI for fast ingest. Is that available?
 5. **opencode-agent-memory journal vs code-memory episodic** — overlap? The opencode-agent-memory journal is semantic (local embeddings). code-memory episodic is SQLite + recall. Both capture cross-session knowledge but at different granularities. Could potentially consolidate.
 6. **MCP permission model** — Does OpenCode's MCP allowlist support `code-memory_*` patterns? (fmflurry does `"code-memory_*": true` per subagent.)
+
+---
+
+## Decision
+
+**Date:** 2026-05-26  
+**Decision:** Keep current setup. **Do not install code-memory.**
+
+### Reasons
+
+1. **Serena overlap** — code-memory's core features (find symbol, find references, find implementations, search by pattern) are already covered by Serena's MCP tools. The only unique differentiators (intent-based semantic search, episodic recall) are nice-to-have, not critical.
+
+2. **Infra cost vs value** — code-memory requires Docker + Ollama + Python 3.11+ + ~6.6GB RAM (bge-m3 1.2GB + optional gemma2:9b 5.4GB). This is a config repo, not a 100k+ file monorepo. The ROI isn't there.
+
+3. **KISSME principle** — Adding code-memory violates Keep It Simple, Maintainable & Explicit. Two memory systems + Serena + codemaps is already sufficient for codebase navigation.
+
+4. **Cross-session knowledge friction** — opencode-agent-memory journal and code-memory episodic recall overlap at different granularities. Would need consolidation — more complexity.
+
+### What we already have
+
+| Layer | Tool | Purpose |
+|-------|------|---------|
+| Profile memory | opencode-agent-memory (plugin) | Persona, human, project, architecture blocks |
+| Code navigation | Serena (MCP) | Symbol lookup, references, implementations, pattern search |
+| Structural overview | Codemaps (generated docs) | High-level architecture docs regenerated on code changes |
+
+### Re-evaluation trigger
+
+Revisit code-memory if:
+- Working on a monorepo with 100k+ files where semantic search would materially save time
+- Serena proves insufficient for codebase navigation in actual daily use
+- Infra requirements drop (no Docker, smaller models)
