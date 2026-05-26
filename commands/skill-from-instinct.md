@@ -1,6 +1,5 @@
 ---
 description: Cluster instincts into skills
-agent: build
 ---
 
 # Evolve Command

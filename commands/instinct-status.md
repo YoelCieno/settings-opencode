@@ -1,6 +1,5 @@
 ---
 description: View learned instincts with confidence scores
-agent: build
 ---
 
 # Instinct Status Command

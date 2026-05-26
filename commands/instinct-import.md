@@ -1,6 +1,5 @@
 ---
 description: Import instincts from external sources
-agent: build
 ---
 
 # Instinct Import Command

@@ -320,12 +320,6 @@
       "agent": "git-specialist",
       "subtask": true,
     },
-    "push-changes": {
-      "description": "Commit relevant changes and push through the git workflow",
-      "template": "{file:commands/git.md}\n\nExecute this git task:\nCommit the relevant changes with a compliant conventional commit message and push the current branch to its remote. Before pushing, inspect every local commit that would be published: compare against the tracked upstream when one exists, otherwise compare against the branch point from the repository default branch and stop if unrelated committed work would also be published. If no upstream exists and the published commit set is correct, push with upstream tracking. If there is nothing to commit, do not create an empty commit. If hooks fail or the push is ambiguous, stop and report the blocker.\n\nAdditional context: $ARGUMENTS",
-      "agent": "git-specialist",
-      "subtask": true,
-    },
     "plan": {
       "description": "Create a detailed implementation plan for complex features",
       "template": "{file:commands/plan.md}\n\n$ARGUMENTS",
@@ -374,28 +368,6 @@
       "agent": "refactor-cleaner",
       "subtask": true,
     },
-    "orchestrate": {
-      "description": "Orchestrate multiple agents for complex tasks",
-      "template": "{file:commands/orchestrate.md}\n\n$ARGUMENTS",
-      "agent": "planner",
-      "subtask": true,
-    },
-    "learn": {
-      "description": "Extract patterns and learnings from session",
-      "template": "{file:commands/learn.md}\n\n$ARGUMENTS",
-    },
-    "checkpoint": {
-      "description": "Save verification state and progress",
-      "template": "{file:commands/checkpoint.md}\n\n$ARGUMENTS",
-    },
-    "verify": {
-      "description": "Run verification loop",
-      "template": "{file:commands/verify.md}\n\n$ARGUMENTS",
-    },
-    "eval": {
-      "description": "Run evaluation against criteria",
-      "template": "{file:commands/eval.md}\n\n$ARGUMENTS",
-    },
     "update-docs": {
       "description": "Update documentation",
       "template": "{file:commands/update-docs.md}\n\n$ARGUMENTS",
@@ -426,13 +398,9 @@
       "agent": "tdd-guide",
       "subtask": true,
     },
-    "setup-pm": {
-      "description": "Configure package manager",
-      "template": "{file:commands/setup-pm.md}\n\n$ARGUMENTS",
-    },
-    "skill-create": {
+    "skill-from-history": {
       "description": "Generate skills from git history",
-      "template": "{file:commands/skill-create.md}\n\n$ARGUMENTS",
+      "template": "{file:commands/skill-from-history.md}\n\n$ARGUMENTS",
     },
     "instinct-status": {
       "description": "View learned instincts",
@@ -446,9 +414,9 @@
       "description": "Export instincts",
       "template": "{file:commands/instinct-export.md}\n\n$ARGUMENTS",
     },
-    "evolve": {
+    "skill-from-instinct": {
       "description": "Cluster instincts into skills",
-      "template": "{file:commands/evolve.md}\n\n$ARGUMENTS",
+      "template": "{file:commands/skill-from-instinct.md}\n\n$ARGUMENTS",
     },
   },
   "mcp": {

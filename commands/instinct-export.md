@@ -1,6 +1,5 @@
 ---
 description: Export instincts for sharing
-agent: build
 ---
 
 # Instinct Export Command
