@@ -41,7 +41,7 @@ Build a comparison table covering:
 
 ## Output Format
 
-Write a structured comparison markdown file to `thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` using this template:
+Write a structured comparison markdown file to `.opencode/thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` using this template:
 
 ```markdown
 # Comparison: {Topic}
@@ -114,7 +114,7 @@ Researched by: researcher agent
 - Reading one source and stopping — always check all four resource categories
 - Recommending without comparative evidence
 - Ignoring community/ecosystem factors in favor of pure tech specs
-- Writing the comparison inline instead of saving to `thoughts/comparisons/` — always write the file
+- Writing the comparison inline instead of saving to `.opencode/thoughts/comparisons/` — always write the file
 - Repeating the same `websearch` query — build from what you find
 - Presenting opinion without evidence — every claim needs a source URL
 

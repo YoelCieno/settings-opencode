@@ -1,13 +1,15 @@
 # OpenCode + Claude Code Setup
 
-> Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) — a hardened OpenCode config with Node.js-first stack, framework-agnostic frontend architecture, and stricter model alignment. MIT licensed, fork freely. Evolves with my workflow.
+> Forked from [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) at
+> commit [`298dc371`](https://github.com/fmflurry/settings-opencode/commit/298dc371c129f18a7173e56d5cae909069ad61b6)
+> and reoriented toward a different stack. Memory, agent architecture, and conventions have diverged
+> significantly since then.
 >
-> **Big thanks to [@fmflurry](https://github.com/fmflurry)** for the original force behind this config. This fork adapts their solid foundation to a different stack and set of conventions.
+> **Big thanks to [@fmflurry](https://github.com/fmflurry)** for the original foundation.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![OpenCode](https://img.shields.io/badge/OpenCode-CLI-000)](https://opencode.ai)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-mirror-d97757)](https://claude.com/claude-code)
-[![Forked from fmflurry](https://img.shields.io/badge/fork-fmflurry/settings--opencode-blueviolet)](https://github.com/fmflurry/settings-opencode)
 
 ### Want to try it? Jump to **[Public install](#public-install)** — it takes about five minutes.
 
@@ -15,9 +17,9 @@
 
 ## What's different from fmflurry's original
 
-This fork reorients the upstream config from a .NET + Angular shop toward a **Node.js + framework-agnostic frontend** stack:
+This project reorients the upstream config from a .NET + Angular shop toward a **Node.js + framework-agnostic frontend** stack:
 
-| Area | Upstream (fmflurry) | This fork |
+| Area | Upstream (fmflurry) | This project |
 |------|-------------------|-----------|
 | **Backend architecture** | .NET 8 Clean Architecture (`dotnet-clean-architecture`) | Node.js Clean Architecture (`nodejs-clean-architecture`: Fastify + Prisma + Zod) |
 | **Frontend architecture** | Angular 18 standalone (`angular-clean-architecture` + store system) | Framework-agnostic Hexagonal Architecture (`frontend-hexagonal-architecture`: works with any framework) |
@@ -33,14 +35,12 @@ This fork reorients the upstream config from a .NET + Angular shop toward a **No
 | **Skill reproducibility** | Not tracked | `skills-lock.json` — pins skill SHAs |
 | **Package manager** | `package-lock.json` only | `bun.lock` (Bun-first) + `mise.toml` |
 | **Env template** | Not present | `.env.example` — copy to `.env.local` and fill |
-| **Documentation** | English + French | English only (French section removed) |
-| **Install method** | Manual steps only | `install.sh` script (interactive or `--yes`) |
 
 ---
 
 ## What's inside
 
-A hardened primary `conductor` agent backed by **13 specialist sub-agents** (planner, architect, coder, writer, code/security/database review, TDD, build-fix, e2e, doc, refactor, git), wired together by:
+A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, code/security/database review, TDD, build-fix, e2e, doc, refactor, git, ask, researcher, merge-cop), wired together by:
 
 - **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer, plus a `tool.execute.before` hook that blocks bash redirects to source files (`> file.ts`, `tee`, `sed -i`, heredocs, `python -c open().write`). The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
@@ -55,19 +55,18 @@ The two halves stand alone. Use the OpenCode side, the Claude Code mirror, or bo
 ## Table of contents
 
 - [Public install](#public-install)
-- [English](#english)
-  - [Goals](#goals-en)
-  - [Repository layout](#layout-en)
-  - [Configuration](#config-en)
-  - [Agents](#agents-en)
-  - [Slash commands](#commands-en)
-  - [Skills](#skills-en)
-  - [Plugins & hooks](#plugins-en)
-  - [Custom tools](#tools-en)
-  - [TUI plugins](#tui-en)
-  - [Continuous learning](#learning-en)
-  - [Claude Code mirror](#claude-en)
-  - [How it fits together](#flow-en)
+- [Goals](#goals)
+- [Repository layout](#repository-layout)
+- [Configuration](#configuration-opencodejsonc)
+- [Agents](#agents)
+- [Slash commands](#slash-commands)
+- [Skills](#skills)
+- [Plugins & hooks](#plugins--hooks)
+- [Custom tools](#custom-tools-tools)
+- [TUI plugins](#tui-plugins)
+- [Continuous learning](#continuous-learning)
+- [Claude Code mirror](#claude-code-mirror-claude)
+- [How it fits together](#how-it-fits-together)
 
 ---
 
@@ -252,14 +251,22 @@ git pull
 
 If a new plugin shows up, OpenCode picks it up on the next restart. If an env var is added to `opencode.jsonc`, this README will mention it.
 
+### Starting a new project
+
+After installing this config, when you start a new app project:
+
+1. `cd /path/to/new-project`
+2. `opencode .`
+3. type `/init` in the TUI prompt
+
+`/init` is a **built-in TUI slash command** (not a CLI subcommand — it does not appear in `opencode --help`). It scans your project, detects the tech stack, build/lint/test commands, and conventions, then creates `AGENTS.md` in the project root (~150 lines, concise). The agent reads this file on every session for project-specific context.
+
+If `AGENTS.md` already exists, `/init` improves it in place rather than overwriting. You should commit `AGENTS.md` to Git to share context with your team.
+
+You can also pass extra instructions: `/init Pay special attention to TypeScript type safety`.
+
 ---
 
-<a id="english"></a>
-## English
-
-Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) — dotfiles for OpenCode + the stable parts of `~/.claude`. Ships a hardened primary `conductor` agent (no write/edit perms — must delegate), 13 specialist sub-agents, always-on skills, slash commands, OpenCode plugins (hooks, instincts, worktrees, auto-compact, caveman, figma RAG, notifications), custom tools, and a Claude Code mirror. Replaces .NET + Angular stack with Node.js + framework-agnostic frontend architecture.
-
-<a id="goals-en"></a>
 ### Goals
 
 - Reproducibility: same agent behavior across machines/sessions.
@@ -267,14 +274,13 @@ Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-openco
 - Security: `security-review` skill loaded by default + pre-tool-use hooks.
 - Continuous improvement: instincts captured into `~/.claude/homunculus`, surfaced into the system prompt on the next session.
 
-<a id="layout-en"></a>
 ### Repository layout
 
 - Configs: `opencode.jsonc`, `dcp.jsonc` (dynamic context pruning), `ocx.jsonc` (OCX registries), `tui.json` (TUI theme).
 - Profiles: `profiles/<name>/` (per-profile overrides + `AGENTS.md`, run with `ocx opencode -p <name>`).
 - Skills: `skills/*/SKILL.md` (plus auxiliary docs).
 - Agent prompts: `prompts/agents/*.txt`.
-- Slash commands: `commands/*.md`.
+- Slash commands: `commands/*.md` — includes `ask`, `research`, `git-workflow`, `cop-review`, `skill-from-*` variants.
 - OpenCode plugins: `plugins/*.{ts,js}` + `plugins/kdco-primitives/`, `plugins/worktree/`.
 - TUI plugins: `tui-plugins/*.tsx`.
 - Custom tools: `tools/*.ts`.
@@ -284,10 +290,11 @@ Fork of [fmflurry/settings-opencode](https://github.com/fmflurry/settings-openco
 - Scripts: `scripts/setup-package-manager.js`, `scripts/codemaps/generate.ts`.
 - Env template: `.env.example` (copy to `.env.local` and fill).
 - Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).
+- Zed rules: `.rules` — mirrors coding standards, verification gate, git conventions for Zed Agent Panel.
+- Git strategy: `GIT-STRATEGY.md` — dev/main squash-merge workflow.
 - Claude mirror: `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/rules/`, `.claude/skills/`, `.claude/commands/`, `.claude/homunculus/`.
 - Intentional exclusions (`.gitignore`): `.serena/` local MCP state, `node_modules/`, `.instinct-digest-state.json`, `antigravity-*`, `.DS_Store`, local `.env*` files except `.env.example`.
 
-<a id="config-en"></a>
 ### Configuration: `opencode.jsonc`
 
 Six concerns wired in one file:
@@ -302,12 +309,11 @@ Six concerns wired in one file:
 2. `default_agent`: `conductor` (orchestrator-only — cannot write/edit).
 3. `agent`: sub-agent definitions (model + reasoning effort + prompt + tool allowlist). All models are env-driven (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`) — see [Public install § 4](#public-install).
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
-5. `mcp`: serena, context7, wallaby, Figma (disabled).
+5. `mcp`: serena, context7, Figma (disabled).
 6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`, `opencode-agent-memory`).
 
 `dcp.jsonc` configures the Dynamic Context Pruning plugin. `ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
-<a id="agents-en"></a>
 ### Agents
 
 Defined in `opencode.jsonc` under `agent`:
@@ -321,12 +327,15 @@ Defined in `opencode.jsonc` under `agent`:
 | `writer`               | subagent | Writes docs/markdown/HTML/text artifacts. Forbidden from touching source code — refuses out-of-scope files back to the conductor. |
 | `code-reviewer`        | subagent | Quality review over diffs and conventions. Read-only — findings only; fixes go to `coder`. |
 | `security-reviewer`    | subagent | OWASP/secrets/deps review. Read-only — reports vulnerabilities; remediation routed to `coder`. |
+| `merge-cop`            | subagent | Pre-merge code review of HEAD vs target branch. Read-only — runs tsc + lint, emits tiered report (junior/senior). |
 | `tdd-guide`            | subagent | RED -> GREEN -> REFACTOR + 80% coverage. Writes tests; delegates GREEN impl to `coder` via scoped Task perm. |
 | `build-error-resolver` | subagent | Build/TS error fixes with minimal diffs.                                            |
 | `e2e-runner`           | subagent | Playwright E2E tests.                                                               |
 | `doc-updater`          | subagent | Generated docs + codemaps.                                                          |
 | `refactor-cleaner`     | subagent | Dead-code removal + consolidation.                                                  |
 | `database-reviewer`    | subagent | PostgreSQL / Supabase schema, perf, security.                                       |
+| `researcher`           | subagent | Multi-source research + comparison analysis. Read-only; writes to `.opencode/thoughts/comparisons/`. |
+| `ask`                  | subagent | General-purpose Q&A. Investigates codebase, docs, technologies via Context7. Delegates deep research to `researcher` (asks first). Read-only. |
 | `git-specialist`       | subagent | Branches, commits, pushes, PRs (mini model).                                        |
 
 ### Hardened sub-agent orchestration
@@ -345,38 +354,33 @@ Use these paths depending on how much control you want:
 
 Why this exists: GPT/Claude often infer delegation from short descriptions, but open-source/open-weight models are more literal and tend to inspect or edit first. Permissions + the hook + the front-loaded gate make delegation **mechanically enforced** rather than instruction-dependent.
 
-<a id="commands-en"></a>
 ### Slash commands
 
 Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist).
 
-| Command               | Sub-agent             | Purpose                                          |
-| --------------------- | --------------------- | ------------------------------------------------ |
-| `/git`                | git-specialist        | Bounded git ops (branches, commits).             |
-| `/push-changes`       | git-specialist        | Commit + push with upstream guard.               |
-| `/plan`               | planner               | Implementation plan.                             |
-| `/tdd`                | tdd-guide             | TDD cycle with coverage.                         |
-| `/code-review`        | code-reviewer         | Quality review.                                  |
-| `/security`           | security-reviewer     | Security audit.                                  |
-| `/build-fix`          | build-error-resolver  | Build/TS error resolution.                       |
-| `/e2e`                | e2e-runner            | E2E test generation/run.                         |
-| `/refactor-clean`     | refactor-cleaner      | Dead-code cleanup.                               |
-| `/orchestrate`        | planner               | Multi-agent orchestration.                       |
-| `/update-docs`        | doc-updater           | Doc updates.                                     |
-| `/update-codemaps`    | doc-updater           | Generates `docs/CODEMAPS/`.                      |
-| `/test-coverage`      | tdd-guide             | Coverage analysis.                               |
-| `/learn`              | (primary)             | Extract reusable patterns from the session.      |
-| `/checkpoint`         | (primary)             | Save verification + progress state.              |
-| `/verify`             | (primary)             | Verification loop.                               |
-| `/eval`               | (primary)             | Evaluate against criteria.                       |
-| `/setup-pm`           | (primary)             | Configure package manager.                       |
-| `/skill-create`       | (primary)             | Generate a skill from git history.               |
-| `/instinct-status`    | (primary)             | Inspect learned instincts.                       |
-| `/instinct-import`    | (primary)             | Import instincts.                                |
-| `/instinct-export`    | (primary)             | Export instincts.                                |
-| `/evolve`             | (primary)             | Cluster instincts into skills.                   |
+| Command                  | Sub-agent             | Purpose                                          |
+| ------------------------ | --------------------- | ------------------------------------------------ |
+| `/git`                   | git-specialist        | Bounded git ops (subcommands: s/c/ps/scps/b/a/bcl). |
+| `/git-workflow`          | git-specialist        | Full git workflow: create branch → commit → push → PR. Subcommands: bcps, bscps, cps, mrsq. |
+| `/plan`                  | planner               | Implementation plan.                             |
+| `/tdd`                   | tdd-guide             | TDD cycle with coverage.                         |
+| `/code-review`           | code-reviewer         | Quality review.                                  |
+| `/security`              | security-reviewer     | Security audit.                                  |
+| `/build-fix`             | build-error-resolver  | Build/TS error resolution.                       |
+| `/e2e`                   | e2e-runner            | E2E test generation/run.                         |
+| `/refactor-clean`        | refactor-cleaner      | Dead-code cleanup.                               |
+| `/cop-review`            | merge-cop             | Pre-merge review of HEAD vs target branch.       |
+| `/update-docs`           | doc-updater           | Doc updates.                                     |
+| `/update-codemaps`       | doc-updater           | Generates `docs/CODEMAPS/`.                      |
+| `/test-coverage`         | tdd-guide             | Coverage analysis.                               |
+| `/research`              | researcher            | Structured multi-source research + comparison.   |
+| `/ask`                   | ask                   | General Q&A about project, tech, plans.          |
+| `/skill-from-history`    | (primary)             | Generate a skill from git history analysis.      |
+| `/skill-from-instinct`   | (primary)             | Cluster instincts into skills.                   |
+| `/instinct-status`       | (primary)             | View learned instincts with confidence.          |
+| `/instinct-import`       | (primary)             | Import instincts from file/URL.                  |
+| `/instinct-export`       | (primary)             | Export instincts for sharing.                    |
 
-<a id="skills-en"></a>
 ### Skills
 
 Always-on:
@@ -393,13 +397,14 @@ Declared in `instructions`:
 
 New skills on-demand (loaded by description / by command):
 
+- `skills/ask/SKILL.md` — general-purpose Q&A agent for questions about project, editor, technologies.
 - `skills/nodejs-clean-architecture/SKILL.md` (+ playbooks) — Fastify + Prisma + Zod scaffolding.
-- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framew- `skills/tdd-workflow/SKILL.md` — full TDD methodology.
+- `skills/frontend-hexagonal-architecture/SKILL.md` (+ framework-wiring, implementation-playbooks) — Framework-agnostic Hexagonal Architecture for any frontend framework.
+- `skills/tdd-workflow/SKILL.md` — full TDD methodology.
 - `skills/caveman/SKILL.md`, `caveman-commit`, `caveman-review` — terse mode.
-- `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.ork.
+- `skills/strategic-compact/SKILL.md` — manual compaction at logical breakpoints.
 - `skills/frontend-accessibility/SKILL.md` — Framework-agnostic a11y audit and fixes.
 
-<a id="plugins-en"></a>
 ### Plugins & hooks
 
 All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
@@ -419,7 +424,6 @@ All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 - `opencode-agent-memory` *(external, declared in `opencode.jsonc › plugin`)* — Letta-style persistent memory blocks (`memory_list`, `memory_set`, `memory_replace`) + optional journal. Data in `~/.config/opencode/memory/*.md` (global) + `.opencode/memory/*.md` (project).
 - `@tarquinen/opencode-dcp@latest` *(external, declared in `opencode.jsonc › plugin`)* — Dynamic Context Pruning. Trims stale tool results and large files from the live context window so long sessions don't blow past the model's limit. Configured via `dcp.jsonc` at the repo root.
 
-<a id="tools-en"></a>
 ### Custom tools (`tools/`)
 
 Reusable OpenCode tools exposed via `tools/index.ts`:
@@ -428,12 +432,10 @@ Reusable OpenCode tools exposed via `tools/index.ts`:
 - `tools/check-coverage.ts` — reads coverage reports and compares against a threshold.
 - `tools/security-audit.ts` — scans deps + secrets + risky patterns.
 
-<a id="tui-en"></a>
 ### TUI plugins
 
 `tui-plugins/caveman.tsx` — React sidebar that shows a "CAVEMAN ULTRA" badge when the mode is active (flag file written by `caveman-server.ts`).
 
-<a id="learning-en"></a>
 ### Continuous learning
 
 Two pipelines coexist (backwards compat):
@@ -444,9 +446,9 @@ Two pipelines coexist (backwards compat):
 Curation:
 
 - `/curate-learned-skills` (Claude Code side) — reviews drafts in `learned/` and promotes the valuable ones into real skills.
-- `/instinct-status` / `/evolve` — inspect and evolve instincts into skills.
+- `/instinct-status` — inspect learned instincts.
+- `/skill-from-instinct` — cluster high-confidence instincts into reusable skills.
 
-<a id="claude-en"></a>
 ### Claude Code mirror (`.claude/`)
 
 - `CLAUDE.md` — global user instructions (no `any`, facade != UseCase).
@@ -458,7 +460,6 @@ Curation:
 - `skills/**` — curated catalog of "learned" skills.
 - `homunculus/{instincts,evolved,observations.archive}` — store shared with OpenCode.
 
-<a id="flow-en"></a>
 ### How it fits together
 
 1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `instinct-injector` preloads instincts -> `instinct-digest` produces a diff -> `caveman-server` adds caveman preamble if active.

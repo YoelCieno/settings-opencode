@@ -1,6 +1,5 @@
 ---
 description: Generate skills from git history analysis
-agent: build
 ---
 
 # Skill Create Command

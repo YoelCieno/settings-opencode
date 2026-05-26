@@ -19,7 +19,7 @@ For each major option or technology being researched:
 
 ## Required Output
 
-Write a structured comparison to `thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` with:
+Write a structured comparison to `.opencode/thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` with:
 
 - Research question
 - Options considered
