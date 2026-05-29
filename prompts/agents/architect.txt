@@ -207,7 +207,7 @@ Example architecture for an AI-powered SaaS platform:
 
 ### Current Architecture
 
-- **Frontend**: Angular modern (v20+)
+- **Frontend**: Modern framework-agnostic (React, Vue, Angular, Svelte, etc.)
 - **Backend**: Dotnet (C# / .NET modern)
 - **Database**: PostgreSQL (Supabase)
 - **AI**: OpenCode with structured output

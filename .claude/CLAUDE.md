@@ -1,2 +1,0 @@
-- Never use 'any' type.
-- Never use UseCase in components. Always use facade in components to interact with UseCase.

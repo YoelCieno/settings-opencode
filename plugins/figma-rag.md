@@ -7,9 +7,8 @@ When implementing components from Figma, treat this document as high-priority gu
 - For UI labels, always use framework i18n translation keys (never hardcode labels).
 - Do not introduce or depend on other locale files unless explicitly requested.
 
-## Angular Implementation Rules
-
-- Use modern Angular patterns and current best practices.
+## Implementation Rules
+- Use modern framework patterns and current best practices.
 - Prefer standalone components, typed APIs, and clear unidirectional data flow.
 - Keep templates declarative and avoid legacy patterns when modern alternatives exist.
 

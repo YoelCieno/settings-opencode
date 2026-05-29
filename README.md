@@ -1,4 +1,4 @@
-# OpenCode + Claude Code Setup
+# OpenCode Setup
 
 > Forked from [fmflurry/settings-opencode](https://github.com/fmflurry/settings-opencode) at
 > commit [`298dc371`](https://github.com/fmflurry/settings-opencode/commit/298dc371c129f18a7173e56d5cae909069ad61b6)
@@ -9,7 +9,6 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![OpenCode](https://img.shields.io/badge/OpenCode-CLI-000)](https://opencode.ai)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-mirror-d97757)](https://claude.com/claude-code)
 
 ### Want to try it? Jump to **[Public install](#public-install)** — it takes about five minutes.
 
@@ -22,10 +21,9 @@ This project reorients the upstream config from a .NET + Angular shop toward a *
 | Area | Upstream (fmflurry) | This project |
 |------|-------------------|-----------|
 | **Backend architecture** | .NET 8 Clean Architecture (`dotnet-clean-architecture`) | Node.js Clean Architecture (`nodejs-clean-architecture`: Fastify + Prisma + Zod) |
-| **Frontend architecture** | Angular 18 standalone (`angular-clean-architecture` + store system) | Framework-agnostic Hexagonal Architecture (`frontend-hexagonal-architecture`: works with any framework) |
-| **Accessibility skill** | Angular-specific `angular-accessibility` (ARIA audit) | Framework-agnostic `frontend-accessibility` |
-| **State management** | flurryx store patterns (`flurryx` skill + merge-cop sub-pages) | Removed — no framework-specific state prescription |
-| **Pre-merge review** | Angular-specific (signals, RxJS, flurryx, clean-architecture sub-pages) | Framework-agnostic (TS strict, architecture, state management) |
+| **Frontend architecture** | Framework-specific standalone | Framework-agnostic Hexagonal Architecture (works with any) |
+| **Accessibility skill** | Framework-specific a11y audit | Framework-agnostic frontend-accessibility |
+| **Pre-merge review** | Framework-specific patterns   | Framework-agnostic (TS strict, architecture, state management) |
 | **Domain-specific skill** | `flurryx` — custom state-management patterns | Not applicable; removed |
 | **Subagent model env vars** | `OPENCODE_MODEL_SUBAGENT_WORKER` | Renamed to `OPENCODE_MODEL_SUBAGENT_PROGRAMMER` |
 | **Autoskills** | None | `.agents/skills/`: `bash-defensive-patterns`, `frontend-design`, `nodejs-best-practices`, `use-ai-sdk` |
@@ -48,9 +46,7 @@ A hardened primary `conductor` agent backed by **16 specialist sub-agents** (pla
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
 - **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
-- **A `.claude/` mirror** — hooks, rule packs, learned skills, and the shared homunculus store, so Claude Code benefits from the same guardrails.
-
-The two halves stand alone. Use the OpenCode side, the Claude Code mirror, or both — whichever you'd find useful.
+- **OpenCode-only** — no Claude Code mirror. The configuration is self-contained.
 
 ## Table of contents
 
@@ -65,7 +61,6 @@ The two halves stand alone. Use the OpenCode side, the Claude Code mirror, or bo
 - [Custom tools](#custom-tools-tools)
 - [TUI plugins](#tui-plugins)
 - [Continuous learning](#continuous-learning)
-- [Claude Code mirror](#claude-code-mirror-claude)
 - [How it fits together](#how-it-fits-together)
 
 ---
@@ -73,13 +68,12 @@ The two halves stand alone. Use the OpenCode side, the Claude Code mirror, or bo
 <a id="public-install"></a>
 ## Public install
 
-The repo is designed to *become* (or symlink into) `~/.config/opencode/`, plus an optional `~/.claude/` mirror. There are two paths: a one-shot script (recommended) and a manual walk-through if you want to see every step.
+There are two paths: a one-shot script (recommended) and a manual walk-through if you want to see every step.
 
 ### Prerequisites
 
 - macOS or Linux (the worktree and notification plugins assume macOS — works on Linux with minor degradation).
 - [OpenCode CLI](https://opencode.ai) installed and on your `PATH`.
-- [Claude Code](https://claude.com/claude-code) installed if you want the `.claude/` half.
 - Either [Bun](https://bun.sh) (recommended — `bun.lock` is what's checked in) or Node.js 20+ with `npm`.
 - `git`, plus `uv`/`uvx` for the Serena MCP server (`brew install uv` on macOS, or `pip install uv`).
 
@@ -97,8 +91,7 @@ cd ~/Workspace/settings-opencode
 2. Symlink the repo into `~/.config/opencode` (backing up any existing config to `*.bak.<timestamp>`).
 3. Run `bun install` (or `npm ci` if Bun isn't available).
 4. Add the `OPENCODE_MODEL_*` and `OPENCODE_REASONING_*` defaults to your shell rc, fenced with markers so re-runs and uninstalls are idempotent.
-5. Optionally symlink `.claude/` into `~/.claude` (skip with `--no-claude` if you only want the OpenCode half).
-6. Print a smoke-test command and the locations to tweak afterwards.
+ 5. Print a smoke-test command and the locations to tweak afterwards.
 
 Useful flags:
 
@@ -106,7 +99,6 @@ Useful flags:
 | ---- | --------- |
 | _(none)_ | Interactive walk-through with `[Y/n]` prompts and sensible defaults. |
 | `--yes`, `-y` | Non-interactive — accept all defaults. Still backs up existing dirs before clobbering. |
-| `--no-claude` | Skip the `~/.claude` mirror (handy if you only use OpenCode, or want to manage Claude Code separately). |
 | `--uninstall` | Remove the env-var block + the two symlinks. **Never deletes the cloned repo, your data, or `*.bak.*` backups.** |
 | `--help`, `-h` | Print usage. |
 
@@ -192,31 +184,6 @@ If your provider doesn't support `reasoningEffort`, OpenCode silently ignores it
 | wallaby    | install [Wallaby.js](https://wallabyjs.com) and run `wallaby update-mcp`                      | Optional. Runtime-test introspection.                                        |
 | Figma      | `enabled: false` by default                                                                   | Optional. Flip `enabled: true` and set up [Figma MCP](https://help.figma.com) for design-system tools. |
 
-#### 5. (Optional) Install the Claude Code mirror
-
-The repo ships a `.claude/` subtree. If you also use Claude Code, link or copy it into `~/.claude/`. The two halves don't depend on each other — install only what you need.
-
-```bash
-# Back up
-mv ~/.claude ~/.claude.bak 2>/dev/null || true
-
-# Symlink approach (recommended — stays in sync with the repo)
-ln -s ~/.config/opencode/.claude ~/.claude
-
-# Or copy approach (independent of the repo)
-cp -R ~/.config/opencode/.claude ~/.claude
-```
-
-What this installs:
-
-- `.claude/CLAUDE.md` — global user instructions Claude Code reads on every session.
-- `.claude/settings.json` — permissions, hooks, env vars (`API_TIMEOUT_MS`, autocompact threshold, etc.).
-- `.claude/hooks/*.sh` — pre-tool-use security warnings + stop hook.
-- `.claude/rules/{common,typescript}/*.md` — coding-style/testing/security rule packs.
-- `.claude/commands/*.md` — extra slash commands (`/create-pull-request`, `/curate-learned-skills`, `/update-codemaps`).
-- `.claude/skills/**` — a curated catalog of "learned" skills (project-specific patterns, debugging recipes).
-- `.claude/homunculus/` — the shared instinct store used by continuous-learning v2 (kept empty in fresh installs; populated by the OpenCode plugins as you work).
-
 </details>
 
 ### Smoke test
@@ -272,7 +239,7 @@ You can also pass extra instructions: `/init Pay special attention to TypeScript
 - Reproducibility: same agent behavior across machines/sessions.
 - Quality: on-demand TDD, frequent verification, centralized conventions.
 - Security: `security-review` skill loaded by default + pre-tool-use hooks.
-- Continuous improvement: instincts captured into `~/.claude/homunculus`, surfaced into the system prompt on the next session.
+- Continuous improvement: automatic pattern extraction from sessions surfaced as learned skills.
 
 ### Repository layout
 
@@ -292,7 +259,7 @@ You can also pass extra instructions: `/init Pay special attention to TypeScript
 - Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).
 - Zed rules: `.rules` — mirrors coding standards, verification gate, git conventions for Zed Agent Panel.
 - Git strategy: `GIT-STRATEGY.md` — dev/main squash-merge workflow.
-- Claude mirror: `.claude/CLAUDE.md`, `.claude/settings.json`, `.claude/hooks/`, `.claude/rules/`, `.claude/skills/`, `.claude/commands/`, `.claude/homunculus/`.
+- `.claude/skills/` — external skill catalog (auto-discovered by opencode)
 - Intentional exclusions (`.gitignore`): `.serena/` local MCP state, `node_modules/`, `.instinct-digest-state.json`, `antigravity-*`, `.DS_Store`, local `.env*` files except `.env.example`.
 
 ### Configuration: `opencode.jsonc`
@@ -410,9 +377,6 @@ New skills on-demand (loaded by description / by command):
 All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 
 - `plugins/ecc-hooks.ts` — Prettier on edited JS/TS, `console.log` detection, sensitive-command reminders (`git push` etc.), and the **conductor hard-stop**: aborts bash redirects (`>`, `>>`, `tee`, `sed -i`, heredocs, `python -c open().write`) targeting source files so delegation cannot be bypassed via shell.
-- `plugins/instinct-injector.ts` — reads `~/.claude/homunculus`, filters by confidence, injects instincts into the system prompt (continuous-learning v2 read side).
-- `plugins/instinct-observer.ts` — captures `tool.execute.before/after` events and appends to `observations.jsonl` (write side).
-- `plugins/instinct-digest.ts` — session-start diff: surfaces new/updated instincts since last session.
 - `plugins/continuous-learning-stop-hook.js` — legacy v1 stop hook, calls `skills/continuous-learning/bin/evaluate-session.js` to write a draft into `skills/learned/`.
 - `plugins/auto-compact.js` — auto-compacts once `OC_COMPACT_THRESHOLD` tool calls are reached, only while idle.
 - `plugins/notification.js` — macOS notification + sound on `session.idle`.
@@ -441,7 +405,6 @@ Reusable OpenCode tools exposed via `tools/index.ts`:
 Two pipelines coexist (backwards compat):
 
 1. **v1 (legacy)** — `plugins/continuous-learning-stop-hook.js` -> `skills/continuous-learning/stop.sh` -> `skills/continuous-learning/bin/evaluate-session.js` writes at most one draft into `skills/learned/`.
-2. **v2 (homunculus, shared with Claude Code)** — `plugins/instinct-observer.ts` writes to `~/.claude/homunculus/projects/<id>/observations.jsonl`. A daemon (ECC side) clusters observations into instincts. `plugins/instinct-injector.ts` injects them into the system prompt. `plugins/instinct-digest.ts` produces a session-start diff.
 
 Curation:
 
@@ -449,20 +412,9 @@ Curation:
 - `/instinct-status` — inspect learned instincts.
 - `/skill-from-instinct` — cluster high-confidence instincts into reusable skills.
 
-### Claude Code mirror (`.claude/`)
-
-- `CLAUDE.md` — global user instructions (no `any`, facade != UseCase).
-- `settings.json` — allow/deny permissions, env (`API_TIMEOUT_MS=3000000`, `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`, `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=80`), `PreToolUse` / `PostToolUse` / `Stop` hooks.
-- `hooks/pre-tool-use.sh` — warning-only checks on sensitive commands/files.
-- `hooks/stop.sh` — Claude Code stop hook.
-- `rules/common/*.md` + `rules/typescript/*.md` — rule packs (style, testing, security, patterns, hooks, agents).
-- `commands/{create-pull-request,curate-learned-skills,update-codemaps}.md` — Claude commands.
-- `skills/**` — curated catalog of "learned" skills.
-- `homunculus/{instincts,evolved,observations.archive}` — store shared with OpenCode.
-
 ### How it fits together
 
-1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `instinct-injector` preloads instincts -> `instinct-digest` produces a diff -> `caveman-server` adds caveman preamble if active.
+1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `caveman-server` adds caveman preamble if active.
 2. First user action: `startup-bootstrap` triggers `serena_activate_project`.
 3. Dev: `conductor` executes — it cannot write files; it dispatches Task calls to specialists. `ecc-hooks` formats / flags `console.log` / blocks bash-write bypasses. `instinct-observer` archives events.
 4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.

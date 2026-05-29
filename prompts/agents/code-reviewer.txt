@@ -91,37 +91,6 @@ function processUsers(users) {
 }
 ```
 
-### Angular Patterns (HIGH)
-
-When reviewing Angular code, also check:
-
-- **Missing unsubscribe / cleanup**
-  - Subscriptions in ngOnInit (or services) without takeUntilDestroyed(), async pipe, or proper teardown → memory leaks & duplicate work.
-  - Also watch fromEvent, interval, router.events, custom Subjects.
-- **State changes during change detection**
-  - Updating bound state “mid-cycle” (often in getters, template-called functions, ngAfterViewInit, or synchronous side effects) can trigger ExpressionChangedAfterItHasBeenCheckedError or detection loops.
-  - Prefer moving side effects to lifecycle hooks properly, scheduling with queueMicrotask/setTimeout when truly needed, or redesigning flow.
-- **Missing / wrong trackBy (Angular’s “keys in lists”)**
-  - \*ngFor without trackBy, or using index when items can reorder → DOM churn, lost input focus, poor perf.
-  - Always trackBy a stable id.
-- **Over-coupled inputs/outputs (Angular “prop drilling”)**
-  - Inputs passed through 3+ component layers and event chains bouncing back up → fragile APIs.
-  - Consider a facade/service (scoped to a feature), signals/store, @ContentChild composition, or router/component-level state.
-- **Unnecessary re-renders via heavy template work**
-  - Expensive computations inside templates (method calls like {{ compute() }}), getters with logic, or pipes that aren’t pure when they should be.
-  - Move work to computed signals/observables, memoize results, or use OnPush + immutable data patterns.
-- **Change detection boundary issues**
-  - Not using ChangeDetectionStrategy.OnPush where appropriate.
-  - Mutating objects/arrays in-place with OnPush (push, splice, property mutation) → view not updating / confusing bugs. Prefer immutable updates or markForCheck() when justified.
-  - Running lots of work inside Angular zone (timers, scroll handlers) → excessive change detection; use NgZone.runOutsideAngular() when appropriate.
-- **Missing loading/error/empty states (Angular edition)**
-  - Async data shown without “loading”, “error”, and “empty” branches → flicker and broken UX.
-  - For observables: async pipe + \*ngIf/@if blocks; for resolvers/HTTP: explicit state model (loading | success | error).
-- **Stale state / race conditions in RxJS flows (Angular’s “stale closures”)**
-  - Using mergeMap where switchMap is needed (older requests overwriting newer).
-  - Reading mutable state inside async callbacks without a stable source → “why did it use the old value?”
-  - Prefer composing streams (withLatestFrom, combineLatest, signals), and pick correct flattening operator (switchMap/exhaustMap/concatMap)
-
 ### Node.js/Backend Patterns (HIGH)
 
 When reviewing backend code:

@@ -11,7 +11,7 @@ paths:
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+Configure via permissions in opencode.jsonc (or Zed settings.json for editor-integrated tools):
 
 - **Prettier**: Auto-format JS/TS files after edit
 - **TypeScript check**: Run `tsc` after editing `.ts`/`.tsx` files

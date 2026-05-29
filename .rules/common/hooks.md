@@ -12,7 +12,7 @@ Use with caution:
 - Enable for trusted, well-defined plans
 - Disable for exploratory work
 - Never use dangerously-skip-permissions flag
-- Configure `allowedTools` in `~/.claude.json` instead
+- Configure tool permissions in opencode.jsonc `permission` block instead
 
 ## TodoWrite Best Practices
 

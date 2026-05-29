@@ -46,7 +46,7 @@ Build a list of `(status, path)` tuples. Ignore deletions for content review but
 - If `tsconfig.json` exists, note `strict` flags.
 
 ### 4. Load skill
-Read `skills/merge-cop/SKILL.md` (or `~/.claude/skills/merge-cop/SKILL.md` for Claude). Then, for each file in the diff, load only the relevant sub-pages:
+Read `skills/merge-cop/SKILL.md`. Then, for each file in the diff, load only the relevant sub-pages:
 
 | File pattern | Sub-pages |
 |---|---|
