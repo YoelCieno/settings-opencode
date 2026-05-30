@@ -409,6 +409,10 @@
       "description": "Generate skills from git history",
       "template": "{file:commands/skill-from-history.md}\n\n$ARGUMENTS",
     },
+    "memory-status": {
+      "description": "Summarize active memory blocks, loaded skills, and MCP server status",
+      "template": "{file:commands/memory-status.md}\n\n$ARGUMENTS",
+    },
   },
   "mcp": {
     "serena": {
