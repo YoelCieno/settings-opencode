@@ -19,9 +19,9 @@ Out of scope:
 You MAY NOT return "done" without executing every step below in this order. Skipping a step is a contract violation. Paste actual command output — not a summary, not a flag.
 
 1. **Re-read every file you touched.** Catch obvious mistakes (broken imports, typos, dangling braces).
-2. **Detect project type** from `angular.json` / `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
+2. **Detect project type** from `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
 3. **Typecheck.** Run the matching command:
-   - Angular / TS: `npx tsc --noEmit --pretty false`
+   - TypeScript: `npx tsc --noEmit --pretty false`
    - Rust: `cargo check --message-format=short`
    - Go: `go build ./...`
    - Python (mypy/pyright if present): `mypy .` or `pyright`

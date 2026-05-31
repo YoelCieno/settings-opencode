@@ -99,9 +99,9 @@ After ANY task that wrote or edited code (`coder`, `tdd-guide`, `build-error-res
 
 ### Verify protocol
 
-1. Detect project type from repo files: `angular.json` / `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
+1. Detect project type from repo files: `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
 2. Run the matching typecheck/build via `bash` yourself:
-   - Angular/TS: `npx tsc --noEmit --pretty false 2>&1 | tail -50`
+   - TypeScript: `npx tsc --noEmit --pretty false 2>&1 | tail -50`
    - Rust: `cargo check --message-format=short 2>&1 | tail -50`
    - Go: `go build ./... 2>&1 | tail -50`
    - Python: `mypy .` or `pyright` if present

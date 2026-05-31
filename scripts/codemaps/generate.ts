@@ -104,7 +104,6 @@ function walkDir(dir: string, results: string[] = []): string[] {
   const SKIP = new Set([
     'node_modules',
     '.git',
-    // '.angular',
     'dist',
     'build',
     'out',
@@ -151,7 +150,6 @@ function buildTree(dir: string, prefix = '', depth = 0): string {
   const SKIP = new Set([
     'node_modules',
     '.git',
-    // '.angular',
     'dist',
     'build',
     'out',

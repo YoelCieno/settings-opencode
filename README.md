@@ -16,7 +16,7 @@
 
 ## What's different from fmflurry's original
 
-This project reorients the upstream config from a .NET + Angular shop toward a **Node.js + framework-agnostic frontend** stack:
+This project reorients the upstream config from a .NET + frontend shop toward a **Node.js + framework-agnostic frontend** stack:
 
 | Area | Upstream (fmflurry) | This project |
 |------|-------------------|-----------|
