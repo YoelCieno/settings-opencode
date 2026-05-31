@@ -49,6 +49,15 @@ Create a detailed implementation plan for: $ARGUMENTS
 
 [HIGH/MEDIUM/LOW with time estimates]
 
+### Persistent Plan Files
+
+When approved, the planner should save this plan as committed artifacts:
+- `.opencode/plans/<plan-name>/README.md` — phase table
+- `.opencode/plans/<plan-name>/phase-N.md` — per phase detail
+- `.opencode/plans/<plan-name>/conventions.md` — (not needed, already in .opencode/plans/)
+
+Templates at `.opencode/plans/templates/`. Plans are git-committed for shared context.
+
 **WAITING FOR CONFIRMATION**: Proceed with this plan? (yes/no/modify)
 
 ---

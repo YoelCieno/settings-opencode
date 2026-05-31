@@ -41,6 +41,7 @@ Create detailed steps with:
 - Group related changes
 - Minimize context switching
 - Enable incremental testing
+- When plan is approved, create persistent plan files in `.opencode/plans/<plan-name>/` using templates.
 
 ## Plan Format
 
@@ -94,6 +95,16 @@ Create detailed steps with:
 - [ ] Criterion 1
 - [ ] Criterion 2
 ```
+
+### Persistent Plan Files
+
+- After creating a plan, save it as committed files in `.opencode/plans/<plan-name>/`
+- Use templates from `.opencode/plans/templates/`
+- Create: `README.md` (phase table), `phase-N.md` per phase
+- Include decision tables in each phase
+- Update phase status as work progresses
+- Research artifacts go to `.opencode/thoughts/comparisons/`
+- Plans are committed to git for shared persistent context
 
 ## Best Practices
 
