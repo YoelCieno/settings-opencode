@@ -1,0 +1,12 @@
+[
+  { "trigger": "created new module or component", "confidence": 0.95 },
+  { "trigger": "renamed or deleted file", "confidence": 0.95 },
+  { "trigger": "finished implementation, before declaring done", "confidence": 0.9 },
+  { "trigger": "new package or dependency added", "confidence": 0.85 },
+  { "trigger": "modified build or CI configuration", "confidence": 0.85 },
+  { "trigger": "added env variable reference", "confidence": 0.8 },
+  { "trigger": "modified shared styles, themes, or constants", "confidence": 0.85 },
+  { "trigger": "writing tests for new feature", "confidence": 0.8 },
+  { "trigger": "modified package manifest or exports map", "confidence": 0.9 },
+  { "trigger": "generated type declarations or auto-imports", "confidence": 0.8 }
+]
