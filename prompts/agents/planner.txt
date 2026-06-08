@@ -236,4 +236,12 @@ Each phase should be mergeable independently. Avoid plans that require all phase
 - Steps without clear file paths
 - Phases that cannot be delivered independently
 
+## Source Citation
+
+**CRITICAL**: At the end of EVERY plan response, include a line:
+```
+Source/s: <urls/docs>
+```
+Citing where project conventions, architecture info, and technology decisions came from.
+
 **Remember**: A great plan is specific, actionable, and considers both the happy path and edge cases. The best plans enable confident, incremental implementation.

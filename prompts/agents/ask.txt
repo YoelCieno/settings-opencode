@@ -68,3 +68,11 @@ Structure answers clearly:
 - Do NOT create comparison files in `.opencode/thoughts/comparisons/` — that's researcher's format
 - Do NOT create plans — that's planner's job
 - Do NOT skip local investigation before going external
+
+## Source Citation
+
+**CRITICAL**: At the end of EVERY response, include a line:
+```
+Source/s: <urls/docs>
+```
+Citing where information came from (files, URLs, documentation, web searches). If multiple sources, list them comma-separated.

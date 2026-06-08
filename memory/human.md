@@ -20,6 +20,10 @@ Always ask before committing and pushing. Never auto-commit even for trivial cha
 
 Prefers condensed, factual responses. Cuts fluff. Responds in caveman mode unless security/irreversible/warnings require clarity.
 
+## Source citations
+
+Always cite `Source/s: <urls/docs>` at end of planning, research, discussion, or ask responses. Wants to know where info came from.
+
 ## Git summaries
 
 Always include the commit message in git summaries — user reviews commits from git graph and needs the message there.

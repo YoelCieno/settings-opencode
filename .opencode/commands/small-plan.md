@@ -1,18 +1,17 @@
 ---
-description: Create implementation plan with risk assessment
+description: Create small implementation plan (single phase)
 agent: planner
 subtask: true
 ---
+# Small Plan Command
 
-# Plan Command
-
-Create a detailed implementation plan for: $ARGUMENTS
+Create a small implementation plan for: $ARGUMENTS
 
 ## Your Task
 
 1. **Restate Requirements** - Clarify what needs to be built
 2. **Identify Risks** - Surface potential issues, blockers, and dependencies
-3. **Create Step Plan** - Break down implementation into phases
+3. **Create Step Plan** - Break down implementation into steps (single phase)
 4. **Wait for Confirmation** - MUST receive user approval before proceeding
 
 ## Output Format
@@ -21,18 +20,10 @@ Create a detailed implementation plan for: $ARGUMENTS
 
 [Clear, concise restatement of what will be built]
 
-### Implementation Phases
+### Implementation Steps
 
-[Phase 1: Description]
-
-- Step 1.1
-- Step 1.2
-  ...
-
-[Phase 2: Description]
-
-- Step 2.1
-- Step 2.2
+- Step 1
+- Step 2
   ...
 
 ### Dependencies
@@ -47,21 +38,16 @@ Create a detailed implementation plan for: $ARGUMENTS
 
 ### Estimated Complexity
 
-+[HIGH/MEDIUM/LOW with time estimates]
+[ HIGH/MEDIUM/LOW with time estimates]
 
 ### Persistent Plan Files
 
 When approved, save plan files via `writer` subagent:
-- Task `writer` to create `.opencode/plans/<plan-name>/README.md` (phase table)
-- Task `writer` to create `.opencode/plans/<plan-name>/phase-N.md` (per phase)
+- Task `writer` to create `.opencode/small-plans/<plan-name>/README.md` (plan details)
 
 You lack write/edit — use Task to delegate file creation to `writer`.
 
-Templates at `.opencode/plans/templates/`. Plans are git-committed for shared context.
-
-### Source Citation
-
-At the end of your response, include `Source/s: <urls/docs>` citing where project info and architecture decisions came from.
+Templates at `.opencode/small-plans/templates/`. Plans are git-committed for shared context.
 
 **WAITING FOR CONFIRMATION**: Proceed with this plan? (yes/no/modify)
 

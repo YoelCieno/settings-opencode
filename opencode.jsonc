@@ -57,20 +57,27 @@
       "description": "MUST delegate for complex feature planning, implementation plans, large refactors, or unclear execution order. Produces plans only.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
-      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/planner.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_MAX}",
       "tools": {
         "read": true,
         "bash": true,
         "write": false,
         "edit": false,
+        "task": true
       },
+      "permission": {
+        "task": {
+          "*": "deny",
+          "writer": "allow"
+        }
+      },
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/planner.txt",
     },
     "architect": {
       "description": "MUST delegate for architecture, system design, scalability, cross-module boundaries, or high-impact technical decisions.",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
       "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/architect.txt",
       "tools": {
         "read": true,

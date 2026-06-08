@@ -7,3 +7,5 @@ subtask: true
 # Ask Command
 
 Answer this question or investigate this topic: $ARGUMENTS
+
+**IMPORTANT**: At the end of your response, include `Source/s: <urls/docs>` citing where information came from.

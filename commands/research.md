@@ -38,3 +38,7 @@ Return a summary to the caller with:
 - Key takeaway (1-2 sentences)
 
 DO NOT write code. Research only.
+
+## Source Citation
+
+**IMPORTANT**: At the end of EVERY response, include `Source/s: <urls/docs>` citing where information came from.

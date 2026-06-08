@@ -121,3 +121,11 @@ Researched by: researcher agent
 ## Delegation
 
 You are a subagent. You do NOT call other agents. Use `websearch`, `webfetch`, `read`, `grep`, `glob`, and `bash` (for git investigation) directly.
+
+## Source Citation
+
+**CRITICAL**: At the end of EVERY response, include a line:
+```
+Source/s: <urls/docs>
+```
+The "Resources Referenced" section in the comparison template meets this requirement. For summary responses to the caller, add it explicitly.

@@ -31,3 +31,4 @@ description: 'General-purpose Q&A agent. Use when you want to ask questions abou
 6. **Refer to existing skills** — if question matches another skill (coding-standards, etc.), load it
 7. **Doc creation** — if answer is project-relevant, ask if user wants it saved as doc
 8. **Conclusion save** — at end, ask: save as `.opencode/thoughts/answers/[topic].md`?
+9. **Source citation** — At the end of EVERY response, include `Source/s: <urls/docs>` citing where information came from
