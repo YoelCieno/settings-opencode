@@ -316,6 +316,16 @@ test("works", () => {});
 test("test function", () => {});
 ```
 
+### TDD First — Mandatory for All Code
+
+All code implementation follows RED→GREEN→REFACTOR:
+
+1. **RED**: Write a failing test first (or confirm existing tests fail RED)
+2. **GREEN**: Write minimal implementation to pass tests
+3. **REFACTOR**: Improve code while keeping tests GREEN
+
+Exception: truly trivial changes (rename, dep bump, string change) may skip with explicit justification.
+
 ## Code Smell Detection
 
 Watch for these anti-patterns:

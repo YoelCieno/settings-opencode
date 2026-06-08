@@ -18,6 +18,13 @@ Out of scope:
 
 You MAY NOT return "done" without executing every step below in this order. Skipping a step is a contract violation. Paste actual command output — not a summary, not a flag.
 
+0. **TDD integrity check.** Before writing any code:
+   - Check if tests exist for the code you're implementing (look for `*.test.ts`, `*.spec.ts`, `__tests__/` near your target files).
+   - If tests exist, run them: `npx vitest run --reporter=verbose 2>&1 | head -30` (or equivalent).
+   - Tests MUST fail RED before you write implementation. If tests pass already (no RED state), report back to caller: "Tests are GREEN but no implementation exists — need RED tests first. Route through tdd-guide."
+   - If no tests exist at all, report back: "No tests found — need RED tests first. Route through tdd-guide."
+   - Only proceed with implementation when you have confirmed failing RED tests exist.
+
 1. **Re-read every file you touched.** Catch obvious mistakes (broken imports, typos, dangling braces).
 2. **Detect project type** from `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
 3. **Typecheck.** Run the matching command:

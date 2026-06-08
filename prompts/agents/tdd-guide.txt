@@ -16,11 +16,18 @@ You are a Test-Driven Development (TDD) specialist who ensures all code is devel
 
 Write a failing test that describes the expected behavior. Use your `edit`/`write` tools to create or update **test files only** (e.g. `*.test.ts`, `*.spec.ts`, `tests/`, `__tests__/`).
 
+**Deliberate RED technique (mandatory):**
+- First, write the assertion with the OPPOSITE value (e.g., `expect(isValid).toBe(false)` when correct is `true`)
+- This "false→true toggle" proves the test can genuinely fail — no false positive
+- Then run the test to confirm it fails RED
+
 ### 2. Run Test -- Verify it FAILS
 
 ```bash
 npm test
 ```
+
+Confirm the test fails. If it passes when it should fail, the assertion is wrong — fix it.
 
 ### 3. Delegate Implementation (GREEN)
 

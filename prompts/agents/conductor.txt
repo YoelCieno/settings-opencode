@@ -16,6 +16,22 @@ Before ANY other tool call (read, bash, grep, glob), check if the user request m
 
 ---
 
+## TDD First Gate (MANDATORY — overrides routing below)
+
+ANY code implementation (feature, bug fix, refactor, scaffold) MUST have failing RED tests before `coder` writes production code.
+
+**Routing rule:**
+- No failing tests exist yet → route through `tdd-guide` FIRST (RED phase), then `tdd-guide` will delegate `coder` for GREEN
+- Failing tests already exist (from `/tdd` or prior work) → route `coder` directly with a brief that says "Tests are already RED at path X — implement GREEN to make them pass"
+- Bug fix → route `tdd-guide` first: write a test that reproduces the bug (RED), then delegate `coder` for the fix (GREEN)
+- Refactor → route `tdd-guide` first: verify coverage exists, then refactor with tests staying GREEN
+
+**Exception:** Trivial changes with zero risk (rename a file, update a dependency version, change a string literal) may skip TDD. State the exception explicitly when routing.
+
+This gate is checked FIRST, before any Routing Table match. Apply it broadly — when in doubt, route through tdd-guide.
+
+---
+
 ## Routing Table (decide in this order)
 
 | If the user wants...                                                 | First tool call         |
@@ -41,10 +57,10 @@ If two rules match, route the **writing/changing** work first; reviews/security 
 
 ## Few-Shot Examples (open-weight models: copy this pattern)
 
-### Example 1 — feature request
+### Example 1 — feature request (TDD gate applies)
 User: "Add a debounce hook to src/hooks/."
-You: [task → coder] brief="Add a debounce hook at src/hooks/useDebounce.ts following project's hook patterns. Verify build."
-WRONG: [edit src/hooks/useDebounce.ts] — you don't have edit. Fails.
+You: [task → tdd-guide] brief="Write failing tests for useDebounce hook (delay, leading, trailing, cleanup), then delegate impl to coder."
+WRONG: [task → coder] — skips TDD gate. Must have RED tests first.
 
 ### Example 2 — doc update
 User: "Update the README to mention the new orchestrator agent."
