@@ -7,8 +7,12 @@ const { spawnSync } = require("node:child_process");
 
 const scriptPath = path.join(__dirname, "evaluate-session.js");
 
+const tempDirs = [];
+
 async function createTempDir() {
-  return fs.mkdtemp(path.join(os.tmpdir(), "continuous-learning-"));
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "continuous-learning-"));
+  tempDirs.push(dir);
+  return dir;
 }
 
 async function writeJson(filePath, value) {
@@ -44,7 +48,14 @@ function buildTranscript() {
   ];
 }
 
-test("writes learned skills to skills/<slug>/SKILL.md when explicit paths are configured", async () => {
+test.afterEach(async () => {
+  while (tempDirs.length) {
+    const dir = tempDirs.pop();
+    try { await fs.rm(dir, { recursive: true, force: true }); } catch { /* ignore */ }
+  }
+});
+
+test.serial("writes learned skills to skills/<slug>/SKILL.md when explicit paths are configured", async () => {
   const tempDir = await createTempDir();
   const skillsRoot = path.join(tempDir, "skills");
   const learnedMetadataRoot = path.join(skillsRoot, "learned");
@@ -76,7 +87,11 @@ test("writes learned skills to skills/<slug>/SKILL.md when explicit paths are co
   const directories = await listChildDirectories(skillsRoot);
   const generatedSkillDirectories = directories.filter((name) => name !== "learned");
 
-  assert.equal(generatedSkillDirectories.length, 1);
+  assert.equal(
+    generatedSkillDirectories.length,
+    1,
+    `Expected 1 skill dir, got ${generatedSkillDirectories.length}. Dirs: [${directories.join(", ")}]`
+  );
 
   const skillDirectory = path.join(skillsRoot, generatedSkillDirectories[0]);
   const skillPath = path.join(skillDirectory, "SKILL.md");
@@ -90,7 +105,7 @@ test("writes learned skills to skills/<slug>/SKILL.md when explicit paths are co
   assert.match(result.stdout, /SKILL\.md/);
 });
 
-test("keeps legacy learned_skills_path configs working while writing to skill directories", async () => {
+test.serial("keeps legacy learned_skills_path configs working while writing to skill directories", async () => {
   const tempDir = await createTempDir();
   const skillsRoot = path.join(tempDir, "skills");
   const learnedMetadataRoot = path.join(skillsRoot, "learned");
@@ -121,7 +136,11 @@ test("keeps legacy learned_skills_path configs working while writing to skill di
   const directories = await listChildDirectories(skillsRoot);
   const generatedSkillDirectories = directories.filter((name) => name !== "learned");
 
-  assert.equal(generatedSkillDirectories.length, 1);
+  assert.equal(
+    generatedSkillDirectories.length,
+    1,
+    `Expected 1 skill dir, got ${generatedSkillDirectories.length}. Dirs: [${directories.join(", ")}]`
+  );
 
   const skillDirectory = path.join(skillsRoot, generatedSkillDirectories[0]);
   const skillPath = path.join(skillDirectory, "SKILL.md");

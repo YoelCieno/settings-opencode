@@ -448,6 +448,10 @@
       "description": "Summarize active memory blocks, loaded skills, and MCP server status",
       "template": "{file:commands/memory-status.md}\n\n$ARGUMENTS",
     },
+    "discuss": {
+      "description": "Collaborative decision-making with source citations and tradeoff analysis",
+      "template": "{file:commands/discuss.md}\n\n$ARGUMENTS",
+    },
   },
   "mcp": {
     "serena": {

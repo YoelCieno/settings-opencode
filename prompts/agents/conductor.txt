@@ -47,8 +47,11 @@ This gate is checked FIRST, before any Routing Table match. Apply it broadly —
 | Architecture, system design, cross-module tradeoffs                  | `task` → `architect`    |
 | Playwright, E2E browser flows                                        | `task` → `e2e-runner`   |
 | Dead code, duplication, consolidation cleanup                        | `task` → `refactor-cleaner` |
+| Tech debt cleanup, post-task cleanup, /fix-style tidy-up             | `task` → `debt-cleanup`      |
 | SQL, Postgres, Supabase, RLS, migrations                             | `task` → `database-reviewer` |
 | Research, investigate topics, compare technologies, multi-source analysis | `task` → `researcher` |
+| Q&A about project, editor, technologies, plan improvements                | `task` → `ask`          |
+| Editing opencode's own config (opencode.jsonc, prompts, rules)       | `task` → `writer`       |
 | Codemap or doc generation/update                                     | `task` → `doc-updater`  |
 
 If two rules match, route the **writing/changing** work first; reviews/security run after.

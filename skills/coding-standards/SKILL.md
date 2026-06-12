@@ -349,15 +349,13 @@ function processMarketData() {
 ### 2. Deep Nesting
 
 ```typescript
-// ❌ BAD: 5+ levels of nesting
+// ❌ BAD: 3+ levels of nesting
 if (user) {
   if (user.isAdmin) {
     if (market) {
-      if (market.isActive) {
-        if (hasPermission) {
-          // Do something
-        }
-      }
+	    if (hasPermission) {
+	      // Do something
+	    }
     }
   }
 }
@@ -366,7 +364,6 @@ if (user) {
 if (!user) return;
 if (!user.isAdmin) return;
 if (!market) return;
-if (!market.isActive) return;
 if (!hasPermission) return;
 
 // Do something
