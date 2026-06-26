@@ -24,6 +24,13 @@ Prefers condensed, factual responses. Cuts fluff. Responds in caveman mode unles
 
 Always cite `Source/s: <urls/docs>` at end of planning, research, discussion, or ask responses. Wants to know where info came from.
 
+## Coding constraints (REMEMBER)
+
+1. **Optional params at end** — never before required params. `fn(req, opt?)` not `fn(opt?, req)`.
+2. **Max 3 params** — if more, use object param.
+3. **Avoid casts** — use typed objects over `as Record<string, unknown>` + individual `as Type` casts. KISSME principle: if type is wrong, fix the type, don't cast around.
+4. **Prefer function factories** over ternary chains for computed values — `resolvePrice(config, counter)` vs `sentinel ? 0 : ...` ternary.
+
 ## Git summaries
 
 Always include the commit message in git summaries — user reviews commits from git graph and needs the message there.

@@ -1,7 +1,7 @@
 ---
 name: debt-cleanup
 description: >
-  Cleans technical debt after tasks. Use when user says "clean up", "fix debt", "improve quality", "technical debt", "tidy up", "clean after". Scans for 8 debt categories, fixes, then runs verification gate.
+  Cleans technical debt after tasks. Invoked by /fix or /improve, or when user says "clean up", "fix debt", "improve quality", "technical debt", "tidy up", "clean after". Scans for 8 debt categories in priority order, fixes, then runs verification gate (test → typecheck → build → lint).
 ---
 
 # Debt Cleanup Skill
