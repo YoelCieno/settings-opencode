@@ -1,10 +1,32 @@
 ---
-description: Create implementation plan with risk assessment
+description: Create, track, and continue implementation plans with subcommands (status, continue). Usage: /plan status, /plan continue &lt;name&gt;, /plan $ARGUMENTS
 agent: planner
 subtask: true
 ---
 
 # Plan Command
+
+## Subcommand Routing
+
+Check first word of `$ARGUMENTS`:
+
+### `/plan status`
+1. List `.opencode/plans/` subdirectories (exclude `templates/`, `README.md`, `conventions.md`)
+2. For each plan dir, read `README.md` → parse phase table → find 🔧 or ❌ phases
+3. Output table: Plan Name | Overall Status | Current Phase
+4. Ask user: "Continue plan [NAME]?" / "Update docs?" / "No unfinished plans"
+5. On "continue" selection → load plan, review, ask next action
+
+### `/plan continue <name>`
+1. Read `.opencode/plans/<name>/README.md`
+2. Find first phase with 🔧 IN PROGRESS or ❌ PENDING
+3. Load phase file (e.g., `phase-1.md`)
+4. Summarize: goal, completed tasks, remaining tasks
+5. Ask: "Proceed with phase N?"
+
+### Default (no subcommand match) — Create new plan
+
+Reference plan conventions from `.opencode/plans/conventions.md` for phase table format.
 
 Create a detailed implementation plan for: $ARGUMENTS
 

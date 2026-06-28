@@ -5,11 +5,7 @@
   "instructions": [
     "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/subagent-routing.md",
     "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/verification-gate.md",
-    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/security-review/SKILL.md",
-    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/coding-standards/SKILL.md",
     "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/serena.md", // serena: code-tools only (memory via opencode-agent-memory)
-    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/socratic-design/SKILL.md", // disabled: load on demand
-    "{env:OPENCODE_SRC_ROUTE}/opencode/skills/git-workflow/SKILL.md", // disabled: load on demand
   ],
   "agent": {
     "conductor": {
@@ -328,6 +324,11 @@
           "writer": "allow",
         },
       },
+    },
+    "title": {
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
+      "maxTokens": 80,
+      "description": "Auto-generate session titles from first user message (enabled by default)",
     },
     // Disable built-in primary agents — conductor is the only primary entry point.
     "build": {
