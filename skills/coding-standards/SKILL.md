@@ -316,6 +316,16 @@ test("works", () => {});
 test("test function", () => {});
 ```
 
+### TDD First — Mandatory for All Code
+
+All code implementation follows RED→GREEN→REFACTOR:
+
+1. **RED**: Write a failing test first (or confirm existing tests fail RED)
+2. **GREEN**: Write minimal implementation to pass tests
+3. **REFACTOR**: Improve code while keeping tests GREEN
+
+Exception: truly trivial changes (rename, dep bump, string change) may skip with explicit justification.
+
 ## Code Smell Detection
 
 Watch for these anti-patterns:
@@ -339,15 +349,13 @@ function processMarketData() {
 ### 2. Deep Nesting
 
 ```typescript
-// ❌ BAD: 5+ levels of nesting
+// ❌ BAD: 3+ levels of nesting
 if (user) {
   if (user.isAdmin) {
     if (market) {
-      if (market.isActive) {
-        if (hasPermission) {
-          // Do something
-        }
-      }
+	    if (hasPermission) {
+	      // Do something
+	    }
     }
   }
 }
@@ -356,7 +364,6 @@ if (user) {
 if (!user) return;
 if (!user.isAdmin) return;
 if (!market) return;
-if (!market.isActive) return;
 if (!hasPermission) return;
 
 // Do something

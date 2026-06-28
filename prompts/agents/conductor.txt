@@ -16,6 +16,22 @@ Before ANY other tool call (read, bash, grep, glob), check if the user request m
 
 ---
 
+## TDD First Gate (MANDATORY — overrides routing below)
+
+ANY code implementation (feature, bug fix, refactor, scaffold) MUST have failing RED tests before `coder` writes production code.
+
+**Routing rule:**
+- No failing tests exist yet → route through `tdd-guide` FIRST (RED phase), then `tdd-guide` will delegate `coder` for GREEN
+- Failing tests already exist (from `/tdd` or prior work) → route `coder` directly with a brief that says "Tests are already RED at path X — implement GREEN to make them pass"
+- Bug fix → route `tdd-guide` first: write a test that reproduces the bug (RED), then delegate `coder` for the fix (GREEN)
+- Refactor → route `tdd-guide` first: verify coverage exists, then refactor with tests staying GREEN
+
+**Exception:** Trivial changes with zero risk (rename a file, update a dependency version, change a string literal) may skip TDD. State the exception explicitly when routing.
+
+This gate is checked FIRST, before any Routing Table match. Apply it broadly — when in doubt, route through tdd-guide.
+
+---
+
 ## Routing Table (decide in this order)
 
 | If the user wants...                                                 | First tool call         |
@@ -31,8 +47,11 @@ Before ANY other tool call (read, bash, grep, glob), check if the user request m
 | Architecture, system design, cross-module tradeoffs                  | `task` → `architect`    |
 | Playwright, E2E browser flows                                        | `task` → `e2e-runner`   |
 | Dead code, duplication, consolidation cleanup                        | `task` → `refactor-cleaner` |
+| Tech debt cleanup, post-task cleanup, /fix-style tidy-up             | `task` → `debt-cleanup`      |
 | SQL, Postgres, Supabase, RLS, migrations                             | `task` → `database-reviewer` |
 | Research, investigate topics, compare technologies, multi-source analysis | `task` → `researcher` |
+| Q&A about project, editor, technologies, plan improvements                | `task` → `ask`          |
+| Editing opencode's own config (opencode.jsonc, prompts, rules)       | `task` → `writer`       |
 | Codemap or doc generation/update                                     | `task` → `doc-updater`  |
 
 If two rules match, route the **writing/changing** work first; reviews/security run after.
@@ -41,10 +60,10 @@ If two rules match, route the **writing/changing** work first; reviews/security 
 
 ## Few-Shot Examples (open-weight models: copy this pattern)
 
-### Example 1 — feature request
+### Example 1 — feature request (TDD gate applies)
 User: "Add a debounce hook to src/hooks/."
-You: [task → coder] brief="Add a debounce hook at src/hooks/useDebounce.ts following project's hook patterns. Verify build."
-WRONG: [edit src/hooks/useDebounce.ts] — you don't have edit. Fails.
+You: [task → tdd-guide] brief="Write failing tests for useDebounce hook (delay, leading, trailing, cleanup), then delegate impl to coder."
+WRONG: [task → coder] — skips TDD gate. Must have RED tests first.
 
 ### Example 2 — doc update
 User: "Update the README to mention the new orchestrator agent."
@@ -99,9 +118,9 @@ After ANY task that wrote or edited code (`coder`, `tdd-guide`, `build-error-res
 
 ### Verify protocol
 
-1. Detect project type from repo files: `angular.json` / `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
+1. Detect project type from repo files: `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
 2. Run the matching typecheck/build via `bash` yourself:
-   - Angular/TS: `npx tsc --noEmit --pretty false 2>&1 | tail -50`
+   - TypeScript: `npx tsc --noEmit --pretty false 2>&1 | tail -50`
    - Rust: `cargo check --message-format=short 2>&1 | tail -50`
    - Go: `go build ./... 2>&1 | tail -50`
    - Python: `mypy .` or `pyright` if present

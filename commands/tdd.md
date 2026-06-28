@@ -14,7 +14,7 @@ Implement the following using strict test-driven development: $ARGUMENTS
 RED → GREEN → REFACTOR → REPEAT
 ```
 
-1. **RED**: Write a failing test FIRST
+1. **RED**: Write a failing test FIRST — use deliberate RED technique: assert opposite value first (e.g., `expect(x).toBe(false)` when correct is `true`), prove test fails, then flip to correct value
 2. **GREEN**: Write minimal code to pass the test
 3. **REFACTOR**: Improve code while keeping tests green
 4. **REPEAT**: Continue until feature complete

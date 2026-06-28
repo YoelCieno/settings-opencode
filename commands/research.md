@@ -19,7 +19,7 @@ For each major option or technology being researched:
 
 ## Required Output
 
-Write a structured comparison to `thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` with:
+Write a structured comparison to `.opencode/thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` with:
 
 - Research question
 - Options considered
@@ -38,3 +38,7 @@ Return a summary to the caller with:
 - Key takeaway (1-2 sentences)
 
 DO NOT write code. Research only.
+
+## Source Citation
+
+**IMPORTANT**: At the end of EVERY response, include `Source/s: <urls/docs>` citing where information came from.

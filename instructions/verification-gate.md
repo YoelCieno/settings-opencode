@@ -7,7 +7,6 @@ Agents have repeatedly reported "implementation done" while the build is red. Th
 You MAY NOT tell the user "done", "complete", "ready", "ready to merge", or render a green-status final message until you have:
 
 1. Detected the project type from manifests present in cwd (search recursively, not only at root — `.csproj`, `pom.xml`, `build.gradle*`, etc. often live in subdirs):
-   - `angular.json` → Angular
    - `tsconfig.json` + `package.json` with `vue` dependency → Vue
    - `tsconfig.json` + `package.json` with `react` dependency → React
    - `package.json` with `svelte` dep or `*.svelte` files → Svelte
@@ -20,7 +19,6 @@ You MAY NOT tell the user "done", "complete", "ready", "ready to merge", or rend
    - `build.gradle` / `build.gradle.kts` → Java or Kotlin/Gradle (check `settings.gradle*` + presence of `*.kt` vs `*.java` to disambiguate; Kotlin Multiplatform falls under Kotlin)
    - `*.sln` / `*.slnx` / `*.slnf` / `*.csproj` / `*.fsproj` / `*.vbproj` / `global.json` / `Directory.Build.props` → .NET (C#/F#/VB). `.slnx` is the XML-based format (default in .NET 10 SDK, supported since 9.0.200); `.slnf` is a solution filter referencing a `.sln`/`.slnx`
 2. Run the matching independent verification yourself (do not trust a subagent's self-report):
-   - Angular: `npx tsc --noEmit --pretty false`
    - Vue: `npx tsc --noEmit --pretty false`
    - React: `npx tsc --noEmit --pretty false`
    - Svelte: `npx tsc --noEmit --pretty false`

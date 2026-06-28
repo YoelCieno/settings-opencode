@@ -80,10 +80,27 @@ describe('Semantic Search', () => {
 })
 ```
 
-### Step 3: Run Tests (They Should Fail)
+### Step 3: Use Deliberate RED Technique
+
+Before running tests, verify they can genuinely fail:
+
+1. Write assertion with **opposite expected value** (false→true toggle):
+   ```typescript
+   // First write this — deliberately wrong:
+   expect(searchResults.length).toBe(0)  // Wrong — we expect results
+   
+   // Then change to correct value:
+   // expect(searchResults.length).toBe(3)  // Real assertion
+   ```
+2. Run tests → confirm they FAIL RED
+3. Flip assertion to correct value
+4. Run tests again → should still FAIL RED (no implementation yet)
+
+This proves the test can fail — no false positives.
+
 ```bash
 npm test
-# Tests should fail - we haven't implemented yet
+# Tests should fail — we haven't implemented yet
 ```
 
 ### Step 4: Implement Code

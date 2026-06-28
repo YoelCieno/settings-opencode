@@ -2,7 +2,7 @@
 /**
  * scripts/codemaps/generate.ts
  *
- * Frontend codemap generator for this Angular workspace.
+ * Frontend codemap generator.
  *
  * Goal: give humans + AI agents fast entry points (routing, providers,
  * state, and layer boundaries) with stable diffs.
@@ -44,7 +44,7 @@ type AreaKey = 'app' | 'shared' | 'domains' | 'assets-config' | 'misc';
 
 const AREAS: Record<AreaKey, { name: string; patterns: RegExp[] }> = {
   app: {
-    name: 'App (Angular)',
+    name: 'App (Frontend)',
     patterns: [/^src\/app\//, /^src\/styles\//],
   },
   shared: {
@@ -104,7 +104,6 @@ function walkDir(dir: string, results: string[] = []): string[] {
   const SKIP = new Set([
     'node_modules',
     '.git',
-    '.angular',
     'dist',
     'build',
     'out',
@@ -151,7 +150,6 @@ function buildTree(dir: string, prefix = '', depth = 0): string {
   const SKIP = new Set([
     'node_modules',
     '.git',
-    '.angular',
     'dist',
     'build',
     'out',

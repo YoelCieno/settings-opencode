@@ -14,7 +14,7 @@ Do not use `bash`, `read`, `write`, `edit`, or MCP tools, including Serena, befo
 
 ## Task Must Be First When
 
-- Implementation work: write/port/scaffold/apply-spec non-test code -> `coder`
+- Implementation work: write/port/scaffold/apply-spec non-test code -> `tdd-guide` first (RED phase), then `coder` (GREEN). Direct to `coder` only when failing tests already exist and are confirmed RED.
 - Writing or editing docs, README, markdown, HTML reports, release notes, ADRs, prose -> `writer`
 - Git, commit, branch, push, pull request creation/status, PR creation/status -> `git-specialist`
 - Code review, PR review, pull request review, current-change review, "does this need review" -> `code-reviewer` (read-only; fixes go to `coder`)
@@ -27,7 +27,7 @@ Do not use `bash`, `read`, `write`, `edit`, or MCP tools, including Serena, befo
 - Codemap or generated-doc updates -> `doc-updater`
 - Dead code, unused exports, duplication cleanup -> `refactor-cleaner`
 - SQL, PostgreSQL, Supabase, RLS, migrations -> `database-reviewer`
-- Research, investigate topics, compare technologies, multi-source analysis -> `researcher` (read-only for codebase; writes comparisons to thoughts/comparisons/)
+- Research, investigate topics, compare technologies, multi-source analysis -> `researcher` (read-only for codebase; writes comparisons to .opencode/thoughts/comparisons/)
 
 ## Conductor Cannot Write Directly
 

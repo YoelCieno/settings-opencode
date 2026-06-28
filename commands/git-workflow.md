@@ -1,5 +1,5 @@
 ---
-description: Full git workflow with automatic PR creation stop-gate
+description: Full git workflow with subcommands (bcps/bscps/cps/mrsq) and automatic PR creation stop-gate
 agent: git-specialist
 subtask: true
 ---

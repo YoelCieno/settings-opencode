@@ -96,5 +96,5 @@ If it points to `.../skills/learned/`, the generator will still write skills to
 `.../skills/<slug>/SKILL.md` and keep metadata in the `learned` directory.
 
 Shared setup note: if you want learned skills shared between OpenCode and
-ClaudeCode, point `skills_root_path` to `~/.claude/skills/` and
-`learned_metadata_path` to `~/.claude/skills/learned/`.
+OpenCode, point `skills_root_path` to `.opencode/skills/` and
+`learned_metadata_path` to `.opencode/skills/learned/`.

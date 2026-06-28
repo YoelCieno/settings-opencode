@@ -1,6 +1,6 @@
 ---
 name: "learned-codemap-generator-hygiene"
-description: "Use when you are adding or updating a codemap generator for a frontend Angular repo."
+description: "Use when you are adding or updating a codemap generator for a frontend repo."
 version: "1.0.0"
 source: "continuous-learning"
 status: "approved"
@@ -18,7 +18,7 @@ Patterns for maintaining a codemap generator that stays useful over time.
 
 ## Trigger
 
-You are adding or updating a codemap generator for a frontend Angular repo.
+You are adding or updating a codemap generator for a frontend repo.
 
 ## Actions
 
