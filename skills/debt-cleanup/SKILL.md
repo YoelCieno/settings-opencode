@@ -1,20 +1,34 @@
 ---
 name: debt-cleanup
 description: >
-  Cleans technical debt after tasks. Invoked by /fix or /improve, or when user says "clean up", "fix debt", "improve quality", "technical debt", "tidy up", "clean after". Scans for 8 debt categories in priority order, fixes, then runs verification gate (test → typecheck → build → lint).
+  Cleans technical debt from any code area — invoked by /fix or /improve, or when user says "clean up", "fix debt", "improve quality", "technical debt", "tidy up", "clean after", "clean this up", "fix this code", "tidy this file", "improve this module". Scans for 8 debt categories in priority order, fixes, then runs verification gate (test → typecheck → build → lint).
 ---
 
 # Debt Cleanup Skill
 
-Automatically detect and fix common technical debt after completing a task.
+Automatically detect and fix common technical debt in targeted code — no dependency on task order.
 
 ## When to Activate
 
-- User says "clean up", "fix debt", "improve quality", "technical debt"
-- After completing a feature implementation
+- User says "clean up", "fix debt", "improve quality", "technical debt", "clean this up", "fix this code", "tidy this file", "improve this module"
+- User points to specific code area, file, or module for cleanup
+- User selects code that has accumulated debt regardless of when it was last modified
 - After renaming or deleting files
 - After adding new dependencies
 - Before declaring a task complete
+
+### Git History Analysis for Targeted Code
+
+When user points to specific code (file, directory, function, or module):
+
+1. Run `git log -- <path>` to reconstruct change timeline for that code
+2. Run `git blame <file>` to identify recent and stale lines
+3. Run `git diff HEAD~1 -- <path>` to see the most recent changes
+4. Use this history to:
+   - Identify dead code from reverted/abandoned changes
+   - Find stale exports from renamed symbols
+   - Detect files left behind after rename operations
+   - Spot config drift specific to the targeted module
 
 ## Debt Patterns (Priority Order)
 

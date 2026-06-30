@@ -1,44 +1,56 @@
 ---
-description: Structured multi-source research with comparison output
+description: Multi-mode research: compare options or deep-dive single topics. Auto-detects mode; --compare/--deep override. Saves to .opencode/thoughts/comparisons/ or .opencode/thoughts/research/.
 agent: researcher
 subtask: true
 ---
 
 # Research Command
 
-Conduct a structured multi-source investigation of: $ARGUMENTS
+Conduct multi-mode research. Auto-detects comparison vs deep dive mode from query syntax.
 
-## Methodology
+## Mode Detection
 
-For each major option or technology being researched:
+Parse $ARGUMENTS to determine mode:
 
-1. **Official Docs** — Fetch primary documentation
-2. **Spec/Source** — Fetch specification, RFC, or source README
-3. **Cookbook/Guide** — Fetch a practical guide or tutorial
-4. **Best Practices** — Fetch community best practices guide
+- **Explicit flag**: --compare or --deep as first arg → force that mode, strip the flag before processing
+- **Auto-detect** (no flag):
+  - Query mentions multiple options: "vs", "compare", "alternatives", "X or Y", "pros and cons", "tradeoffs" → **Comparison Mode**
+  - Single topic query: "how does X work", "learn about Y", "explain Z", "architecture of", "overview" → **Deep Dive Mode**
 
-## Required Output
+## Comparison Mode
 
-Write a structured comparison to `.opencode/thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` with:
+Structured multi-source investigation comparing options. Output to `.opencode/thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md`.
 
-- Research question
-- Options considered
-- Resource analysis per option (all 4 source types)
-- Conflicts between sources
-- Comparison table (setup, API, perf, ecosystem, security, license, integration effort)
-- Clear recommendation with evidence-based justification
-- Open questions
+For each option:
+1. Official Docs
+2. Spec/Source
+3. Cookbook/Guide
+4. Best Practices
 
-## Output format
+Output: research question, options, resource analysis, conflicts, comparison table, recommendation, open questions.
 
-Return a summary to the caller with:
+## Deep Dive Mode
+
+Single-topic deep investigation for knowledge library. Output to `.opencode/thoughts/research/YYYY-MM-DD-{topic-slug}.md`.
+
+Focus on depth over breadth:
+1. Primary Sources (docs, specs, RFCs)
+2. Secondary Sources (tutorials, articles)
+3. Community Consensus (patterns, pitfalls)
+4. Cross-reference with codebase (grep/glob/read)
+
+Output: motivation, core concepts, how it works, key findings, relation to codebase, actionable insights, resources.
+
+## Output to Caller (both modes)
+
+Return summary with:
 - Topic researched
-- Comparison file path
-- Winner (recommended option)
+- Output file path
+- Mode used
 - Key takeaway (1-2 sentences)
 
 DO NOT write code. Research only.
 
 ## Source Citation
 
-**IMPORTANT**: At the end of EVERY response, include `Source/s: <urls/docs>` citing where information came from.
+**CRITICAL**: At the end of every response, include `Source/s: <urls/docs>`.
