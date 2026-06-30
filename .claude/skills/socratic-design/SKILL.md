@@ -1,0 +1,1 @@
+../../skills/socratic-design/SKILL.md
