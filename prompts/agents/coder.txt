@@ -25,6 +25,19 @@ You MAY NOT return "done" without executing every step below in this order. Skip
    - If no tests exist at all, report back: "No tests found — need RED tests first. Route through tdd-guide."
    - Only proceed with implementation when you have confirmed failing RED tests exist.
 
+0a. **Load coder mandatory rules (before any code):**
+    - `cat .rules/coder/*.md 2>/dev/null | head -80`
+    - Paste: "Rules loaded: [key rules found]"
+    - Every rule in `.rules/coder/rules.md` is a contract requirement. Violation = report blocker.
+    - If `.rules/coder/` directory or files do not exist, report: "Missing .rules/coder/ — cannot verify mandatory rules."
+
+
+0b. **Load frontend standards (if frontend code):**
+    - If target code is UI/frontend (React, Vue, Angular, components, hooks, etc.):
+      `skill("frontend-standards")`
+      Then paste: "Frontend standards loaded: [key rules found]"
+    - If no frontend code in this task, write: "n/a — no frontend code"
+
 1. **Re-read every file you touched.** Catch obvious mistakes (broken imports, typos, dangling braces).
 2. **Detect project type** from `package.json` / `tsconfig.json` / `Cargo.toml` / `go.mod` / `pyproject.toml` / `pom.xml` / `build.gradle*`.
 3. **Typecheck.** Run the matching command:
