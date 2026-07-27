@@ -1,442 +1,483 @@
 {
-	"$schema": "https://opencode.ai/config.json",
-	"autoupdate": true,
-	"default_agent": "conductor",
-	"instructions": [
-		"{env:OPENCODE_SRC_ROUTE}/opencode/instructions/subagent-routing.md",
-		"{env:OPENCODE_SRC_ROUTE}/opencode/instructions/verification-gate.md",
-		"{env:OPENCODE_SRC_ROUTE}/opencode/instructions/serena.md", // serena: code-tools only (memory via opencode-agent-memory)
-	],
-	"agent": {
-		"conductor": {
-			"description": "Primary orchestrator. Routes every task to the matching specialist subagent. CANNOT write or edit files directly — all writes go through writer (docs) or coder (code).",
-			"mode": "primary",
-			"model": "{env:OPENCODE_MODEL_PRIMARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/conductor.txt",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"tools": {
-				"*": true,
-				"write": false,
-				"edit": false,
-			},
-			"permission": {
-				"read": "allow",
-				"edit": "deny",
-				"write": "deny",
-				"bash": "allow",
-				// OpenCode task permissions are last-match-wins; direct Task smoke tests verify these allows override the wildcard deny.
-				// Keep this allowlist in sync when adding or renaming subagents.
-				"task": {
-					"*": "deny",
-					"conductor": "deny",
-					"planner": "allow",
-					"architect": "allow",
-					"ask": "allow",
-					"coder": "allow",
-					"writer": "allow",
-					"security-reviewer": "allow",
-					"tdd-guide": "allow",
-					"build-error-resolver": "allow",
-					"e2e-runner": "allow",
-					"database-reviewer": "allow",
-					"debt-cleanup": "allow",
-					"doc-updater": "allow",
-					"researcher": "allow",
-					"reviewer": "allow",
-					"git-specialist": "allow",
-				},
-			},
-		},
-		"planner": {
-			"description": "MUST delegate for complex feature planning, implementation plans, large refactors, or unclear execution order. Produces plans only.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-			"tools": {
-				"read": true,
-				"bash": true,
-				"write": false,
-				"edit": false,
-				"task": true,
-			},
-			"permission": {
-				"task": {
-					"*": "deny",
-					"writer": "allow",
-				},
-			},
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/planner.txt",
-		},
-		"architect": {
-			"description": "MUST delegate for architecture, system design, scalability, cross-module boundaries, or high-impact technical decisions.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/architect.txt",
-			"tools": {
-				"read": true,
-				"bash": true,
-				"write": false,
-				"edit": false,
-			},
-		},
-		"coder": {
-			"description": "MUST delegate for any non-test implementation work: writing new code, applying spec, scaffolding modules, porting code, implementing fixes. Pure implementation only — caller owns planning, architecture, and review.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/coder.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"writer": {
-			"description": "MUST delegate for writing or editing non-code text artifacts: documentation, README, markdown, HTML reports, release notes, ADRs, prose, change logs. Forbidden from touching source code files.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/writer.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"security-reviewer": {
-			"description": "MUST delegate for auth, user input, API endpoints, secrets, payments, PII, or sensitive data. Read-only — reports vulnerabilities; orchestrator dispatches fixes to coder.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/security-reviewer.txt",
-			"tools": {
-				"read": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-				"write": false,
-				"edit": false,
-			},
-		},
-		"tdd-guide": {
-			"description": "MUST delegate for new features, bug fixes, or refactors that need tests. Enforces RED-GREEN-REFACTOR and 80%+ coverage. Writes test files only; delegates implementation to coder.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/tdd-guide.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-				"task": true,
-			},
-			"permission": {
-				"task": {
-					"*": "deny",
-					"coder": "allow",
-				},
-			},
-		},
-		"build-error-resolver": {
-			"description": "MUST delegate when build, typecheck, lint, or TypeScript errors occur. Fixes only those errors with minimal diffs.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/build-error-resolver.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"e2e-runner": {
-			"description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/e2e-runner.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"doc-updater": {
-			"description": "MUST delegate for documentation, README updates, architecture notes, and codemaps. Keeps docs aligned with code changes.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/doc-updater.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"database-reviewer": {
-			"description": "MUST delegate for PostgreSQL, SQL, Supabase, RLS, migrations, schema design, query performance, or DB security.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/database-reviewer.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"debt-cleanup": {
-			"description": "Fixes technical debt from completed tasks — dead code, stale exports, config drift, untracked files, duplicates.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/skills/debt-cleanup/SKILL.md",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-			},
-		},
-		"git-specialist": {
-			"description": "MUST delegate for branch names, commits, staging, pushes, pull request creation/status, and git hygiene. Performs git-only work safely.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/git-specialist.txt",
-			"tools": {
-				"bash": true,
-				"read": true,
-				"write": false,
-				"edit": false,
-				"grep": false,
-				"glob": false,
-			},
-		},
-		"researcher": {
-			"description": "MUST delegate for research, investigate topics, compare technologies, multi-source analysis. Read-only for codebase; writes comparison artifacts to .opencode/thoughts/comparisons/.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/researcher.txt",
-			"tools": {
-				"read": true,
-				"write": true,
-				"edit": false,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-				"webfetch": true,
-				"websearch": true,
-			},
-		},
-		"reviewer": {
-			"description": "MUST delegate for code review, PR review, pre-merge review. Reviews diffs for bugs, security, quality, tests. Read-only — findings only; fixes go to coder.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/reviewer.txt",
-			"tools": {
-				"read": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-				"write": false,
-				"edit": false,
-			},
-		},
-		"ask": {
-			"description": "General-purpose Q&A agent. Answers questions about the editor, project, technologies (Context7), research topics, or plan improvements. Read-only — delegates file writes to writer/researcher.",
-			"mode": "subagent",
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
-			"reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
-			"prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/ask.txt",
-			"tools": {
-				"read": true,
-				"bash": true,
-				"grep": true,
-				"glob": true,
-				"webfetch": true,
-				"websearch": true,
-				"write": false,
-				"edit": false,
-				"task": true,
-			},
-			"permission": {
-				"task": {
-					"*": "deny",
-					"researcher": "allow",
-					"planner": "allow",
-					"writer": "allow",
-				},
-			},
-		},
-		"title": {
-			"model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
-			"maxTokens": 80,
-			"description": "Auto-generate session titles from first user message (enabled by default)",
-		},
-		// Disable built-in primary agents — conductor is the only primary entry point.
-		"build": {
-			"disable": true,
-		},
-		"plan": {
-			"disable": true,
-		},
-	},
-	"command": {
-		"git": {
-			"description": "Handle git operations with enforced branch and commit conventions",
-			"template": "{file:commands/git.md}\n\n$ARGUMENTS",
-			"agent": "git-specialist",
-			"subtask": true,
-		},
-		"git-workflow": {
-			"description": "Full git workflow with PR stop-gate. /git-workflow bcps <branch>, bscps <branch>, or cps (default)",
-			"template": "{file:commands/git-workflow.md}\n\n$ARGUMENTS",
-			"agent": "git-specialist",
-			"subtask": true,
-		},
-		"improve": {
-			"description": "Clean up technical debt from any code area — alias for /fix",
-			"template": "{file:commands/fix.md}\n\n$ARGUMENTS",
-			"agent": "debt-cleanup",
-			"subtask": true,
-		},
-		"plan": {
-			"description": "Create a detailed implementation plan for complex features",
-			"template": "{file:commands/plan.md}\n\n$ARGUMENTS",
-			"agent": "planner",
-			"subtask": true,
-		},
-		"small-plan": {
-			"description": "Quick plan — alias for /plan --small. Usage: /small-plan <what to plan>",
-			"template": "{file:commands/plan.md}\n\n--small $ARGUMENTS",
-			"agent": "planner",
-			"subtask": true,
-		},
-		"tdd": {
-			"description": "Enforce TDD workflow with 80%+ test coverage",
-			"template": "{file:commands/tdd.md}\n\n$ARGUMENTS",
-			"agent": "tdd-guide",
-			"subtask": true,
-		},
-		"security": {
-			"description": "Run comprehensive security review",
-			"template": "{file:commands/security.md}\n\n$ARGUMENTS",
-			"agent": "security-reviewer",
-			"subtask": true,
-		},
-		"build-fix": {
-			"description": "Fix build and TypeScript errors with minimal changes",
-			"template": "{file:commands/build-fix.md}\n\n$ARGUMENTS",
-			"agent": "build-error-resolver",
-			"subtask": true,
-		},
-		"e2e": {
-			"description": "Generate and run E2E tests with Playwright",
-			"template": "{file:commands/e2e.md}\n\n$ARGUMENTS",
-			"agent": "e2e-runner",
-			"subtask": true,
-		},
-		"fix": {
-			"description": "Clean up technical debt from the last task — dead code, broken exports, config drift, stale refs, untracked files",
-			"template": "{file:commands/fix.md}\n\n$ARGUMENTS",
-			"agent": "debt-cleanup",
-			"subtask": true,
-		},
-		"update-docs": {
-			"description": "Update documentation",
-			"template": "{file:commands/update-docs.md}\n\n$ARGUMENTS",
-			"agent": "doc-updater",
-			"subtask": true,
-		},
-		"update-codemaps": {
-			"description": "Update codemaps",
-			"template": "{file:commands/update-codemaps.md}\n\n$ARGUMENTS",
-			"agent": "doc-updater",
-			"subtask": true,
-		},
-		"research": {
-			"description": "Multi-mode research: compare options or deep-dive single topics. Uses --compare/--deep flags.",
-			"template": "{file:commands/research.md}\n\n$ARGUMENTS",
-			"agent": "researcher",
-			"subtask": true,
-		},
-		"ask": {
-			"description": "Ask questions about the project, editor, technologies, or improve plans",
-			"template": "{file:commands/ask.md}\n\n$ARGUMENTS",
-			"agent": "ask",
-			"subtask": true,
-		},
-		"review": {
-			"description": "Review code, PRs, docs, or DB schemas — /review [target] [--docs|--db] [--level] [--no-tools]",
-			"template": "{file:commands/review.md}\n\n$ARGUMENTS",
-			"agent": "reviewer",
-			"subtask": true,
-		},
-		"skill-plus": {
-			"description": "Create, improve, or generate skills from history — /skill-plus --create|--from-history|--improve",
-			"template": "{file:commands/skill-plus.md}\n\n$ARGUMENTS",
-		},
-		"test-coverage": {
-			"description": "Analyze test coverage",
-			"template": "{file:commands/test-coverage.md}\n\n$ARGUMENTS",
-			"agent": "tdd-guide",
-			"subtask": true,
-		},
-		"memory-status": {
-			"description": "Summarize active memory blocks, loaded skills, and MCP server status",
-			"template": "{file:commands/memory-status.md}\n\n$ARGUMENTS",
-		},
-		"discuss": {
-			"description": "Collaborative decision-making with source citations and tradeoff analysis",
-			"template": "{file:commands/discuss.md}\n\n$ARGUMENTS",
-		},
-	},
-	"mcp": {
-		"serena": {
-			"type": "local",
-			"command": ["serena", "start-mcp-server", "--context=ide"],
-			"enabled": true,
-		},
-		"context7": {
-			"type": "local",
-			"command": ["bunx", "-y", "@upstash/context7-mcp@latest"],
-			"enabled": true,
-		},
-		"Figma": {
-			"type": "remote",
-			"url": "https://mcp.figma.com/mcp",
-			"headers": {},
-			"enabled": false,
-		},
-	},
-	"plugin": [
-		"@tarquinen/opencode-dcp@latest",
-		"opencode-skill-creator",
-		"opencode-agent-memory",
-	],
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
+  "default_agent": "conductor",
+  "instructions": [
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/subagent-routing.md",
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/verification-gate.md",
+    "{env:OPENCODE_SRC_ROUTE}/opencode/instructions/serena.md"
+  ],
+  "agent": {
+    "architect": {
+      "description": "MUST delegate for architecture, system design, scalability, cross-module boundaries, or high-impact technical decisions.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/architect.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "read": true,
+        "write": false
+      }
+    },
+    "ask": {
+      "description": "General-purpose Q&A agent. Answers questions about the editor, project, technologies (Context7), research topics, or plan improvements. Read-only — delegates file writes to writer/researcher.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
+      "permission": {
+        "task": {
+          "*": "deny",
+          "planner": "allow",
+          "researcher": "allow",
+          "writer": "allow"
+        }
+      },
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/ask.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "task": true,
+        "webfetch": true,
+        "websearch": true,
+        "write": false
+      }
+    },
+    "build": {
+      "disable": true
+    },
+    "build-error-resolver": {
+      "description": "MUST delegate when build, typecheck, lint, or TypeScript errors occur. Fixes only those errors with minimal diffs.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/build-error-resolver.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "coder": {
+      "description": "MUST delegate for any non-test implementation work: writing new code, applying spec, scaffolding modules, porting code, implementing fixes. Pure implementation only — caller owns planning, architecture, and review.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/coder.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "conductor": {
+      "description": "Primary orchestrator. Routes every task to the matching specialist subagent. CANNOT write or edit files directly — all writes go through writer (docs) or coder (code).",
+      "mode": "primary",
+      "model": "{env:OPENCODE_MODEL_PRIMARY}",
+      "permission": {
+        "bash": "allow",
+        "edit": "deny",
+        "read": "allow",
+        "task": {
+          "*": "deny",
+          "architect": "allow",
+          "ask": "allow",
+          "build-error-resolver": "allow",
+          "coder": "allow",
+          "conductor": "deny",
+          "database-reviewer": "allow",
+          "debt-cleanup": "allow",
+          "doc-updater": "allow",
+          "e2e-runner": "allow",
+          "git-specialist": "allow",
+          "planner": "allow",
+          "researcher": "allow",
+          "reviewer": "allow",
+          "security-reviewer": "allow",
+          "tdd-guide": "allow",
+          "writer": "allow"
+        },
+        "write": "deny"
+      },
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/conductor.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "*": true,
+        "edit": false,
+        "write": false
+      }
+    },
+    "database-reviewer": {
+      "description": "MUST delegate for PostgreSQL, SQL, Supabase, RLS, migrations, schema design, query performance, or DB security.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/database-reviewer.txt",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "debt-cleanup": {
+      "description": "Fixes technical debt from completed tasks — dead code, stale exports, config drift, untracked files, duplicates.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/skills/debt-cleanup/SKILL.md",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "doc-updater": {
+      "description": "MUST delegate for documentation, README updates, architecture notes, and codemaps. Keeps docs aligned with code changes.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/doc-updater.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "e2e-runner": {
+      "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/e2e-runner.txt",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "git-specialist": {
+      "description": "MUST delegate for branch names, commits, staging, pushes, pull request creation/status, and git hygiene. Performs git-only work safely.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/git-specialist.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "glob": false,
+        "grep": false,
+        "read": true,
+        "write": false
+      }
+    },
+    "plan": {
+      "disable": true
+    },
+    "planner": {
+      "description": "MUST delegate for complex feature planning, implementation plans, large refactors, or unclear execution order. Produces plans only.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
+      "permission": {
+        "task": {
+          "*": "deny",
+          "writer": "allow"
+        }
+      },
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/planner.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "read": true,
+        "task": true,
+        "write": false
+      }
+    },
+    "researcher": {
+      "description": "MUST delegate for research, investigate topics, compare technologies, multi-source analysis. Read-only for codebase; writes comparison artifacts to .opencode/thoughts/comparisons/.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/researcher.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "webfetch": true,
+        "websearch": true,
+        "write": true
+      }
+    },
+    "reviewer": {
+      "description": "MUST delegate for code review, PR review, pre-merge review. Reviews diffs for bugs, security, quality, tests. Read-only — findings only; fixes go to coder.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/reviewer.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": false
+      }
+    },
+    "security-reviewer": {
+      "description": "MUST delegate for auth, user input, API endpoints, secrets, payments, PII, or sensitive data. Read-only — reports vulnerabilities; orchestrator dispatches fixes to coder.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/security-reviewer.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": false,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": false
+      }
+    },
+    "tdd-guide": {
+      "description": "MUST delegate for new features, bug fixes, or refactors that need tests. Enforces RED-GREEN-REFACTOR and 80%+ coverage. Writes test files only; delegates implementation to coder.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "permission": {
+        "task": {
+          "*": "deny",
+          "coder": "allow"
+        }
+      },
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/tdd-guide.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "task": true,
+        "write": true
+      }
+    },
+    "title": {
+      "description": "Auto-generate session titles from first user message (enabled by default)",
+      "maxTokens": 80,
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_MINI}"
+    },
+    "writer": {
+      "description": "MUST delegate for writing or editing non-code text artifacts: documentation, README, markdown, HTML reports, release notes, ADRs, prose, change logs. Forbidden from touching source code files.",
+      "mode": "subagent",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/writer.txt",
+      "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    }
+  },
+  "command": {
+    "ask": {
+      "agent": "ask",
+      "description": "Ask questions about the project, editor, technologies, or improve plans",
+      "subtask": true,
+      "template": "{file:commands/ask.md}\n\n$ARGUMENTS"
+    },
+    "build-fix": {
+      "agent": "build-error-resolver",
+      "description": "Fix build and TypeScript errors with minimal changes",
+      "subtask": true,
+      "template": "{file:commands/build-fix.md}\n\n$ARGUMENTS"
+    },
+    "discuss": {
+      "description": "Collaborative decision-making with source citations and tradeoff analysis",
+      "template": "{file:commands/discuss.md}\n\n$ARGUMENTS"
+    },
+    "e2e": {
+      "agent": "e2e-runner",
+      "description": "Generate and run E2E tests with Playwright",
+      "subtask": true,
+      "template": "{file:commands/e2e.md}\n\n$ARGUMENTS"
+    },
+    "fix": {
+      "agent": "debt-cleanup",
+      "description": "Clean up technical debt from the last task — dead code, broken exports, config drift, stale refs, untracked files",
+      "subtask": true,
+      "template": "{file:commands/fix.md}\n\n$ARGUMENTS"
+    },
+    "git": {
+      "agent": "git-specialist",
+      "description": "Handle git operations with enforced branch and commit conventions",
+      "subtask": true,
+      "template": "{file:commands/git.md}\n\n$ARGUMENTS"
+    },
+    "git-workflow": {
+      "agent": "git-specialist",
+      "description": "Full git workflow with PR stop-gate. /git-workflow bcps <branch>, bscps <branch>, or cps (default)",
+      "subtask": true,
+      "template": "{file:commands/git-workflow.md}\n\n$ARGUMENTS"
+    },
+    "improve": {
+      "agent": "debt-cleanup",
+      "description": "Clean up technical debt from any code area — alias for /fix",
+      "subtask": true,
+      "template": "{file:commands/fix.md}\n\n$ARGUMENTS"
+    },
+    "memory-status": {
+      "description": "Summarize active memory blocks, loaded skills, and MCP server status",
+      "template": "{file:commands/memory-status.md}\n\n$ARGUMENTS"
+    },
+    "plan": {
+      "agent": "planner",
+      "description": "Create a detailed implementation plan for complex features",
+      "subtask": true,
+      "template": "{file:commands/plan.md}\n\n$ARGUMENTS"
+    },
+    "research": {
+      "agent": "researcher",
+      "description": "Multi-mode research: compare options or deep-dive single topics. Uses --compare/--deep flags.",
+      "subtask": true,
+      "template": "{file:commands/research.md}\n\n$ARGUMENTS"
+    },
+    "review": {
+      "agent": "reviewer",
+      "description": "Review code, PRs, docs, or DB schemas — /review [target] [--docs|--db] [--level] [--no-tools]",
+      "subtask": true,
+      "template": "{file:commands/review.md}\n\n$ARGUMENTS"
+    },
+    "security": {
+      "agent": "security-reviewer",
+      "description": "Run comprehensive security review",
+      "subtask": true,
+      "template": "{file:commands/security.md}\n\n$ARGUMENTS"
+    },
+    "skill-plus": {
+      "description": "Create, improve, or generate skills from history — /skill-plus --create|--from-history|--improve",
+      "template": "{file:commands/skill-plus.md}\n\n$ARGUMENTS"
+    },
+    "small-plan": {
+      "agent": "planner",
+      "description": "Quick plan — alias for /plan --small. Usage: /small-plan <what to plan>",
+      "subtask": true,
+      "template": "{file:commands/plan.md}\n\n--small $ARGUMENTS"
+    },
+    "tdd": {
+      "agent": "tdd-guide",
+      "description": "Enforce TDD workflow with 80%+ test coverage",
+      "subtask": true,
+      "template": "{file:commands/tdd.md}\n\n$ARGUMENTS"
+    },
+    "test-coverage": {
+      "agent": "tdd-guide",
+      "description": "Analyze test coverage",
+      "subtask": true,
+      "template": "{file:commands/test-coverage.md}\n\n$ARGUMENTS"
+    },
+    "update-codemaps": {
+      "agent": "doc-updater",
+      "description": "Update codemaps",
+      "subtask": true,
+      "template": "{file:commands/update-codemaps.md}\n\n$ARGUMENTS"
+    },
+    "update-docs": {
+      "agent": "doc-updater",
+      "description": "Update documentation",
+      "subtask": true,
+      "template": "{file:commands/update-docs.md}\n\n$ARGUMENTS"
+    }
+  },
+
+  "mcp": {
+    "Figma": {
+      "enabled": false,
+      "headers": {},
+      "type": "remote",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "context7": {
+      "command": [
+        "bunx",
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "serena": {
+      "command": [
+        "serena",
+        "start-mcp-server",
+        "--context=ide"
+      ],
+      "enabled": true,
+      "type": "local"
+    }
+  },
+  "plugin": [
+    "opencode-skill-creator",
+    "opencode-agent-memory"
+  ],
+  "provider": {
+    "llama.cpp (local)": {
+      "models": {
+        "qwen2.5-coder-3b": {
+          "limit": {
+            "context": 16384,
+            "output": 14000
+          },
+          "name": "Qwen2.5-Coder-3B"
+        },
+        "qwen2.5-coder-7.6B-Q4_K_M": {
+          "name": "Qwen2.5-Coder-7.6B-Q4_K_M"
+        },
+        "qwen3-ab-3b": {
+          "name": "Qwen3-AB-3B"
+        }
+      },
+      "options": {
+      	"apiKey": "{env:LLAMA_CPP_API_KEY}",
+        "baseURL": "http://127.0.0.1:11435/v1"
+      }
+    },
+    "llamastash": {
+      "models": {
+        "Qwen_Qwen3-4B-Thinking-2507-Q3_K_M": {
+          "name": "Qwen_Qwen3-4B-Thinking-2507-Q3_K_M"
+        }
+      },
+      "name": "LlamaStash",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "apiKey": "{env:LLAMASTASH_API_KEY}",
+        "baseURL": "http://127.0.0.1:11435/v1"
+      }
+    }
+  }
 }

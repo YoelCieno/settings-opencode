@@ -277,7 +277,7 @@ Six concerns wired in one file:
 3. `agent`: sub-agent definitions (model + reasoning effort + prompt + tool allowlist). All models are env-driven (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`) — see [Public install § 4](#public-install).
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
 5. `mcp`: serena, context7, Figma (disabled).
-6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`, `opencode-agent-memory`).
+6. `plugin`: external marketplace plugins (`opencode-agent-memory`).
 
 `dcp.jsonc` configures the Dynamic Context Pruning plugin. `ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
@@ -386,7 +386,6 @@ All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 - `plugins/startup-bootstrap.ts` — runs `serena_activate_project` on the first tool call of a session.
 - `plugins/kdco-primitives/` — shared utilities (mutex, shell, terminal-detect, project-id resolver, types).
 - `opencode-agent-memory` *(external, declared in `opencode.jsonc › plugin`)* — Letta-style persistent memory blocks (`memory_list`, `memory_set`, `memory_replace`) + optional journal. Data in `~/.config/opencode/memory/*.md` (global) + `.opencode/memory/*.md` (project).
-- `@tarquinen/opencode-dcp@latest` *(external, declared in `opencode.jsonc › plugin`)* — Dynamic Context Pruning. Trims stale tool results and large files from the live context window so long sessions don't blow past the model's limit. Configured via `dcp.jsonc` at the repo root.
 
 ### Custom tools (`tools/`)
 
