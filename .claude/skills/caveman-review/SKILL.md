@@ -1,1 +1,0 @@
-../../skills/caveman-review/SKILL.md

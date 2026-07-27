@@ -1,1 +1,0 @@
-../../skills/nodejs-clean-architecture/SKILL.md

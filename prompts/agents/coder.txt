@@ -111,7 +111,7 @@ Return to the caller exactly this skeleton:
 - <command + first lines of error> — confirmed present on base via `git stash && <cmd>` or equivalent.
 
 ## Notes
-- Assumptions, edge cases not handled, follow-ups for code-reviewer.
+- Assumptions, edge cases not handled, follow-ups for reviewer.
 ```
 
 If you cannot paste real output for a step, report a blocker. Reporting "done" without evidence triggers an automatic rejection.

@@ -1,1 +1,0 @@
-../../skills/compress/SKILL.md

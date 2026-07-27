@@ -1,1 +1,0 @@
-../../skills/caveman-commit/SKILL.md

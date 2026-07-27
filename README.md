@@ -38,13 +38,13 @@ This project reorients the upstream config from a .NET + frontend shop toward a 
 
 ## What's inside
 
-A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, code/security/database review, TDD, build-fix, e2e, doc, refactor, git, ask, researcher, merge-cop), wired together by:
+A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, reviewer, security-reviewer, database-reviewer, tdd-guide, build-error-resolver, e2e-runner, doc-updater, debt-cleaner, git-specialist, ask, researcher), wired together by:
 
 - **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer, plus a `tool.execute.before` hook that blocks bash redirects to source files (`> file.ts`, `tee`, `sed -i`, heredocs, `python -c open().write`). The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
-- **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/code-review`, …).
+- **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/review`, `/fix`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
-- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
+- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), auto-compact, caveman ultra mode, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
 - **OpenCode-only** — no Claude Code mirror. The configuration is self-contained.
 
@@ -292,14 +292,14 @@ Defined in `opencode.jsonc` under `agent`:
 | `architect`            | subagent | System design / scalability decisions. Read+bash only.                              |
 | `coder`                | subagent | Pure non-test implementation. Mandatory build+lint+standards self-check before reporting done. Socratic ambiguity gate. |
 | `writer`               | subagent | Writes docs/markdown/HTML/text artifacts. Forbidden from touching source code — refuses out-of-scope files back to the conductor. |
-| `code-reviewer`        | subagent | Quality review over diffs and conventions. Read-only — findings only; fixes go to `coder`. |
+| `reviewer`             | subagent | Code review + pre-merge review (tsc + lint). Read-only — findings only; fixes go to `coder`. |
 | `security-reviewer`    | subagent | OWASP/secrets/deps review. Read-only — reports vulnerabilities; remediation routed to `coder`. |
-| `merge-cop`            | subagent | Pre-merge code review of HEAD vs target branch. Read-only — runs tsc + lint, emits tiered report (junior/senior). |
+| `debt-cleaner`         | subagent | Dead-code removal, tech debt cleanup, duplication consolidation. |
 | `tdd-guide`            | subagent | RED -> GREEN -> REFACTOR + 80% coverage. Writes tests; delegates GREEN impl to `coder` via scoped Task perm. |
 | `build-error-resolver` | subagent | Build/TS error fixes with minimal diffs.                                            |
 | `e2e-runner`           | subagent | Playwright E2E tests.                                                               |
 | `doc-updater`          | subagent | Generated docs + codemaps.                                                          |
-| `refactor-cleaner`     | subagent | Dead-code removal + consolidation.                                                  |
+
 | `database-reviewer`    | subagent | PostgreSQL / Supabase schema, perf, security.                                       |
 | `researcher`           | subagent | Multi-source research + comparison analysis. Read-only; writes to `.opencode/thoughts/comparisons/`. |
 | `ask`                  | subagent | General-purpose Q&A. Investigates codebase, docs, technologies via Context7. Delegates deep research to `researcher` (asks first). Read-only. |
@@ -331,22 +331,17 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 | `/git-workflow`          | git-specialist        | Full git workflow: create branch → commit → push → PR. Subcommands: bcps, bscps, cps, mrsq. |
 | `/plan`                  | planner               | Implementation plan.                             |
 | `/tdd`                   | tdd-guide             | TDD cycle with coverage.                         |
-| `/code-review`           | code-reviewer         | Quality review.                                  |
+| `/review`                | reviewer              | Code review or pre-merge review (with target branch). |
 | `/security`              | security-reviewer     | Security audit.                                  |
 | `/build-fix`             | build-error-resolver  | Build/TS error resolution.                       |
 | `/e2e`                   | e2e-runner            | E2E test generation/run.                         |
-| `/refactor-clean`        | refactor-cleaner      | Dead-code cleanup.                               |
-| `/cop-review`            | merge-cop             | Pre-merge review of HEAD vs target branch.       |
+| `/fix`                   | debt-cleaner          | Dead-code cleanup, tech debt, duplicates.        |
 | `/update-docs`           | doc-updater           | Doc updates.                                     |
 | `/update-codemaps`       | doc-updater           | Generates `docs/CODEMAPS/`.                      |
 | `/test-coverage`         | tdd-guide             | Coverage analysis.                               |
 | `/research`              | researcher            | Structured multi-source research + comparison.   |
 | `/ask`                   | ask                   | General Q&A about project, tech, plans.          |
-| `/skill-from-history`    | (primary)             | Generate a skill from git history analysis.      |
-| `/skill-from-instinct`   | (primary)             | Cluster instincts into skills.                   |
-| `/instinct-status`       | (primary)             | View learned instincts with confidence.          |
-| `/instinct-import`       | (primary)             | Import instincts from file/URL.                  |
-| `/instinct-export`       | (primary)             | Export instincts for sharing.                    |
+| `/skill-plus`            | (primary)             | Create/improve skills via skill-creator plugin.  |
 
 ### Skills
 

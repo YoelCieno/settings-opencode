@@ -1,1 +1,0 @@
-../../skills/coding-standards/SKILL.md

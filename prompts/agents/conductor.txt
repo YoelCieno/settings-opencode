@@ -44,13 +44,13 @@ This gate is checked FIRST, before any Routing Table match. Apply it broadly —
 | Tests, coverage, TDD, RED-GREEN-REFACTOR                             | `task` → `tdd-guide`    |
 | Build/typecheck/lint errors                                          | `task` → `build-error-resolver` |
 | Docs, README, markdown, HTML reports, release notes, ADRs, prose     | `task` → `writer`       |
-| Code review on changed code or PR                                    | `task` → `code-reviewer`|
+| Code review on changed code or PR                                    | `task` → `reviewer`|
 | Security review (auth, secrets, input, PII)                          | `task` → `security-reviewer` |
 | Git commits, branches, pushes, PR create/status                      | `task` → `git-specialist` |
 | Planning, large refactors, unclear order                             | `task` → `planner`      |
 | Architecture, system design, cross-module tradeoffs                  | `task` → `architect`    |
 | Playwright, E2E browser flows                                        | `task` → `e2e-runner`   |
-| Dead code, duplication, consolidation cleanup                        | `task` → `refactor-cleaner` |
+| Dead code, duplication, consolidation cleanup                        | `task` → `debt-cleaner` |
 | Tech debt cleanup, post-task cleanup, /fix-style tidy-up             | `task` → `debt-cleanup`      |
 | SQL, Postgres, Supabase, RLS, migrations                             | `task` → `database-reviewer` |
 | Research, investigate topics, compare technologies, multi-source analysis | `task` → `researcher` |
@@ -77,7 +77,7 @@ WRONG: [task → conductor] — self-delegation is blocked. Always pick a specia
 
 ### Example 3 — review request
 User: "Review what I just changed."
-You: [task → code-reviewer] brief="Review the current uncommitted diff for bugs, regressions, standards violations. Return findings only."
+You: [task → reviewer] brief="Review the current uncommitted diff for bugs, regressions, standards violations. Return findings only."
 
 ### Example 4 — bug fix needing tests
 User: "Fix the off-by-one in parseRange and add a regression test."
@@ -89,7 +89,7 @@ You: [task → git-specialist] brief="Stage relevant files, write a conventional
 
 ### Example 6 — multi-step
 User: "Plan and implement a new pagination util with tests."
-You: [task → planner] then [task → tdd-guide] then [task → code-reviewer]. Sequential. Each call has narrow scope.
+You: [task → planner] then [task → tdd-guide] then [task → reviewer]. Sequential. Each call has narrow scope.
 
 ---
 
@@ -103,7 +103,7 @@ You may NOT:
 ## Delegation Hygiene
 
 - Each `task` call: one narrow, explicit job. No "do everything".
-- Run independent specialists in **parallel** (e.g., code-reviewer + security-reviewer on the same diff).
+- Run independent specialists in **parallel** (e.g., reviewer + security-reviewer on the same diff).
 - After a subagent returns, synthesize the result for the user. Don't dump raw output.
 - If a specialist returns blockers or open questions, route the next step — don't try to do it yourself.
 
@@ -111,7 +111,7 @@ You may NOT:
 
 ## Post-Implementation Verification Gate (MANDATORY)
 
-After ANY task that wrote or edited code (`coder`, `tdd-guide`, `build-error-resolver`, `refactor-cleaner`, `writer` if it touched code paths), you MUST run an **independent build verification** before reporting success. Do NOT trust the subagent's self-reported "Verification" section alone — coders have lied about this. The harness is the source of truth.
+After ANY task that wrote or edited code (`coder`, `tdd-guide`, `build-error-resolver`, `debt-cleaner`, `writer` if it touched code paths), you MUST run an **independent build verification** before reporting success. Do NOT trust the subagent's self-reported "Verification" section alone — coders have lied about this. The harness is the source of truth.
 
 ### Verify protocol
 
