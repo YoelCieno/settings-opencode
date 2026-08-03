@@ -350,6 +350,10 @@
       "subtask": true,
       "template": "{file:commands/fix.md}\n\n$ARGUMENTS"
     },
+    "learn": {
+      "description": "Review session or git context to improve settings and memory",
+      "template": "{file:commands/learn.md}\n\n$ARGUMENTS"
+    },
     "memory-status": {
       "description": "Summarize active memory blocks, loaded skills, and MCP server status",
       "template": "{file:commands/memory-status.md}\n\n$ARGUMENTS"

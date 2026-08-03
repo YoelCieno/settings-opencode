@@ -128,4 +128,4 @@ const extended = [...items, newItem];
 - [ ] No silent try/catch — typed errors or tagged unions
 - [ ] Input validated at system boundaries (API, user, file)
 - [ ] Test files use `.spec.ts` (not `.test.ts`)
-- [ ] RED tests confirmed failing before implementation
+- [ ] TDD RED tests confirmed failing before implementation

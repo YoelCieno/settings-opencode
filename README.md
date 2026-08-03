@@ -243,12 +243,12 @@ You can also pass extra instructions: `/init Pay special attention to TypeScript
 
 ### Repository layout
 
-- Configs: `opencode.jsonc`, `dcp.jsonc` (dynamic context pruning), `ocx.jsonc` (OCX registries), `tui.json` (TUI theme).
+- Configs: `opencode.jsonc`, `ocx.jsonc` (OCX registries), `tui.json` (TUI theme).
 - Profiles: `profiles/<name>/` (per-profile overrides + `AGENTS.md`, run with `ocx opencode -p <name>`).
 - Skills: `skills/*/SKILL.md` (plus auxiliary docs).
 - Agent prompts: `prompts/agents/*.txt`.
-- Slash commands: `commands/*.md` — includes `ask`, `research`, `git-workflow`, `cop-review`, `skill-from-*` variants.
-- OpenCode plugins: `plugins/*.{ts,js}` + `plugins/kdco-primitives/`, `plugins/worktree/`.
+- Slash commands: `commands/*.md` — includes `ask`, `research`, `git-workflow`, `review`, `skill-plus` variants.
+- OpenCode plugins: `plugins/*.{ts,js}`.
 - TUI plugins: `tui-plugins/*.tsx`.
 - Custom tools: `tools/*.ts`.
 - Mode notes: `contexts/*.md`.
@@ -279,7 +279,7 @@ Six concerns wired in one file:
 5. `mcp`: serena, context7, Figma (disabled).
 6. `plugin`: external marketplace plugins (`opencode-agent-memory`).
 
-`dcp.jsonc` configures the Dynamic Context Pruning plugin. `ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
+`ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
 ### Agents
 
@@ -377,9 +377,7 @@ All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 - `plugins/notification.js` — macOS notification + sound on `session.idle`.
 - `plugins/caveman-server.ts` + `tui-plugins/caveman.tsx` — injects caveman instructions into the system prompt + TUI sidebar showing active mode.
 - `plugins/figma-mcp-trigger.js` — Figma RAG: reads `figma-rag.md` (or `OPENCODE_FIGMA_RAG_PATHS`) and injects snippets when designs are referenced.
-- `plugins/worktree.ts` (+ `plugins/worktree/`) — creates an isolated git worktree for the session and spawns a terminal (mac/Win/Linux). Inspired by opencode-worktree-session.
 - `plugins/startup-bootstrap.ts` — runs `serena_activate_project` on the first tool call of a session.
-- `plugins/kdco-primitives/` — shared utilities (mutex, shell, terminal-detect, project-id resolver, types).
 - `opencode-agent-memory` *(external, declared in `opencode.jsonc › plugin`)* — Letta-style persistent memory blocks (`memory_list`, `memory_set`, `memory_replace`) + optional journal. Data in `~/.config/opencode/memory/*.md` (global) + `.opencode/memory/*.md` (project).
 
 ### Custom tools (`tools/`)
@@ -403,8 +401,7 @@ Two pipelines coexist (backwards compat):
 Curation:
 
 - `/curate-learned-skills` (Claude Code side) — reviews drafts in `learned/` and promotes the valuable ones into real skills.
-- `/instinct-status` — inspect learned instincts.
-- `/skill-from-instinct` — cluster high-confidence instincts into reusable skills.
+- `/skill-plus --from-history` — extract patterns from git history into reusable skills.
 
 ### How it fits together
 
