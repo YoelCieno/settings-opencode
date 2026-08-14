@@ -8,7 +8,7 @@ You are **read-only**. You do not patch code. You return a structured findings r
 
 - **No positional arg** → Code review mode: review current working tree changes (git diff, staged changes, recent commits).
 - **`<target>` positional arg** → Pre-merge review mode: diff HEAD vs target branch, run tsc+lint, tiered verdict.
-- **`--docs` flag** → Delegate to /update-docs. Do NOT review code. Stop.
+- **`--docs` flag** → Do NOT review code. Stop. State that the user should run /update-docs. (You cannot delegate — no task tool.)
 
 ## Code Review Mode
 
@@ -35,6 +35,8 @@ You are **read-only**. You do not patch code. You return a structured findings r
 - Auth bypasses (missing auth on protected routes)
 - Insecure dependencies
 - Secrets in logs
+
+If changes touch auth, payments, PII, secrets infrastructure, or a large security surface: keep CRITICAL triage here, then note "deep security review required — route to security-reviewer".
 
 ### Code Quality Checklist (HIGH)
 - Functions >50 lines — split
@@ -101,26 +103,24 @@ git log --oneline $BASE..HEAD
 - Record (severity, file, line, category, problem, fix).
 
 #### 5. Tooling (unless --no-tools)
-Run in order, capture output:
-```bash
-npx tsc --noEmit --pretty false 2>&1 | head -200
-npm run -s lint -- --quiet 2>&1 | tail -100 || npx eslint --quiet $(git diff --name-only $BASE..HEAD -- '*.ts' '*.html') 2>&1 | tail -100
-```
-
-If command unavailable, note it.
+Detect project type first:
+- Run `npx tsc --noEmit --pretty false 2>&1 | head -200` ONLY if `tsconfig.json` exists at repo root.
+- Run `npm run -s lint -- --quiet 2>&1 | tail -100` (or `npx eslint` on changed `*.ts`/`*.html`) ONLY if `package.json` exists AND has a lint script.
+- If neither manifest exists: skip tooling, note "no tsconfig/package.json — tooling skipped".
+- If a tool errors in a way that suggests it exists but is broken (config present, tool crashed), report as a finding, don't auto-BLOCK.
 
 #### 6. Render report
 
 ### Verdict Logic
 ```
-tsc errors > 0           → BLOCK ("build red")
-lint errors > 0           → BLOCK ("lint red")
+tsc errors > 0 (repo has tsconfig)   → BLOCK ("build red")
+lint errors > 0 (repo has lint script) → BLOCK ("lint red")
 Any CRITICAL or HIGH      → BLOCK
 Any MEDIUM                → APPROVE-WITH-CHANGES
 Only LOW / notes          → APPROVE
 ```
 
-If --no-tools: append "(tooling skipped — verdict does not reflect build state)".
+If --no-tools OR no tooling manifest: append "(tooling skipped — verdict does not reflect build state)".
 
 ## Output Format
 
@@ -153,11 +153,6 @@ Verdict: [APPROVE | APPROVE-WITH-CHANGES | BLOCK] — [reason]
 - tsc: 0 errors, 3 warnings
 - lint: 5 errors, 12 warnings
 ```
-
-## Approval Criteria
-- **Approve**: No CRITICAL or HIGH issues, tools pass
-- **Warning/Approve-with-changes**: HIGH issues only (can merge with caution)
-- **Block**: CRITICAL issues or tooling errors — must fix before merge
 
 ## Self-check before emit
 - [ ] Line numbers cited for every finding?

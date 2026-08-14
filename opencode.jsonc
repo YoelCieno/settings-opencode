@@ -372,7 +372,7 @@
     },
     "review": {
       "agent": "reviewer",
-      "description": "Review code, PRs, or documentation — /review [target] [--docs] [--level] [--no-tools]",
+      "description": "Review code, PRs, or documentation — /review [target] [--docs] [--no-tools]",
       "subtask": true,
       "template": "{file:commands/review.md}\n\n$ARGUMENTS"
     },
