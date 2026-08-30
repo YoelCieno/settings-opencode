@@ -164,7 +164,7 @@
     "e2e-runner": {
       "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/e2e-runner.txt",
       "tools": {
         "bash": true,
@@ -228,13 +228,19 @@
         "webfetch": true,
         "websearch": true,
         "write": true
-      }
+      },
     },
     "reviewer": {
-      "description": "MUST delegate for code review, PR review, pre-merge review. Reviews diffs for bugs, security, quality, tests. Read-only — findings only; fixes go to coder.",
+      "description": "MUST delegate for code review, PR review, pre-merge review. Reviews diffs for bugs, security, quality, tests. Read-only — findings only; with --code, delegates implementation to coder (TDD RED→GREEN).",
       "mode": "subagent",
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
       "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/reviewer.txt",
+      "permission": {
+        "task": {
+          "*": "deny",
+          "coder": "allow"
+        }
+      },
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
       "tools": {
         "bash": true,
@@ -242,6 +248,7 @@
         "glob": true,
         "grep": true,
         "read": true,
+        "task": true,
         "write": false
       }
     },
@@ -290,7 +297,7 @@
     "writer": {
       "description": "MUST delegate for writing or editing non-code text artifacts: documentation, README, markdown, HTML reports, release notes, ADRs, prose, change logs. Forbidden from touching source code files.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/writer.txt",
       "reasoningEffort": "{env:OPENCODE_REASONING_TERTIARY}",
       "tools": {
@@ -398,6 +405,10 @@
       "subtask": true,
       "template": "{file:commands/tdd.md}\n\n$ARGUMENTS"
     },
+    "tune": {
+      "description": "Tune opencode settings — commands, instructions, or config. --local/--global scope. Invokes customize-opencode skill; delegates writes to coder.",
+      "template": "{file:commands/tune.md}\n\n$ARGUMENTS"
+    },
     "test-coverage": {
       "agent": "tdd-guide",
       "description": "Analyze test coverage",
@@ -446,7 +457,8 @@
   },
   "plugin": [
     "opencode-skill-creator",
-    "opencode-agent-memory"
+    "opencode-agent-memory",
+    "opencode-auto-fallback"
   ],
   "provider": {
     "llama.cpp (local)": {
@@ -481,6 +493,25 @@
       "options": {
         "apiKey": "{env:LLAMASTASH_API_KEY}",
         "baseURL": "http://127.0.0.1:11435/v1"
+      }
+    },
+    "google-ai": {
+      "npm": "@ai-sdk/google",
+      "name": "Google AI Studio (free)",
+      "options": {
+        "apiKey": "{env:GOOGLE_API_KEY}"
+      },
+      "models": {
+        "gemini-2.5-flash": {
+          "name": "Gemini 2.5 Flash (free)",
+          "limit": {
+            "context": 1048576,
+            "output": 65536
+          }
+        },
+        "gemini-2.5-flash-lite": {
+          "name": "Gemini 2.5 Flash Lite (free)"
+        }
       }
     }
   }
