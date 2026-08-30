@@ -35,3 +35,4 @@ skills/learned/learned-*.md
 skills/learned/.continuous-learning-index.json
 opencode-skill-creator-update-check.json
 skills/opencode-skill-creator/*
+opencode-fallback.log

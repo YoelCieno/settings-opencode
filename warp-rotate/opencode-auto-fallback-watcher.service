@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenCode Auto-Fallback WARP IP Rotation Watcher
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/opencode/warp-rotate/opencode-auto-fallback-watcher.sh
+Restart=on-failure
+RestartSec=30
+Environment=PATH=/usr/bin:/usr/local/bin
+
+[Install]
+WantedBy=default.target

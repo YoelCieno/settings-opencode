@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/HyeokjaeLee/opencode-auto-fallback/main/docs/fallback.schema.json",
+  "enabled": true,
+  "autoUpdate": false,
+  "defaultFallback": [
+    "google-ai/gemini-2.5-flash",
+    "opencode/muse-spark-1.2-contributor-free"
+  ],
+  "defaultLargeContextModel": false,
+  "cooldownMs": 60000,
+  "maxRetries": 2,
+  "logging": true
+}
