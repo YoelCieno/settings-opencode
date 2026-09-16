@@ -502,15 +502,15 @@
         "apiKey": "{env:GOOGLE_API_KEY}"
       },
       "models": {
-        "gemini-2.5-flash": {
-          "name": "Gemini 2.5 Flash (free)",
+        "gemini-3.7-flash": {
+          "name": "Gemini 3.7 Flash (free)",
           "limit": {
             "context": 1048576,
             "output": 65536
           }
         },
-        "gemini-2.5-flash-lite": {
-          "name": "Gemini 2.5 Flash Lite (free)"
+        "gemini-3.5-flash-lite": {
+          "name": "Gemini 3.5 Flash Lite (free)"
         }
       }
     }

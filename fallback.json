@@ -3,11 +3,66 @@
   "enabled": true,
   "autoUpdate": false,
   "defaultFallback": [
-    "google-ai/gemini-2.5-flash",
-    "opencode/muse-spark-1.2-contributor-free"
+    "opencode/mimo-v2.5-free",
+    "google-ai/gemini-3.7-flash",
+    "opencode/muse-spark-1.2-contributor-free",
+    "opencode/ling-3.0-flash-fin-free"
   ],
   "defaultLargeContextModel": false,
   "cooldownMs": 60000,
   "maxRetries": 2,
-  "logging": true
+  "logging": true,
+  "agents": {
+    "conductor": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "architect": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "ask": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "build-error-resolver": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "coder": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "database-reviewer": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "debt-cleanup": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "doc-updater": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "e2e-runner": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "git-specialist": {
+      "fallback": ["google-ai/gemini-3.5-flash-lite"]
+    },
+    "planner": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "researcher": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "reviewer": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "security-reviewer": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "tdd-guide": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "writer": {
+      "fallback": ["google-ai/gemini-3.7-flash"]
+    },
+    "title": {
+      "fallback": ["google-ai/gemini-3.5-flash-lite"]
+    }
+  }
 }

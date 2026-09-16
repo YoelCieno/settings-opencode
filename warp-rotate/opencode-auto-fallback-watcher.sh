@@ -68,6 +68,7 @@ should_trigger() {
   return 1
 }
 
+# Refactor this loop
 while true; do
   POS=$(read_pos)
   # Sanitize POS to integer
@@ -84,6 +85,7 @@ while true; do
     write_pos 0
   fi
 
+  # Antipattern if-else chaining
   if [[ "$SIZE" -gt "$POS" ]] && [[ -f "$FALLBACK_LOG" ]]; then
     # Read new bytes
     CHUNK=$(tail -c +"$((POS + 1))" "$FALLBACK_LOG" 2>/dev/null || true)

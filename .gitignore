@@ -6,6 +6,8 @@ node_modules/
 .instinct-digest-state.json
 antigravity-*
 .DS_Store
+opencode-fallback.log
+warp-rotate/auto-fallback-watch*.*
 
 # Python cache
 **/__pycache__/
@@ -28,11 +30,11 @@ opencode.bkup/
 
 # Plugin-installed skill (regenerated on opencode start)
 skills/skill-creator/
+opencode-skill-creator-update-check.json
+skills/opencode-skill-creator/*
 
 # Continuous-learning runtime artifacts (not yet promoted)
 skills/learned/*.draft.md
 skills/learned/learned-*.md
 skills/learned/.continuous-learning-index.json
-opencode-skill-creator-update-check.json
-skills/opencode-skill-creator/*
-opencode-fallback.log
+
