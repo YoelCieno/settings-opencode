@@ -11,7 +11,7 @@
     "architect": {
       "description": "MUST delegate for architecture, system design, scalability, cross-module boundaries, or high-impact technical decisions.",
       "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_PROGRAMMER}",
+      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/architect.txt",
       "reasoningEffort": "{env:OPENCODE_REASONING_PRIMARY}",
       "tools": {
@@ -83,7 +83,7 @@
     "conductor": {
       "description": "Primary orchestrator. Routes every task to the matching specialist subagent. CANNOT write or edit files directly — all writes go through writer (docs) or coder (code).",
       "mode": "primary",
-      "model": "{env:OPENCODE_MODEL_PRIMARY}",
+      "model": "{env:OPENCODE_MODEL_AGENTIC}",
       "permission": {
         "bash": "allow",
         "edit": "deny",
