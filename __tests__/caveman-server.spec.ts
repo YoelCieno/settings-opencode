@@ -3,8 +3,11 @@ import os from "node:os";
 import path from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
 import * as mod from "../plugins/caveman-server.js";
-import { assertV2Plugin, systemText } from "./helpers/v2-shape";
-import { createMockCtx, tick } from "./helpers/mock-ctx";
+import { v2Shape } from "./helpers/v2-shape";
+import { mockCtx } from "./helpers/mock-ctx";
+
+const { assertV2Plugin, systemText } = v2Shape();
+const { createMockCtx, tick } = mockCtx();
 
 const SESSION_ID = "ses-caveman-flag-test";
 

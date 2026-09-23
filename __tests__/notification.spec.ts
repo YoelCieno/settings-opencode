@@ -1,7 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import * as mod from "../plugins/notification.js";
-import { assertV2Plugin } from "./helpers/v2-shape";
-import { afterEvent, createMockCtx, tick } from "./helpers/mock-ctx";
+import { v2Shape } from "./helpers/v2-shape";
+import { mockCtx } from "./helpers/mock-ctx";
+import type { MockCtx } from "./helpers/mock-ctx";
+
+const { assertV2Plugin } = v2Shape();
+const { afterEvent, createMockCtx, tick } = mockCtx();
 
 function startupNames(): Set<string> {
   const exported: unknown = mod.SERENA_STARTUP_TOOL_NAMES;
@@ -27,7 +31,7 @@ describe("notification v2 shape", () => {
 });
 
 describe("notification filtering", () => {
-  function mockWithNotifier(): { m: ReturnType<typeof createMockCtx>; calls: unknown[][] } {
+  function mockWithNotifier(): { m: MockCtx; calls: unknown[][] } {
     const calls: unknown[][] = [];
     const dollar = (...args: unknown[]): Promise<void> => {
       calls.push(args);

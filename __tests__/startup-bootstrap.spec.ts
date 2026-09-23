@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import * as mod from "../plugins/startup-bootstrap.js";
-import { assertV2Plugin, systemText } from "./helpers/v2-shape";
-import { afterEvent, createMockCtx, tick } from "./helpers/mock-ctx";
+import { v2Shape } from "./helpers/v2-shape";
+import { mockCtx } from "./helpers/mock-ctx";
+
+const { assertV2Plugin, systemText } = v2Shape();
+const { afterEvent, createMockCtx, tick } = mockCtx();
 
 const SESSION_ID = "ses-bootstrap-1";
 const DIRECTORY = "/repo/proj";

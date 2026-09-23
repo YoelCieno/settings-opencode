@@ -1,8 +1,11 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as mod from "../plugins/auto-compact.js";
-import { assertV2Plugin, systemText } from "./helpers/v2-shape";
-import { afterEvent, createMockCtx, tick } from "./helpers/mock-ctx";
+import { v2Shape } from "./helpers/v2-shape";
+import { mockCtx } from "./helpers/mock-ctx";
 import type { CompactionHookEvent } from "./helpers/mock-ctx";
+
+const { assertV2Plugin, systemText } = v2Shape();
+const { afterEvent, createMockCtx, tick } = mockCtx();
 
 const SESSION_ID = "ses-autocompact-1";
 

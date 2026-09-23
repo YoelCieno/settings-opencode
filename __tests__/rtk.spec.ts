@@ -3,8 +3,11 @@ import { mkdtempSync, writeFileSync, chmodSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import * as mod from "../plugins/rtk.js";
-import { assertV2Plugin } from "./helpers/v2-shape";
-import { beforeEvent, createMockCtx, tick } from "./helpers/mock-ctx";
+import { v2Shape } from "./helpers/v2-shape";
+import { mockCtx } from "./helpers/mock-ctx";
+
+const { assertV2Plugin } = v2Shape();
+const { beforeEvent, createMockCtx, tick } = mockCtx();
 
 let savedPath: string | undefined;
 let binDir: string;
