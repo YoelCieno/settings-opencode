@@ -1,12 +1,16 @@
 ---
 name: debt-cleanup
 description: >
-  Cleans technical debt from any code area — invoked by /fix or /improve, or when user says "clean up", "fix debt", "improve quality", "technical debt", "tidy up", "clean after", "clean this up", "fix this code", "tidy this file", "improve this module". Scans for 8 debt categories in priority order, fixes, then runs verification gate (test → typecheck → build → lint).
+  Cleans technical debt from any code area — invoked by /fix, or when user says "clean up", "fix debt", "improve quality", "technical debt", "tidy up", "clean after", "clean this up", "fix this code", "tidy this file", "improve this module". Scans for 8 debt categories in priority order, fixes, then runs verification gate (test → typecheck → build → lint).
 ---
 
 # Debt Cleanup Skill
 
 Automatically detect and fix common technical debt in targeted code — no dependency on task order.
+
+## Scope
+
+Security review, bug hunting, PR review are OUT OF SCOPE — route to /review. This skill executes cleanup of the 8 debt categories only.
 
 ## When to Activate
 

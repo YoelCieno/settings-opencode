@@ -33,8 +33,7 @@ skills/skill-creator/
 opencode-skill-creator-update-check.json
 skills/opencode-skill-creator/*
 
-# Continuous-learning runtime artifacts (not yet promoted)
+# /learn output (drafts + promoted learned skills)
 skills/learned/*.draft.md
 skills/learned/learned-*.md
-skills/learned/.continuous-learning-index.json
 

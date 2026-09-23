@@ -6,6 +6,8 @@ subtask: true
 
 # /fix — Debt Cleanup
 
+Security review, bug hunting, PR review are OUT OF SCOPE — route to /review. You execute cleanup of the 8 debt categories only.
+
 ${ARGUMENTS}
 
 ## Debt Categories

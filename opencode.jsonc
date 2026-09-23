@@ -327,12 +327,6 @@
       "description": "Collaborative decision-making with source citations and tradeoff analysis",
       "template": "{file:commands/discuss.md}\n\n$ARGUMENTS",
     },
-    "e2e": {
-      "agent": "e2e-runner",
-      "description": "Generate and run E2E tests with Playwright",
-      "subtask": true,
-      "template": "{file:commands/e2e.md}\n\n$ARGUMENTS",
-    },
     "fix": {
       "agent": "debt-cleanup",
       "description": "Clean up technical debt from the last task — dead code, broken exports, config drift, stale refs, untracked files",
@@ -350,12 +344,6 @@
       "description": "Full git workflow with PR stop-gate. /git-workflow bcps <branch>, bscps <branch>, or cps (default)",
       "subtask": true,
       "template": "{file:commands/git-workflow.md}\n\n$ARGUMENTS",
-    },
-    "improve": {
-      "agent": "debt-cleanup",
-      "description": "Clean up technical debt from any code area — alias for /fix",
-      "subtask": true,
-      "template": "{file:commands/fix.md}\n\n$ARGUMENTS",
     },
     "learn": {
       "description": "Review session or git context to improve settings and memory",
@@ -408,12 +396,6 @@
     "tune": {
       "description": "Tune opencode settings — commands, instructions, or config. --local/--global scope. Invokes customize-opencode skill; delegates writes to coder.",
       "template": "{file:commands/tune.md}\n\n$ARGUMENTS",
-    },
-    "test-coverage": {
-      "agent": "tdd-guide",
-      "description": "Analyze test coverage",
-      "subtask": true,
-      "template": "{file:commands/test-coverage.md}\n\n$ARGUMENTS",
     },
     "update-codemaps": {
       "agent": "doc-updater",
