@@ -1,5 +1,10 @@
 {
-  "$schema": "https://opencode.ai/config.json",
+  // Local patched schema: the published https://opencode.ai/config.json still describes V1
+  // (no `mcp.servers`, no `disabled`) and flags this V2 config with schema "type errors".
+  // JSON schema diagnostics cannot be suppressed with lint comments — patching the schema is
+  // the only in-repo fix. Revert this line + delete schema/opencode.config.json once upstream
+  // ships the V2 shape (see x-source/x-patched in that file).
+  "$schema": "./schema/opencode.config.json",
   "autoupdate": true,
   "default_agent": "conductor",
   "instructions": [
@@ -412,21 +417,21 @@
   },
 
   "mcp": {
-    "Figma": {
-      "enabled": false,
-      "headers": {},
-      "type": "remote",
-      "url": "https://mcp.figma.com/mcp",
-    },
-    "context7": {
-      "command": ["bunx", "-y", "@upstash/context7-mcp@latest"],
-      "enabled": true,
-      "type": "local",
-    },
-    "serena": {
-      "command": ["serena", "start-mcp-server", "--context=ide"],
-      "enabled": true,
-      "type": "local",
+    "servers": {
+      "Figma": {
+        "disabled": true,
+        "headers": {},
+        "type": "remote",
+        "url": "https://mcp.figma.com/mcp",
+      },
+      "context7": {
+        "command": ["{env:CONTEXT7_MCP_BIN}"],
+        "type": "local",
+      },
+      "serena": {
+        "command": ["serena", "start-mcp-server", "--context=ide"],
+        "type": "local",
+      },
     },
   },
   "plugin": [
