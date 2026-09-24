@@ -1,3 +1,7 @@
+---
+description: Summarize active memory blocks, loaded skills, and MCP server status
+---
+
 # /memory-status Command
 
 When user invokes /memory-status, generate structured summary of current agent state.

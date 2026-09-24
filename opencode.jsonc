@@ -354,9 +354,53 @@
       "description": "Review session or git context to improve settings and memory",
       "template": "{file:commands/learn.md}\n\n$ARGUMENTS",
     },
-    "memory-status": {
-      "description": "Summarize active memory blocks, loaded skills, and MCP server status",
-      "template": "{file:commands/memory-status.md}\n\n$ARGUMENTS",
+    "opsx:apply": {
+      "description": "Implement tasks from an OpenSpec change (Experimental)",
+      "template": ".opencode/references/opsx/opsx-apply.md",
+    },
+    "opsx:archive": {
+      "description": "Archive a completed change in the experimental workflow",
+      "template": ".opencode/references/opsx/opsx-archive.md",
+    },
+    "opsx:bulk-archive": {
+      "description": "Archive multiple completed changes at once",
+      "template": ".opencode/references/opsx/opsx-bulk-archive.md",
+    },
+    "opsx:continue": {
+      "description": "Continue working on a change - create the next artifact (Experimental)",
+      "template": ".opencode/references/opsx/opsx-continue.md",
+    },
+    "opsx:explore": {
+      "description": "Enter explore mode - think through ideas, investigate problems, clarify requirements",
+      "template": ".opencode/references/opsx/opsx-explore.md",
+    },
+    "opsx:ff": {
+      "description": "Create a change and generate all artifacts needed for implementation in one go",
+      "template": ".opencode/references/opsx/opsx-ff.md",
+    },
+    "opsx:new": {
+      "description": "Start a new change using the experimental artifact workflow (OPSX)",
+      "template": ".opencode/references/opsx/opsx-new.md",
+    },
+    "opsx:onboard": {
+      "description": "Guided onboarding - walk through a complete OpenSpec workflow cycle with narration",
+      "template": ".opencode/references/opsx/opsx-onboard.md",
+    },
+    "opsx:propose": {
+      "description": "Propose a new change - create it and generate all artifacts in one step",
+      "template": ".opencode/references/opsx/opsx-propose.md",
+    },
+    "opsx:sync": {
+      "description": "Sync delta specs from a change to main specs",
+      "template": ".opencode/references/opsx/opsx-sync.md",
+    },
+    "opsx:update": {
+      "description": "Update a change - revise existing planning artifacts and keep them coherent (Experimental)",
+      "template": ".opencode/references/opsx/opsx-update.md",
+    },
+    "opsx:verify": {
+      "description": "Verify implementation matches change artifacts before archiving",
+      "template": ".opencode/references/opsx/opsx-verify.md",
     },
     "plan": {
       "agent": "planner",
@@ -385,18 +429,6 @@
     "skill-plus": {
       "description": "Create, improve, or generate skills from history — /skill-plus --create|--from-history|--improve",
       "template": "{file:commands/skill-plus.md}\n\n$ARGUMENTS",
-    },
-    "small-plan": {
-      "agent": "planner",
-      "description": "Quick plan — alias for /plan --small. Usage: /small-plan <what to plan>",
-      "subtask": true,
-      "template": "{file:commands/plan.md}\n\n--small $ARGUMENTS",
-    },
-    "tdd": {
-      "agent": "tdd-guide",
-      "description": "Enforce TDD workflow with 80%+ test coverage",
-      "subtask": true,
-      "template": "{file:commands/tdd.md}\n\n$ARGUMENTS",
     },
     "tune": {
       "description": "Tune opencode settings — commands, instructions, or config. --local/--global scope. Invokes customize-opencode skill; delegates writes to coder.",

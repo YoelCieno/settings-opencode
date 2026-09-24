@@ -42,7 +42,7 @@ A hardened primary `conductor` agent backed by **16 specialist sub-agents** (pla
 
 - **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer. The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
-- **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/review`, `/fix`, …).
+- **Slash commands** that force routing to the right specialist (`/plan`, `/security`, `/review`, `/fix`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
 - **OpenCode plugins** — auto-compact, caveman ultra mode, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
@@ -311,7 +311,7 @@ Use these paths depending on how much control you want:
 
 - Plain request: `conductor` consults the routing table and dispatches the matching specialist via Task.
 - `@agent` mention: manually invokes a specific subagent in the conversation.
-- Slash command: forces a subtask with a configured template, e.g. `/plan`, `/tdd`, `/security`.
+- Slash command: forces a subtask with a configured template, e.g. `/plan`, `/security`.
 
 Why this exists: GPT/Claude often infer delegation from short descriptions, but open-source/open-weight models are more literal and tend to inspect or edit first. Permissions + the hook + the front-loaded gate make delegation **mechanically enforced** rather than instruction-dependent.
 
@@ -324,7 +324,6 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 | `/git`                   | git-specialist        | Bounded git ops (subcommands: s/c/ps/scps/b/a/bcl). |
 | `/git-workflow`          | git-specialist        | Full git workflow: create branch → commit → push → PR. Subcommands: bcps, bscps, cps, mrsq. |
 | `/plan`                  | planner               | Implementation plan.                             |
-| `/tdd`                   | tdd-guide             | TDD cycle with coverage.                         |
 | `/review`                | reviewer              | Code review or pre-merge review (with target branch). |
 | `/security`              | security-reviewer     | Security audit.                                  |
 | `/build-fix`             | build-error-resolver  | Build/TS error resolution.                       |
@@ -384,5 +383,5 @@ Reusable OpenCode tools exposed via `tools/index.ts`:
 1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `caveman-server` adds caveman preamble if active.
 2. First user action: `startup-bootstrap` triggers `serena_activate_project`.
 3. Dev: `conductor` executes — it cannot write files; it dispatches Task calls to specialists.
-4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.
+4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/security`, etc. force the same routing explicitly.
 5. Idle: `auto-compact` triggers when the tool-call threshold is reached; `notification` pings macOS.

@@ -1,5 +1,5 @@
 ---
-description: Create, track, and continue implementation plans with subcommands (status, continue). Usage: /plan status, /plan continue &lt;name&gt;, /plan $ARGUMENTS
+description: Create, track, and continue implementation plans with subcommands (status, continue) and --small single-phase mode. Usage: /plan status | /plan continue <name> | /plan --small <what to plan> | /plan <what to plan>
 agent: planner
 subtask: true
 ---
@@ -23,6 +23,49 @@ Check first word of `$ARGUMENTS`:
 3. Load phase file (e.g., `phase-1.md`)
 4. Summarize: goal, completed tasks, remaining tasks
 5. Ask: "Proceed with phase N?"
+
+### `/plan --small`
+
+Single-phase mode. Detect: first word of `$ARGUMENTS` is `--small` → strip it, remainder = topic. Plan that topic (NOT the literal string "--small ...").
+
+Same task flow (restate, risks, step plan, wait for confirmation) but output format = **Implementation Steps** (flat single list) — NO multi-phase `[Phase 1: ...]` structure:
+
+#### Requirements Restatement
+
+[Clear, concise restatement of what will be built]
+
+#### Implementation Steps
+
+- Step 1
+- Step 2
+  ...
+
+#### Dependencies
+
+[List external dependencies, APIs, services needed]
+
+#### Risks
+
+- HIGH: [Critical risks that could block implementation]
+- MEDIUM: [Moderate risks to address]
+- LOW: [Minor concerns]
+
+#### Estimated Complexity
+
+[HIGH/MEDIUM/LOW with time estimates]
+
+#### Persistent Plan Files
+
+When approved, save plan files via `writer` subagent:
+- Task `writer` to create `.opencode/plans/<plan-name>/README.md` only (single-phase plan: phase table with one row `| 1 | <name> | phase-1.md | ❌ PENDING |` per `plans/conventions.md` format — read `.opencode/plans/conventions.md` first for exact phase-table format and follow it). No phase-N.md files.
+
+You lack write/edit — use Task to delegate file creation to `writer`.
+
+Templates at `.opencode/plans/templates/` only. Plans are git-committed for shared context.
+
+**WAITING FOR CONFIRMATION**: Proceed with this plan? (yes/no/modify)
+
+**CRITICAL**: Do NOT write any code until the user explicitly confirms with "yes", "proceed", or similar affirmative response.
 
 ### Default (no subcommand match) — Create new plan
 

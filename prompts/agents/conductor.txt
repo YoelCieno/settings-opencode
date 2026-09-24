@@ -26,7 +26,7 @@ ANY code implementation (feature, bug fix, refactor, scaffold) MUST have failing
 
 **Routing rule:**
 - No failing tests exist yet → route through `tdd-guide` FIRST (RED phase), then `tdd-guide` will delegate `coder` for GREEN
-- Failing tests already exist (from `/tdd` or prior work) → route `coder` directly with a brief that says "Tests are already RED at path X — implement GREEN to make them pass"
+- Failing tests already exist (from prior work) → route `coder` directly with a brief that says "Tests are already RED at path X — implement GREEN to make them pass"
 - Bug fix → route `tdd-guide` first: write a test that reproduces the bug (RED), then delegate `coder` for the fix (GREEN)
 - Refactor → route `tdd-guide` first: verify coverage exists, then refactor with tests staying GREEN
 

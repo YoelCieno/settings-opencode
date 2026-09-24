@@ -5,8 +5,8 @@ Two-phase cleanup + OpenSpec integration for settings-opencode (config repo).
 | Phase | Status | Goal |
 |-------|--------|------|
 | 1. Deep Clean | 🔧 In Progress | Remove dead commands/skills/legacy, strip research comparison + reviewer delegator, scope boundaries, skills-store archive |
-| 2. OSPX Integration | ❌ Pending | Official OpenSpec CLI, EXPANDED profile, project config |
-| 3. Verification | ❌ Pending | JSONC parse, ospx E2E, dangling-ref grep, manual invocation |
+| 2. OSPX Integration | ✅ Done | Official OpenSpec CLI, EXPANDED profile, project config |
+| 3. Verification | 🔧 In Progress | JSONC parse, ospx E2E, dangling-ref grep, manual invocation |
 
 Legend: ✅ Done · 🔧 In Progress · ❌ Pending · ⏸ Blocked
 
