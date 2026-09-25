@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@ai-sdk/google": "^4.0.58",
-    "@ai-sdk/openai": "^3.0.48",
-    "@ai-sdk/openai-compatible": "^2.0.30",
+    "@ai-sdk/google": "^4.0.80",
+    "@ai-sdk/openai": "^3.0.118",
+    "@ai-sdk/openai-compatible": "^2.0.78",
     "@opencode-ai/plugin": "1.4.6",
-    "@opencode/plugin": "^2.0.13",
+    "@opencode/plugin": "^2.0.16",
     "opencode-cursor-auth": "^1.0.16"
   },
   "devDependencies": {
