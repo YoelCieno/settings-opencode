@@ -38,13 +38,13 @@ This project reorients the upstream config from a .NET + frontend shop toward a 
 
 ## What's inside
 
-A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, code/security/database review, TDD, build-fix, e2e, doc, refactor, git, ask, researcher, merge-cop), wired together by:
+A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, reviewer, security-reviewer, database-reviewer, tdd-guide, build-error-resolver, e2e-runner, doc-updater, debt-cleaner, git-specialist, ask, researcher), wired together by:
 
-- **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer, plus a `tool.execute.before` hook that blocks bash redirects to source files (`> file.ts`, `tee`, `sed -i`, heredocs, `python -c open().write`). The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
+- **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer. The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
-- **Slash commands** that force routing to the right specialist (`/plan`, `/tdd`, `/security`, `/code-review`, …).
+- **Slash commands** that force routing to the right specialist (`/plan`, `/security`, `/review`, `/fix`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
-- **OpenCode plugins** — ECC hooks (Prettier + `tsc` on save), continuous-learning v2 (the *homunculus* instinct store), worktree spawner, auto-compact, caveman ultra mode, Figma RAG trigger, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
+- **OpenCode plugins** — auto-compact, caveman ultra mode, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
 - **OpenCode-only** — no Claude Code mirror. The configuration is self-contained.
 
@@ -59,8 +59,6 @@ A hardened primary `conductor` agent backed by **16 specialist sub-agents** (pla
 - [Skills](#skills)
 - [Plugins & hooks](#plugins--hooks)
 - [Custom tools](#custom-tools-tools)
-- [TUI plugins](#tui-plugins)
-- [Continuous learning](#continuous-learning)
 - [How it fits together](#how-it-fits-together)
 
 ---
@@ -196,7 +194,6 @@ You should see:
 
 - The caveman ultra TUI sidebar plugin show up (or be silent if you're not in a caveman session).
 - `instructions/serena.md` ask Serena to activate the project on first user message.
-- The continuous-learning v2 injector preload high-confidence instincts into the system prompt.
 
 Then drop a slash command:
 
@@ -243,13 +240,12 @@ You can also pass extra instructions: `/init Pay special attention to TypeScript
 
 ### Repository layout
 
-- Configs: `opencode.jsonc`, `dcp.jsonc` (dynamic context pruning), `ocx.jsonc` (OCX registries), `tui.json` (TUI theme).
+- Configs: `opencode.jsonc`, `ocx.jsonc` (OCX registries), `tui.json` (TUI theme).
 - Profiles: `profiles/<name>/` (per-profile overrides + `AGENTS.md`, run with `ocx opencode -p <name>`).
 - Skills: `skills/*/SKILL.md` (plus auxiliary docs).
 - Agent prompts: `prompts/agents/*.txt`.
-- Slash commands: `commands/*.md` — includes `ask`, `research`, `git-workflow`, `cop-review`, `skill-from-*` variants.
-- OpenCode plugins: `plugins/*.{ts,js}` + `plugins/kdco-primitives/`, `plugins/worktree/`.
-- TUI plugins: `tui-plugins/*.tsx`.
+- Slash commands: `commands/*.md` — includes `ask`, `research`, `git-workflow`, `review`, `skill-plus` variants.
+- OpenCode plugins: `plugins/*.{ts,js}`.
 - Custom tools: `tools/*.ts`.
 - Mode notes: `contexts/*.md`.
 - Global instructions: `instructions/subagent-routing.md`, `instructions/serena.md`, `instructions/caveman-ultra.md`, `instructions/verification-gate.md`.
@@ -259,7 +255,6 @@ You can also pass extra instructions: `/init Pay special attention to TypeScript
 - Skill lockfile: `skills-lock.json` (pins skill SHAs for reproducibility).
 - Zed rules: `.rules` — mirrors coding standards, verification gate, git conventions for Zed Agent Panel.
 - Git strategy: `GIT-STRATEGY.md` — dev/main squash-merge workflow.
-- `.claude/skills/` — external skill catalog (auto-discovered by opencode)
 - Intentional exclusions (`.gitignore`): `.serena/` local MCP state, `node_modules/`, `.instinct-digest-state.json`, `antigravity-*`, `.DS_Store`, local `.env*` files except `.env.example`.
 
 ### Configuration: `opencode.jsonc`
@@ -277,9 +272,9 @@ Six concerns wired in one file:
 3. `agent`: sub-agent definitions (model + reasoning effort + prompt + tool allowlist). All models are env-driven (`OPENCODE_MODEL_*`, `OPENCODE_REASONING_*`) — see [Public install § 4](#public-install).
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
 5. `mcp`: serena, context7, Figma (disabled).
-6. `plugin`: external marketplace plugins (`@tarquinen/opencode-dcp@latest`, `opencode-agent-memory`).
+6. `plugin`: external marketplace plugins (`opencode-agent-memory`).
 
-`dcp.jsonc` configures the Dynamic Context Pruning plugin. `ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
+`ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
 ### Agents
 
@@ -287,37 +282,36 @@ Defined in `opencode.jsonc` under `agent`:
 
 | Agent                  | Mode     | Role                                                                                |
 | ---------------------- | -------- | ----------------------------------------------------------------------------------- |
-| `conductor`            | primary  | Orchestrator. `write` + `edit` **denied** at the permission layer. Routes every change to a specialist via Task. Bash redirects to source files blocked by the ECC pre-tool hook. |
+| `conductor`            | primary  | Orchestrator. `write` + `edit` **denied** at the permission layer. Routes every change to a specialist via Task. |
 | `planner`              | subagent | Plan + risks before large changes. Read+bash, no edit.                              |
 | `architect`            | subagent | System design / scalability decisions. Read+bash only.                              |
 | `coder`                | subagent | Pure non-test implementation. Mandatory build+lint+standards self-check before reporting done. Socratic ambiguity gate. |
 | `writer`               | subagent | Writes docs/markdown/HTML/text artifacts. Forbidden from touching source code — refuses out-of-scope files back to the conductor. |
-| `code-reviewer`        | subagent | Quality review over diffs and conventions. Read-only — findings only; fixes go to `coder`. |
+| `reviewer`             | subagent | Code review + pre-merge review (tsc + lint). Read-only — findings only; fixes go to `coder`. |
 | `security-reviewer`    | subagent | OWASP/secrets/deps review. Read-only — reports vulnerabilities; remediation routed to `coder`. |
-| `merge-cop`            | subagent | Pre-merge code review of HEAD vs target branch. Read-only — runs tsc + lint, emits tiered report (junior/senior). |
+| `debt-cleaner`         | subagent | Dead-code removal, tech debt cleanup, duplication consolidation. |
 | `tdd-guide`            | subagent | RED -> GREEN -> REFACTOR + 80% coverage. Writes tests; delegates GREEN impl to `coder` via scoped Task perm. |
 | `build-error-resolver` | subagent | Build/TS error fixes with minimal diffs.                                            |
 | `e2e-runner`           | subagent | Playwright E2E tests.                                                               |
 | `doc-updater`          | subagent | Generated docs + codemaps.                                                          |
-| `refactor-cleaner`     | subagent | Dead-code removal + consolidation.                                                  |
+
 | `database-reviewer`    | subagent | PostgreSQL / Supabase schema, perf, security.                                       |
-| `researcher`           | subagent | Multi-source research + comparison analysis. Read-only; writes to `.opencode/thoughts/comparisons/`. |
+| `researcher`           | subagent | Deep-dive single-topic research. Read-only; writes to `.opencode/thoughts/research/`. |
 | `ask`                  | subagent | General-purpose Q&A. Investigates codebase, docs, technologies via Context7. Delegates deep research to `researcher` (asks first). Read-only. |
 | `git-specialist`       | subagent | Branches, commits, pushes, PRs (mini model).                                        |
 
 ### Hardened sub-agent orchestration
 
-Delegation is enforced at **three layers**, so the same behavior holds whether the primary model is Claude, GPT, DeepSeek, or any open-weight runner that ignores prose hints:
+Delegation is enforced at **two layers**, so the same behavior holds whether the primary model is Claude, GPT, DeepSeek, or any open-weight runner that ignores prose hints:
 
 1. **Permissions** — `conductor` has `tools.write: false`, `tools.edit: false`, and `permission.edit/write: deny` in `opencode.jsonc`. The Task allowlist enumerates every legal specialist; `*: deny` blocks anything else. The orchestrator literally has no file-mutation tool.
-2. **Pre-tool hook (`plugins/ecc-hooks.ts`)** — defense in depth: blocks bash commands that would write to source files via shell redirect (`>`, `>>`), `tee`, `sed -i`, heredocs, or `python -c open().write`. Throws aborting the tool call with an explicit "delegate to coder/writer/tdd-guide" message. Applies globally — no subagent should be writing code through bash either.
-3. **Front-loaded prompt (`prompts/agents/conductor.txt`)** — hard rules in the first lines, routing table second, six worked few-shot examples showing User → `task` calls with explicit wrong-way contrasts. `instructions/subagent-routing.md` enforces a Task-first gate before direct inspection.
+2. **Front-loaded prompt (`prompts/agents/conductor.txt`)** — hard rules in the first lines, routing table second, six worked few-shot examples showing User → `task` calls with explicit wrong-way contrasts. `instructions/subagent-routing.md` enforces a Task-first gate before direct inspection.
 
 Use these paths depending on how much control you want:
 
 - Plain request: `conductor` consults the routing table and dispatches the matching specialist via Task.
 - `@agent` mention: manually invokes a specific subagent in the conversation.
-- Slash command: forces a subtask with a configured template, e.g. `/plan`, `/tdd`, `/security`.
+- Slash command: forces a subtask with a configured template, e.g. `/plan`, `/security`.
 
 Why this exists: GPT/Claude often infer delegation from short descriptions, but open-source/open-weight models are more literal and tend to inspect or edit first. Permissions + the hook + the front-loaded gate make delegation **mechanically enforced** rather than instruction-dependent.
 
@@ -330,23 +324,16 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 | `/git`                   | git-specialist        | Bounded git ops (subcommands: s/c/ps/scps/b/a/bcl). |
 | `/git-workflow`          | git-specialist        | Full git workflow: create branch → commit → push → PR. Subcommands: bcps, bscps, cps, mrsq. |
 | `/plan`                  | planner               | Implementation plan.                             |
-| `/tdd`                   | tdd-guide             | TDD cycle with coverage.                         |
-| `/code-review`           | code-reviewer         | Quality review.                                  |
+| `/review`                | reviewer              | Code review or pre-merge review (with target branch). |
 | `/security`              | security-reviewer     | Security audit.                                  |
 | `/build-fix`             | build-error-resolver  | Build/TS error resolution.                       |
 | `/e2e`                   | e2e-runner            | E2E test generation/run.                         |
-| `/refactor-clean`        | refactor-cleaner      | Dead-code cleanup.                               |
-| `/cop-review`            | merge-cop             | Pre-merge review of HEAD vs target branch.       |
+| `/fix`                   | debt-cleaner          | Dead-code cleanup, tech debt, duplicates.        |
 | `/update-docs`           | doc-updater           | Doc updates.                                     |
 | `/update-codemaps`       | doc-updater           | Generates `docs/CODEMAPS/`.                      |
-| `/test-coverage`         | tdd-guide             | Coverage analysis.                               |
-| `/research`              | researcher            | Structured multi-source research + comparison.   |
+| `/research`              | researcher            | Deep-dive single-topic research.   |
 | `/ask`                   | ask                   | General Q&A about project, tech, plans.          |
-| `/skill-from-history`    | (primary)             | Generate a skill from git history analysis.      |
-| `/skill-from-instinct`   | (primary)             | Cluster instincts into skills.                   |
-| `/instinct-status`       | (primary)             | View learned instincts with confidence.          |
-| `/instinct-import`       | (primary)             | Import instincts from file/URL.                  |
-| `/instinct-export`       | (primary)             | Export instincts for sharing.                    |
+| `/skill-plus`            | (primary)             | Create/improve skills via skill-creator plugin.  |
 
 ### Skills
 
@@ -376,17 +363,12 @@ New skills on-demand (loaded by description / by command):
 
 All TypeScript plugins use `@opencode-ai/plugin@1.4.6`.
 
-- `plugins/ecc-hooks.ts` — Prettier on edited JS/TS, `console.log` detection, sensitive-command reminders (`git push` etc.), and the **conductor hard-stop**: aborts bash redirects (`>`, `>>`, `tee`, `sed -i`, heredocs, `python -c open().write`) targeting source files so delegation cannot be bypassed via shell.
-- `plugins/continuous-learning-stop-hook.js` — legacy v1 stop hook, calls `skills/continuous-learning/bin/evaluate-session.js` to write a draft into `skills/learned/`.
+- `plugins/caveman-server.ts` — injects caveman instructions into the system prompt.
 - `plugins/auto-compact.js` — auto-compacts once `OC_COMPACT_THRESHOLD` tool calls are reached, only while idle.
 - `plugins/notification.js` — macOS notification + sound on `session.idle`.
-- `plugins/caveman-server.ts` + `tui-plugins/caveman.tsx` — injects caveman instructions into the system prompt + TUI sidebar showing active mode.
 - `plugins/figma-mcp-trigger.js` — Figma RAG: reads `figma-rag.md` (or `OPENCODE_FIGMA_RAG_PATHS`) and injects snippets when designs are referenced.
-- `plugins/worktree.ts` (+ `plugins/worktree/`) — creates an isolated git worktree for the session and spawns a terminal (mac/Win/Linux). Inspired by opencode-worktree-session.
 - `plugins/startup-bootstrap.ts` — runs `serena_activate_project` on the first tool call of a session.
-- `plugins/kdco-primitives/` — shared utilities (mutex, shell, terminal-detect, project-id resolver, types).
 - `opencode-agent-memory` *(external, declared in `opencode.jsonc › plugin`)* — Letta-style persistent memory blocks (`memory_list`, `memory_set`, `memory_replace`) + optional journal. Data in `~/.config/opencode/memory/*.md` (global) + `.opencode/memory/*.md` (project).
-- `@tarquinen/opencode-dcp@latest` *(external, declared in `opencode.jsonc › plugin`)* — Dynamic Context Pruning. Trims stale tool results and large files from the live context window so long sessions don't blow past the model's limit. Configured via `dcp.jsonc` at the repo root.
 
 ### Custom tools (`tools/`)
 
@@ -396,27 +378,10 @@ Reusable OpenCode tools exposed via `tools/index.ts`:
 - `tools/check-coverage.ts` — reads coverage reports and compares against a threshold.
 - `tools/security-audit.ts` — scans deps + secrets + risky patterns.
 
-### TUI plugins
-
-`tui-plugins/caveman.tsx` — React sidebar that shows a "CAVEMAN ULTRA" badge when the mode is active (flag file written by `caveman-server.ts`).
-
-### Continuous learning
-
-Two pipelines coexist (backwards compat):
-
-1. **v1 (legacy)** — `plugins/continuous-learning-stop-hook.js` -> `skills/continuous-learning/stop.sh` -> `skills/continuous-learning/bin/evaluate-session.js` writes at most one draft into `skills/learned/`.
-
-Curation:
-
-- `/curate-learned-skills` (Claude Code side) — reviews drafts in `learned/` and promotes the valuable ones into real skills.
-- `/instinct-status` — inspect learned instincts.
-- `/skill-from-instinct` — cluster high-confidence instincts into reusable skills.
-
 ### How it fits together
 
 1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `caveman-server` adds caveman preamble if active.
 2. First user action: `startup-bootstrap` triggers `serena_activate_project`.
-3. Dev: `conductor` executes — it cannot write files; it dispatches Task calls to specialists. `ecc-hooks` formats / flags `console.log` / blocks bash-write bypasses. `instinct-observer` archives events.
-4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/tdd`, `/security`, etc. force the same routing explicitly.
+3. Dev: `conductor` executes — it cannot write files; it dispatches Task calls to specialists.
+4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/security`, etc. force the same routing explicitly.
 5. Idle: `auto-compact` triggers when the tool-call threshold is reached; `notification` pings macOS.
-6. Stop: v1 hook writes a draft; v2 daemon clusters observations into instincts for the next session.

@@ -30,6 +30,7 @@ Always cite `Source/s: <urls/docs>` at end of planning, research, discussion, or
 2. **Max 3 params** — if more, use object param.
 3. **Avoid casts** — use typed objects over `as Record<string, unknown>` + individual `as Type` casts. KISSME principle: if type is wrong, fix the type, don't cast around.
 4. **Prefer function factories** over ternary chains for computed values — `resolvePrice(config, counter)` vs `sentinel ? 0 : ...` ternary.
+5. **"Simplify without casting" = eliminate, not relocate.** Moving a type assertion into another file/module does NOT count as simplifying. When user asks to remove casts, actually remove them (use typed globals, guards, `satisfies`); only 1 unavoidable boundary cast is acceptable and must be documented.
 
 ## Git summaries
 

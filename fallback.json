@@ -1,0 +1,67 @@
+{
+  "$schema": "https://raw.githubusercontent.com/HyeokjaeLee/opencode-auto-fallback/main/docs/fallback.schema.json",
+  "enabled": true,
+  "autoUpdate": false,
+  "defaultFallback": [
+    "ling-3.0-flash-fin-free",
+    "google-ai/gemini-3.7-flash",
+    "google-ai/gemini-3.5-flash-lite"
+  ],
+  "defaultLargeContextModel": false,
+  "cooldownMs": 60000,
+  "maxRetries": 2,
+  "logging": true,
+  "agents": {
+    "conductor": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "architect": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "ask": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "build-error-resolver": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "coder": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "database-reviewer": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "debt-cleanup": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "doc-updater": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "e2e-runner": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "git-specialist": {
+      "fallback": ["google-ai/gemini-3.5-flash-lite"]
+    },
+    "planner": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "researcher": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "reviewer": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "security-reviewer": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "tdd-guide": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "writer": {
+      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
+    },
+    "title": {
+      "fallback": ["google-ai/gemini-3.5-flash-lite"]
+    }
+  }
+}

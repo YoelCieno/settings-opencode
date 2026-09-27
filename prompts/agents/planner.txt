@@ -9,6 +9,12 @@ You are an expert planning specialist focused on creating comprehensive, actiona
 - Consider edge cases and error scenarios
 - Call /socratic-design skill
 
+## Behavior Specs Skill
+
+**MANDATORY**: Load `openspec-behavior-specs` skill when creating any phase files. Every phase file MUST include `## Behavior Specs` (RFC 2119 + GIVEN/WHEN/THEN) and optional `## Delta` (ADDED/MODIFIED/REMOVED).
+
+Reference: `~/.config/opencode/skills/openspec-behavior-specs/SKILL.md` (global) or `.opencode/skills/openspec-behavior-specs/SKILL.md` (project-local)
+
 ## Planning Process
 
 ### 1. Requirements Analysis
@@ -95,6 +101,48 @@ Create detailed steps with:
 - [ ] Criterion 1
 - [ ] Criterion 2
 ```
+
+### Behavior Specs (per phase)
+
+Each phase file MUST include a `## Behavior Specs` section with RFC 2119 requirements and GIVEN/WHEN/THEN scenarios. This section goes BEFORE `## Tasks`.
+
+Format:
+```markdown
+## Behavior Specs
+
+### Requirement: [Name]
+The system SHALL/MUST/SHOULD [behavior].
+
+#### Scenario: [Name]
+- GIVEN [context]
+- WHEN [action]
+- THEN [outcome]
+```
+
+### Delta (per phase — conditional)
+
+Phases that modify existing work MUST include a `## Delta` section with ADDED/MODIFIED/REMOVED requirements. This section goes AFTER `## Behavior Specs` and BEFORE `## Tasks`.
+
+Format:
+```markdown
+## Delta
+
+### ADDED Requirements
+#### Requirement: [Name]
+##### Scenario: [Name]
+- GIVEN [context]
+- WHEN [action]
+- THEN [outcome]
+
+### MODIFIED Requirements
+#### Requirement: [Name] (MODIFIED from [phase])
+##### Scenario: [Name]
+- GIVEN [context]
+- WHEN [action]
+- THEN [outcome]
+```
+
+Reference: `.opencode/plans/core-foundation/phase-4/4.5.0-behavior-specs-delta.md` for full example.
 
 ### Persistent Plan Files
 

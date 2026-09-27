@@ -1,17 +1,14 @@
-import { readFile } from "node:fs/promises";
+import { unlinkSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-import type { Plugin } from "@opencode-ai/plugin";
+import { Plugin } from "@opencode/plugin";
 
 /**
- * Caveman Server Plugin
+ * Caveman Server Plugin (v2 API).
  *
- * Injects caveman ultra instructions into every chat system prompt via
- * `experimental.chat.system.transform`. No more session.command race —
- * the instruction lives alongside the user's actual message.
- *
+ * Injects caveman ultra instructions into every chat system prompt via the
+ * `session.hook("context")` hook (v1 used experimental.chat.system.transform).
  * Still writes a flag file so the TUI sidebar knows it's active.
  */
 
@@ -55,49 +52,80 @@ function extractSessionID(event: unknown): string | undefined {
   return undefined;
 }
 
-const CavemanServerPlugin: Plugin = async ({ client }) => {
-  const log = (level: "debug" | "info" | "warn" | "error", message: string) =>
-    client.app.log({ body: { service: "caveman", level, message } }).catch(() => {});
+function log(level: "debug" | "info" | "warn" | "error", message: string): void {
+  try {
+    // v2 App domain has no log endpoint (name/version/channel only).
+    console.log(`[caveman] ${level}: ${message}`);
+  } catch {
+    // ignore logging failures
+  }
+}
 
-  void log("info", "Caveman ultra will be injected via chat.system.transform");
+export default Plugin.define({
+  id: "caveman-server",
+  async setup(ctx: Plugin.Context) {
+    let stopped = false;
+    const registrations: Array<{ dispose?: () => unknown }> = [];
 
-  return {
-    event: async ({ event }) => {
-      if (!isRecord(event) || typeof event.type !== "string") return;
+    log("info", "Caveman ultra will be injected via session context hook");
 
-      if (event.type === "session.created") {
-        const sessionID = extractSessionID(event);
+    registrations.push(
+      await ctx.session.hook("context", async (event) => {
+        if (stopped) return;
+        event.system.push({ type: "text", text: CAVEMAN_INSTRUCTION });
+      }),
+    );
+
+    async function handleEvent(raw: unknown): Promise<void> {
+      if (!isRecord(raw) || typeof raw.type !== "string") return;
+
+      if (raw.type === "session.created") {
+        const sessionID = extractSessionID(raw);
         if (!sessionID) return;
 
         // Write flag so TUI sidebar knows caveman is active
         try {
-          const { writeFileSync } = await import("node:fs");
           writeFileSync(flagPath(sessionID), "ultra", "utf8");
         } catch {
           // non-critical
         }
 
-        await log("info", `Caveman ultra armed for session ${sessionID}`);
+        log("info", `Caveman ultra armed for session ${sessionID}`);
       }
 
-      if (event.type === "session.deleted") {
-        const sessionID = extractSessionID(event);
+      if (raw.type === "session.deleted") {
+        const sessionID = extractSessionID(raw);
         if (!sessionID) return;
 
         try {
-          const { unlinkSync } = await import("node:fs");
           unlinkSync(flagPath(sessionID));
         } catch {
           // absent
         }
       }
-    },
+    }
 
-    "experimental.chat.system.transform": async (_input, output) => {
-      if (!Array.isArray(output.system)) return;
-      output.system.push(CAVEMAN_INSTRUCTION);
-    },
-  };
-};
+    // Background event consumption (v1 `event` hook port).
+    void (async () => {
+      try {
+        for await (const raw of ctx.event.subscribe()) {
+          if (stopped) break;
+          await handleEvent(raw);
+        }
+      } catch {
+        // stream closed during shutdown — non-fatal
+      }
+    })();
 
-export default CavemanServerPlugin;
+    return async () => {
+      stopped = true;
+      for (const reg of registrations) {
+        try {
+          await reg.dispose?.();
+        } catch {
+          // ignore dispose failures
+        }
+      }
+    };
+  },
+});

@@ -1,44 +1,34 @@
 ---
-description: Structured multi-source research with comparison output
+description: Deep-dive research on a single topic. Saves to .opencode/thoughts/research/.
 agent: researcher
 subtask: true
 ---
 
 # Research Command
 
-Conduct a structured multi-source investigation of: $ARGUMENTS
+Conduct deep-dive single-topic investigation for the knowledge library.
 
-## Methodology
+## Deep Dive Mode
 
-For each major option or technology being researched:
+Single-topic deep investigation for knowledge library. Output to `.opencode/thoughts/research/YYYY-MM-DD-{topic-slug}.md`.
 
-1. **Official Docs** — Fetch primary documentation
-2. **Spec/Source** — Fetch specification, RFC, or source README
-3. **Cookbook/Guide** — Fetch a practical guide or tutorial
-4. **Best Practices** — Fetch community best practices guide
+Focus on depth over breadth:
+1. Primary Sources (docs, specs, RFCs)
+2. Secondary Sources (tutorials, articles)
+3. Community Consensus (patterns, pitfalls)
+4. Cross-reference with codebase (grep/glob/read)
 
-## Required Output
+Output: motivation, core concepts, how it works, key findings, relation to codebase, actionable insights, resources.
 
-Write a structured comparison to `.opencode/thoughts/comparisons/YYYY-MM-DD-{topic-slug}.md` with:
+## Output to Caller
 
-- Research question
-- Options considered
-- Resource analysis per option (all 4 source types)
-- Conflicts between sources
-- Comparison table (setup, API, perf, ecosystem, security, license, integration effort)
-- Clear recommendation with evidence-based justification
-- Open questions
-
-## Output format
-
-Return a summary to the caller with:
+Return summary with:
 - Topic researched
-- Comparison file path
-- Winner (recommended option)
+- Output file path
 - Key takeaway (1-2 sentences)
 
 DO NOT write code. Research only.
 
 ## Source Citation
 
-**IMPORTANT**: At the end of EVERY response, include `Source/s: <urls/docs>` citing where information came from.
+**CRITICAL**: At the end of every response, include `Source/s: <urls/docs>`.

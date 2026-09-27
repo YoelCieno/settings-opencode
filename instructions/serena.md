@@ -15,3 +15,7 @@ Two memory systems are active. USE ONLY opencode-agent-memory for memory:
 - **Serena**: code tools ONLY (find_symbol, replace_symbol_body, rename_symbol, search_for_pattern, etc.)
 
 Serena's memory tools (write_memory, read_memory, etc.) and JetBrains tools are excluded at the MCP server level. Do not attempt to call them.
+
+## Verification Rigor
+
+When a regression test covers a fixed bug, prove it discriminates: temporarily reintroduce the bug, confirm the test FAILS, then restore the fix. Mock factory seed values can make tests pass for the wrong reason (false green). Never trust subagent self-reports — independently run lint/typecheck/test/coverage before declaring done.
