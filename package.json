@@ -17,7 +17,7 @@
     "zod": "4.3.5"
   },
   "scripts": {
-    "test": "bun test __tests__/",
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   }
 }

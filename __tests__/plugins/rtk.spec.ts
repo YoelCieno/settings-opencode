@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, chmodSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import * as mod from "../plugins/rtk.js";
-import { v2Shape } from "./helpers/v2-shape";
-import { mockCtx } from "./helpers/mock-ctx";
+import * as mod from "../../plugins/rtk.js";
+import { v2Shape } from "../helpers/v2-shape";
+import { mockCtx } from "../helpers/mock-ctx";
 
 const { assertV2Plugin } = v2Shape();
 const { beforeEvent, createMockCtx, tick } = mockCtx();

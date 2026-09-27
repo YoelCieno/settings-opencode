@@ -11,5 +11,5 @@
     "esModuleInterop": true,
     "types": ["bun"]
   },
-  "include": ["plugins/**/*", "__tests__/**/*"]
+  "include": ["plugins/**/*", "schema/**/*", "__tests__/**/*"]
 }

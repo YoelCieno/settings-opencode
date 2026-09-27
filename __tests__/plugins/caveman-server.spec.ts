@@ -2,9 +2,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 import os from "node:os";
 import path from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
-import * as mod from "../plugins/caveman-server.js";
-import { v2Shape } from "./helpers/v2-shape";
-import { mockCtx } from "./helpers/mock-ctx";
+import * as mod from "../../plugins/caveman-server.js";
+import { v2Shape } from "../helpers/v2-shape";
+import { mockCtx } from "../helpers/mock-ctx";
 
 const { assertV2Plugin, systemText } = v2Shape();
 const { createMockCtx, tick } = mockCtx();

@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import * as mod from "../plugins/model-fallback.js";
-import { v2Shape } from "./helpers/v2-shape";
-import { mockCtx } from "./helpers/mock-ctx";
-import type { MockCtx } from "./helpers/mock-ctx";
+import * as mod from "../../plugins/model-fallback.js";
+import { v2Shape } from "../helpers/v2-shape";
+import { mockCtx } from "../helpers/mock-ctx";
+import type { MockCtx } from "../helpers/mock-ctx";
 
 const { assertV2Plugin } = v2Shape();
 const { createMockCtx, tick } = mockCtx();
