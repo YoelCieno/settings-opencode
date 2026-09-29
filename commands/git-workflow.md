@@ -17,6 +17,8 @@ Handle this git workflow task: $ARGUMENTS
 | `cps` | `commit push ask` | Commit -> push -> ask about PR |
 | `mrsq [source] [dest]` | `merge squash [source] [dest]` | Squash source into dest + sync source back |
 
+> For plain commit & push without PR stop-gate, use `/git cps` instead.
+
 If no subcommand is given, default to `cps`.
 
 ## mrsq Workflow

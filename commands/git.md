@@ -44,6 +44,7 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 | `s` | `stage` | Stage relevant changes |
 | `c` | `commit` | Draft conventional commit message and commit |
 | `ps` | `push` | Push current branch to remote |
+| `cps` | `commit & push` | Commit + push (assumes staged, no PR ask) |
 | `scps` | `commit & push` | Stage + commit + push |
 | `b [name]` | `create branch [name]` | Create + switch branch. If no name given, auto-generate per convention. |
 | `a [message]` | `amend [message]` | Amend last commit. If message arg given, update it. Like `c` for commit — assumes already staged. |
