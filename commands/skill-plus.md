@@ -4,23 +4,26 @@ description: Create, improve, or generate skills from history — /skill-plus --
 
 # Skill Plus Command
 
-Create, improve, or generate OpenCode skills. Runs in primary context — uses skill-creator plugin tools and skill-from-history instructions.
+Create, improve, or generate OpenCode skills. Instructions-only workflow — no plugin tools. Validation via the `skill-check` CLI.
 
 ## Usage
 
 ```
 /skill-plus --create|-c <name>         Create new skill from scratch
 /skill-plus --from-history|-h <name>   Generate skill from git history analysis
-/skill-plus --improve|-i <name>        Improve existing skill via eval/testing
+/skill-plus --improve|-i <name>        Improve existing skill
 ```
 
 ## Modes
 
 ### --create / -c
-Use skill-creator tools to scaffold a new skill:
-1. `skill_validate` — check structure is valid
-2. Write SKILL.md with name, description, usage patterns, examples
-3. `skill_parse` — verify frontmatter
+1. Load `skills/opencode-skill-creator/SKILL.md` for full workflow (intake interview gate, writing guide, description rules)
+2. Draft `skills/<name>/SKILL.md` — frontmatter `name` + `description`, then body
+3. Validate:
+   ```
+   npx -y skill-check check skills/<name> --no-security-scan --no-open
+   ```
+   exit 0 = pass. Fix reported errors, re-run until clean.
 
 ### --from-history / -h
 Generate a skill from git history analysis:
@@ -28,13 +31,14 @@ Generate a skill from git history analysis:
 2. Analyze git commits: `git log --oneline -100`, file change patterns
 3. Identify recurring conventions, patterns, practices
 4. Generate SKILL.md capturing those patterns
+5. Validate with the same `skill-check` command as above
 
 ### --improve / -i
-Improve an existing skill:
-1. `skill_parse` — load current skill
-2. `skill_eval` — test trigger accuracy with eval set
-3. `skill_improve_description` — generate better description
-4. `skill_optimize_loop` — run full optimization cycle
+Improve an existing skill (instructions only — no eval loop):
+1. Read `skills/<name>/SKILL.md`
+2. Apply user feedback: rewrite weak sections, tighten body, sharpen description triggering
+3. Re-run the same `skill-check` validation command
+4. Manual sanity check only — run 1-2 realistic prompts against the skill and review output with the user
 
 ## Output
 

@@ -1,3 +1,8 @@
+---
+name: tdd-workflow
+description: Test-driven development — RED failing tests first, then GREEN implementation, then REFACTOR. Includes verification gate (tsc/cargo/mypy) and context-bus test sharing. Use whenever the user says "tdd", "write tests first", "red green", "test driven", asks for any feature, bug fix, or refactor that needs tests, or asks to follow the TDD workflow.
+---
+
 # TDD Workflow Skill
 
 ## Core Rule

@@ -333,7 +333,7 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 | `/update-codemaps`       | doc-updater           | Generates `docs/CODEMAPS/`.                      |
 | `/research`              | researcher            | Deep-dive single-topic research.   |
 | `/ask`                   | ask                   | General Q&A about project, tech, plans.          |
-| `/skill-plus`            | (primary)             | Create/improve skills via skill-creator plugin.  |
+| `/skill-plus`            | (primary)             | Create/improve skills via skill-creator skill + skill-check CLI (no plugin). |
 
 ### Skills
 
