@@ -316,6 +316,10 @@
     },
   },
   "command": {
+    "apply": {
+      "description": "Implement tasks from an OpenSpec change + browser postcheck",
+      "template": "{file:.opencode/references/opsx/opsx-apply.md}\n\n{file:commands/apply-postcheck.md}\n\n$ARGUMENTS",
+    },
     "ask": {
       "agent": "ask",
       "description": "Ask questions about the project, editor, technologies, or improve plans",
@@ -411,6 +415,10 @@
       "description": "Create a detailed implementation plan for complex features",
       "subtask": true,
       "template": "{file:commands/plan.md}\n\n$ARGUMENTS",
+    },
+    "probe": {
+      "description": "One-shot browser probe: console errors, title, screenshot",
+      "template": "{file:commands/probe.md}\n\n$ARGUMENTS",
     },
     "research": {
       "agent": "researcher",
