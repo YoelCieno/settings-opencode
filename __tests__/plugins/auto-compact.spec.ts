@@ -75,8 +75,8 @@ describe("auto-compact arming + idle trigger", () => {
   });
 });
 
-describe("auto-compact summary hardening", () => {
-  test("compaction hook produces a resume-ready checkpoint", async () => {
+describe("auto-compact checkpoint instruction injection", () => {
+  test("injects checkpoint instructions into system, leaves model summary intact", async () => {
     const m = createMockCtx();
     const plugin = assertV2Plugin(mod);
     const setupPromise = plugin.setup(m.ctx);
@@ -85,11 +85,12 @@ describe("auto-compact summary hardening", () => {
 
     const event: CompactionHookEvent = { system: [], messages: [] };
     await m.runSessionHook("compaction", event);
-    const summary: unknown = event.result?.summary;
-    const text =
-      typeof summary === "string"
-        ? summary
-        : systemText(event.system) + JSON.stringify(event.result ?? "");
+
+    // No result -> model request NOT skipped: real session summary stays.
+    expect(event.result).toBeUndefined();
+
+    // Checkpoint format instructions land in system, not in the summary.
+    const text = systemText(event.system);
     for (const marker of ["Goal", "Next steps", "Evidence"]) {
       expect(text).toContain(marker);
     }

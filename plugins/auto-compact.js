@@ -3,7 +3,7 @@ import { Plugin } from "@opencode/plugin";
 /**
  * OpenCode minimal autonomous auto-compaction plugin (v2 API).
  *
- * - Hardens compaction summary (resume-ready checkpoint) via session "compaction" hook
+ * - Injects resume-ready checkpoint format into compaction system prompt (session "compaction" hook); summary itself stays model-generated
  * - Arms compaction after N tool calls
  * - Triggers compaction only when session is idle (safe, non-interrupting)
  *
@@ -144,7 +144,12 @@ export default Plugin.define({
 
     registrations.push(
       await ctx.session.hook("compaction", async (event) => {
-        event.result = { summary: CHECKPOINT_SUMMARY };
+        // Inject checkpoint format as a system part; never set `result` —
+        // setting it would skip the model request and replace the real
+        // session summary with these static instructions (session.d.ts:43).
+        if (Array.isArray(event.system)) {
+          event.system.push({ type: "text", text: CHECKPOINT_SUMMARY });
+        }
       }),
     );
 
