@@ -1,5 +1,5 @@
 ---
-description: Create, track, and continue implementation plans with subcommands (status, continue) and --small single-phase mode. Usage: /plan status | /plan continue <name> | /plan --small <what to plan> | /plan <what to plan>
+description: Create, track, and continue implementation plans with subcommands (status, continue, update) and --small single-phase mode. Usage: /plan status | /plan continue <name> | /plan --update <name> [point ...] | /plan --small <what to plan> | /plan <what to plan>
 agent: planner
 subtask: true
 ---
@@ -23,6 +23,24 @@ Check first word of `$ARGUMENTS`:
 3. Load phase file (e.g., `phase-1.md`)
 4. Summarize: goal, completed tasks, remaining tasks
 5. Ask: "Proceed with phase N?"
+
+### `/plan --update <name> [point ...]`
+
+Edit an existing plan — add, remove, or tweak specified points.
+
+1. Detect: first word of `$ARGUMENTS` is `--update` → strip it, next token = plan name, remainder = edit instruction (free-form)
+2. Read `.opencode/plans/<name>/README.md` + affected phase files
+3. Classify user intent from the instruction:
+   - **add** → new requirement/step/phase
+   - **remove** → delete specified point
+   - **tweak** → modify specified point in place
+   - Ambiguous → ask user which
+4. Show proposed edit diff per file (old → new) BEFORE writing
+5. On confirm → delegate writes to `writer` subagent (planner has write=false)
+6. If scope changed: update README phase table statuses + keep Behavior Specs/Delta sections consistent per layer rule
+7. No match on plan name → list available plans under `.opencode/plans/` and ask
+
+**WAITING FOR CONFIRMATION**: show diffs, then wait for explicit yes before delegating to writer.
 
 ### `/plan --small`
 

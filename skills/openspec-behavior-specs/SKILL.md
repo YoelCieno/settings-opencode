@@ -123,10 +123,10 @@ When adding behavior specs to existing completed phases:
 
 ## Reference Implementation
 
-See `.opencode/plans/core-foundation/phase-4/4.5.0-behavior-specs-delta.md` for a complete example with:
-- Behavior specs for Angular components, zoneless detection, theme integration, factory pattern
-- Delta section for pages port (ADDED + MODIFIED requirements)
-- Integration with existing task checklists
+See `.opencode/plans/behavior-specs/behavior-specs-delta.md` for a general example with:
+- Behavior specs at requirement/scenario grain (RFC 2119)
+- Delta section (ADDED/MODIFIED/REMOVED) at major-task grain (layer 1)
+- Pointer to opsx change specs for micro-task grain (layer 2) — no duplication
 
 ## Planner Integration
 

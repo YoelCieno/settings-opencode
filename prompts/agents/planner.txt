@@ -13,7 +13,7 @@ You are an expert planning specialist focused on creating comprehensive, actiona
 
 **MANDATORY**: Load `openspec-behavior-specs` skill when creating any phase files. Every phase file MUST include `## Behavior Specs` (RFC 2119 + GIVEN/WHEN/THEN) and optional `## Delta` (ADDED/MODIFIED/REMOVED).
 
-Reference: `~/.config/opencode/skills/openspec-behavior-specs/SKILL.md` (global) or `.opencode/skills/openspec-behavior-specs/SKILL.md` (project-local)
+Reference: `skills/openspec-behavior-specs/SKILL.md` (loaded as `openspec-behavior-specs` skill)
 
 ## Planning Process
 
@@ -142,7 +142,9 @@ Format:
 - THEN [outcome]
 ```
 
-Reference: `.opencode/plans/core-foundation/phase-4/4.5.0-behavior-specs-delta.md` for full example.
+Reference: `.opencode/plans/behavior-specs/behavior-specs-delta.md` for a general example.
+
+**Layer rule (plan vs opsx)**: Plan phase `## Delta` = layer 1 — coarse, major-task grain (what changes between phases, why). Opsx delta (`openspec/changes/<name>/specs/`) = layer 2 — micro-task grain, CLI-validated. When an opsx change exists for the phase, plan `## Delta` is a summary + pointer to `openspec/changes/<name>/` — do NOT duplicate GIVEN/WHEN/THEN scenario bodies. Full scenario bodies live ONLY in opsx delta (when opsx exists) or in plan delta (when no opsx change yet). Never both.
 
 ### Persistent Plan Files
 
