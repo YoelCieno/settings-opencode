@@ -85,3 +85,7 @@ Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 - `Push`: yes or no
 - `PR`: URL if created, otherwise `n/a`
 - `Notes`: any blocker
+
+## Dependabot checkpoint (push/PR)
+
+After any successful push or PR-creating subcommand: run the `/update-deps` Step 0.3 Dependabot query (`gh api`, open alerts only). Open alerts → surface the ⚠️ security note. gh missing/not GitHub → skip silently.

@@ -136,3 +136,7 @@ With message arg: `a "msg"`, `sa "msg"`, or `saps "msg"` pass `-m "msg"` to upda
 - `Commit`: created or proposed commit message
 - `Push`: yes or no
 - `Notes`: any blocker
+
+## Dependabot checkpoint (push only)
+
+For push subcommands (`ps`, `cps`, `scps`, `saps`): after a successful push, run the `/update-deps` Step 0.3 Dependabot query (`gh api`, open alerts only). Open alerts → surface the ⚠️ security note. gh missing/not GitHub → skip silently. Non-push subcommands: no check.

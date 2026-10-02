@@ -87,3 +87,7 @@ Analyze the specified code for security vulnerabilities following OWASP guidelin
 ---
 
 **IMPORTANT**: Security issues are blockers. Do not proceed until critical issues are resolved.
+
+## Dependabot checkpoint
+
+Before reporting done: run the `/update-deps` Step 0.3 Dependabot query (`gh api repos/<owner>/<repo>/dependabot/alerts`, open alerts only). Open alerts → surface the ⚠️ security note verbatim. gh missing/not a GitHub repo → skip silently.
