@@ -122,7 +122,7 @@ Per major bump, one at a time, behind **per-dep confirmation**:
 1. Table: dep | from → to | layers result.
 2. Re-run Step 0.3 Dependabot query → compare vs baseline: cleared? remaining? (act: no auto-fix of remaining, report only).
 3. Ask: commit accumulated changes? (never auto-commit — user reviews diff first via `/review` if wanted).
-4. **HUMAN-TEST GATE**: after commit → STOP. Present test options (diff review, manual layer re-run, post-merge smoke note). Wait for explicit human approval — only then merge to target branch (default `dev`, never `main` without separate squash ask).
+4. **HUMAN-TEST GATE**: after commit → STOP. Present test options (diff review, manual layer re-run, post-merge smoke note). Wait for explicit human approval — only then merge. Target branch = `dev` ONLY. `main` releases/squash are OUTSIDE this flow entirely (own GIT-STRATEGY process, human-initiated).
 5. After merge → **ask explicitly** whether to remove worktree + delete branch (never assume, even if cleanup was mentioned earlier).
 
 ## Step 6 — Trigger mode (first run only, PER REPO)

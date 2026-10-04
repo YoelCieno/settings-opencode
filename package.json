@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "@ai-sdk/google": "^4.0.87",
-    "@ai-sdk/openai": "^3.0.124",
-    "@ai-sdk/openai-compatible": "^2.0.81",
+    "@ai-sdk/openai": "^4.0.83",
+    "@ai-sdk/openai-compatible": "^3.0.62",
     "@opencode-ai/plugin": "1.18.34",
     "@opencode/plugin": "^2.0.22",
     "opencode-cursor-auth": "^1.0.16"
