@@ -122,23 +122,27 @@ Per major bump, one at a time, behind **per-dep confirmation**:
 1. Table: dep | from → to | layers result.
 2. Re-run Step 0.3 Dependabot query → compare vs baseline: cleared? remaining? (act: no auto-fix of remaining, report only).
 3. Ask: commit accumulated changes? (never auto-commit — user reviews diff first via `/review` if wanted).
-4. Green + committed → offer worktree cleanup (`git worktree remove` + branch delete via git-specialist).
+4. **HUMAN-TEST GATE**: after commit → STOP. Present test options (diff review, manual layer re-run, post-merge smoke note). Wait for explicit human approval — only then merge to target branch (default `dev`, never `main` without separate squash ask).
+5. After merge → **ask explicitly** whether to remove worktree + delete branch (never assume, even if cleanup was mentioned earlier).
 
-## Step 6 — Trigger mode (first run only)
+## Step 6 — Trigger mode (first run only, PER REPO)
 
-If `~/.config/opencode/update-deps.config.json` missing → ask:
+Config lookup: `./update-deps.config.json` (repo root) → fallback `~/.config/opencode/update-deps.config.json` (global default). Repo file exists → load silently, no question.
+
+Missing → ask:
 
 > How should future vulnerability notes trigger `/update-deps`?
 > **A** — manual only (note shown at checkpoints, human runs command)
 > **B** — note prompts "run /update-deps now?" at checkpoints (human confirms)
+> **A+B** — note shown AND prompt offered (human always decides)
 > **C** — scheduled auto-run (cron/CI; needs setup — future work)
 
-Persist answer:
+Persist answer in REPO root (`./update-deps.config.json`):
 ```json
-{ "trigger": "A|B|C", "firstRun": "<date>", "pmOverride": null }
+{ "trigger": "A|B|A+B|C", "firstRun": "<date>", "pmOverride": null }
 ```
-Config exists → load silently, no question. `pmOverride` = per-repo PM forcing (future: per-repo config merge).
+Checkpoint behavior by mode: `A` = surface note only. `B`/`A+B` = surface note + ask "run /update-deps now?". `C` = note informational only (scheduler runs flow). `pmOverride` = per-repo PM forcing (future).
 
 ## Checkpoint note integration (other commands)
 
-Commands `/security` and `/git`/`/git-workflow` (push subcommands) MUST run the Step 0.3 Dependabot query before completing and surface the note if open alerts exist. Same query, same format — never a proactive per-session check.
+Commands `/security` and `/git`/`/git-workflow` (push subcommands) MUST run the Step 0.3 Dependabot query before completing and surface the note if open alerts exist. Same query, same format — never a proactive per-session check. Surface behavior follows repo's `update-deps.config.json` trigger mode (`A` = note only; `B`/`A+B` = note + "run /update-deps now?" prompt; `C` = note only, scheduler handles flow).
