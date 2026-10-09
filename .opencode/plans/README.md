@@ -15,7 +15,7 @@ See `conventions.md` for full details.
 
 | Plan | Description | Status |
 |------|-------------|--------|
-|      |             |        |
+| `cleanup-dead-routes/` | Eliminate all dead routes (stale agent names, unwired commands, orphan files, dead configs); preview→confirm→apply per phase | 🔧 Phase 9 ✅, Phases 1-8 ❌ |
 
 *(Plans created per-project. Table populated on demand.)*
 

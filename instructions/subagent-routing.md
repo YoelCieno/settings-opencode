@@ -25,7 +25,7 @@ Do not use `bash`, `read`, `write`, `edit`, or MCP tools, including Serena, befo
 - TDD, tests, coverage, test strategy -> `tdd-guide` (writes tests; delegates impl to `coder` itself)
 - E2E/browser journeys/Playwright -> `e2e-runner`
 - Codemap or generated-doc updates -> `doc-updater`
-- Dead code, unused exports, duplication cleanup -> `debt-cleaner` (via `/fix` command)
+- Dead code, unused exports, duplication cleanup -> `debt-cleanup` (via `/fix` command)
 - SQL, PostgreSQL, Supabase, RLS, SQLite, migrations, schema design -> `database-reviewer`
 - Research, investigate topics, compare technologies, multi-source analysis -> `researcher` (read-only for codebase; writes comparisons to .opencode/thoughts/comparisons/)
 
@@ -38,7 +38,7 @@ The primary `conductor` agent has `write` and `edit` disabled (permissions + hoo
 - Code review, PR review -> `reviewer`
 - Docs/markdown/HTML/text -> `writer`
 - Generated docs/codemaps -> `doc-updater`
-- Refactor cleanup -> `debt-cleaner` (via `/fix`)
+- Refactor cleanup -> `debt-cleanup` (via `/fix`)
 - Git operations (commit/push/PR) -> `git-specialist`
 
 There is no "direct trivial edit" escape hatch for the primary anymore. If you find yourself wanting to edit, pick a subagent.

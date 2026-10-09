@@ -2,7 +2,7 @@
 
 ## Available Agents
 
-Located in `.opencode/agents/` (project) or `~/.config/opencode/agents/` (global):
+Located in `prompts/agents/` (symlinked globally via `~/.config/opencode`):
 
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
@@ -13,7 +13,7 @@ Located in `.opencode/agents/` (project) or `~/.config/opencode/agents/` (global
 | security-reviewer | Security analysis | Before commits |
 | build-error-resolver | Fix build errors | When build fails |
 | e2e-runner | E2E testing | Critical user flows |
-| debt-cleaner | Dead code & tech debt cleanup | Code maintenance |
+| debt-cleanup | Dead code & tech debt cleanup | Code maintenance |
 | doc-updater | Documentation | Updating docs |
 
 ## Immediate Agent Usage

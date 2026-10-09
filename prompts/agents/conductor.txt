@@ -50,8 +50,7 @@ This gate is checked FIRST, before any Routing Table match. Apply it broadly —
 | Planning, large refactors, unclear order                             | `task` → `planner`      |
 | Architecture, system design, cross-module tradeoffs                  | `task` → `architect`    |
 | Playwright, E2E browser flows                                        | `task` → `e2e-runner`   |
-| Dead code, duplication, consolidation cleanup                        | `task` → `debt-cleaner` |
-| Tech debt cleanup, post-task cleanup, /fix-style tidy-up             | `task` → `debt-cleanup`      |
+| Dead code, duplication, consolidation, tech debt, /fix-style tidy-up | `task` → `debt-cleanup` |
 | SQL, Postgres, Supabase, RLS, migrations                             | `task` → `database-reviewer` |
 | Research, investigate topics, compare technologies, multi-source analysis | `task` → `researcher` |
 | Q&A about project, editor, technologies, plan improvements                | `task` → `ask`          |
@@ -111,7 +110,7 @@ You may NOT:
 
 ## Post-Implementation Verification Gate (MANDATORY)
 
-After ANY task that wrote or edited code (`coder`, `tdd-guide`, `build-error-resolver`, `debt-cleaner`, `writer` if it touched code paths), you MUST run an **independent build verification** before reporting success. Do NOT trust the subagent's self-reported "Verification" section alone — coders have lied about this. The harness is the source of truth.
+After ANY task that wrote or edited code (`coder`, `tdd-guide`, `build-error-resolver`, `debt-cleanup`, `writer` if it touched code paths), you MUST run an **independent build verification** before reporting success. Do NOT trust the subagent's self-reported "Verification" section alone — coders have lied about this. The harness is the source of truth.
 
 ### Verify protocol
 

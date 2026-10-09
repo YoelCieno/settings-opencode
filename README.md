@@ -38,7 +38,7 @@ This project reorients the upstream config from a .NET + frontend shop toward a 
 
 ## What's inside
 
-A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, reviewer, security-reviewer, database-reviewer, tdd-guide, build-error-resolver, e2e-runner, doc-updater, debt-cleaner, git-specialist, ask, researcher), wired together by:
+A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, reviewer, security-reviewer, database-reviewer, tdd-guide, build-error-resolver, e2e-runner, doc-updater, debt-cleanup, git-specialist, ask, researcher), wired together by:
 
 - **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer. The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
@@ -289,7 +289,7 @@ Defined in `opencode.jsonc` under `agent`:
 | `writer`               | subagent | Writes docs/markdown/HTML/text artifacts. Forbidden from touching source code — refuses out-of-scope files back to the conductor. |
 | `reviewer`             | subagent | Code review + pre-merge review (tsc + lint). Read-only — findings only; fixes go to `coder`. |
 | `security-reviewer`    | subagent | OWASP/secrets/deps review. Read-only — reports vulnerabilities; remediation routed to `coder`. |
-| `debt-cleaner`         | subagent | Dead-code removal, tech debt cleanup, duplication consolidation. |
+| `debt-cleanup`         | subagent | Dead-code removal, tech debt cleanup, duplication consolidation. |
 | `tdd-guide`            | subagent | RED -> GREEN -> REFACTOR + 80% coverage. Writes tests; delegates GREEN impl to `coder` via scoped Task perm. |
 | `build-error-resolver` | subagent | Build/TS error fixes with minimal diffs.                                            |
 | `e2e-runner`           | subagent | Playwright E2E tests.                                                               |
@@ -328,7 +328,7 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 | `/security`              | security-reviewer     | Security audit.                                  |
 | `/build-fix`             | build-error-resolver  | Build/TS error resolution.                       |
 | `/e2e`                   | e2e-runner            | E2E test generation/run.                         |
-| `/fix`                   | debt-cleaner          | Dead-code cleanup, tech debt, duplicates.        |
+| `/fix`                   | debt-cleanup          | Dead-code cleanup, tech debt, duplicates.        |
 | `/update-docs`           | doc-updater           | Doc updates.                                     |
 | `/update-codemaps`       | doc-updater           | Generates `docs/CODEMAPS/`.                      |
 | `/research`              | researcher            | Deep-dive single-topic research.   |

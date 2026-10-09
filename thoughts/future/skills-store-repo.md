@@ -1,3 +1,5 @@
+> **DONE (2026-10-07):** superseded — `skills-store/` moving to `.archived/skills-store/`, no separate repo needed.
+
 # Skills-store repo (pencil)
 
 Idea: extract `skills-store/` into a separate repo (e.g. `skill-registry`) for
