@@ -9,8 +9,8 @@ Stale agent names, unwired commands, orphan files, dead configs — removed phas
 | Phase | Focus | Location | Status |
 |-------|-------|----------|--------|
 | 1. Stale names | Fix 9 stale agent-name sites | `phase-1.md` | ✅ Done |
-| 2. Routing dedup | conductor.txt = sole routing source; delete 3 copies | `phase-2.md` | ❌ PENDING |
-| 3. Skills params + command dedup | Wire 7 command templates to SKILL.md + $ARGUMENTS, then delete dup command files | `phase-3.md` | ❌ PENDING |
+| 2. Routing dedup | conductor.txt = sole routing source; delete 3 copies | `phase-2.md` | ✅ Done |
+| 3. Skills params + command dedup | Wire 7 command templates to SKILL.md + $ARGUMENTS, then delete dup command files | `phase-3.md` | ✅ Done |
 | 4. Command prune | Delete 0-use commands + orphan files (keep /probe) | `phase-4.md` | ❌ PENDING |
 | 5. .archived/ consolidation | Create gitignored .archived/; move skills-store, plugins-stash, e2e-runner | `phase-5.md` | ❌ PENDING |
 | 6. Config cleanup | service.json purge, register update-deps, archive ocx/dcp | `phase-6.md` | ❌ PENDING |

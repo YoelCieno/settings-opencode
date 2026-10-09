@@ -324,17 +324,17 @@
       "agent": "ask",
       "description": "Ask questions about the project, editor, technologies, or improve plans",
       "subtask": true,
-      "template": "{file:commands/ask.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/ask/SKILL.md}\n\n$ARGUMENTS",
     },
     "build-fix": {
       "agent": "build-error-resolver",
       "description": "Fix build and TypeScript errors with minimal changes",
       "subtask": true,
-      "template": "{file:commands/build-fix.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/build-fix/SKILL.md}\n\n$ARGUMENTS",
     },
     "discuss": {
       "description": "Collaborative decision-making with source citations and tradeoff analysis",
-      "template": "{file:commands/discuss.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/discuss/SKILL.md}\n\n$ARGUMENTS",
     },
     "fix": {
       "agent": "debt-cleanup",
@@ -352,7 +352,7 @@
       "agent": "git-specialist",
       "description": "Full git workflow with PR stop-gate. /git-workflow bcps <branch>, bscps <branch>, or cps (default)",
       "subtask": true,
-      "template": "{file:commands/git-workflow.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/git-workflow/SKILL.md}\n\n$ARGUMENTS",
     },
     "learn": {
       "description": "Review session or git context to improve settings and memory",
@@ -424,7 +424,7 @@
       "agent": "researcher",
       "description": "Multi-mode research: compare options or deep-dive single topics. Uses --compare/--deep flags.",
       "subtask": true,
-      "template": "{file:commands/research.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/research/SKILL.md}\n\n$ARGUMENTS",
     },
     "review": {
       "agent": "reviewer",
@@ -450,13 +450,13 @@
       "agent": "doc-updater",
       "description": "Update codemaps",
       "subtask": true,
-      "template": "{file:commands/update-codemaps.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/update-codemaps/SKILL.md}\n\n$ARGUMENTS",
     },
     "update-docs": {
       "agent": "doc-updater",
       "description": "Update documentation",
       "subtask": true,
-      "template": "{file:commands/update-docs.md}\n\n$ARGUMENTS",
+      "template": "{file:skills/update-docs/SKILL.md}\n\n$ARGUMENTS",
     },
   },
 

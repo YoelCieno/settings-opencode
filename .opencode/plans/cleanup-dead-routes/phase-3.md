@@ -1,6 +1,6 @@
 # Phase 3 — Skills Params + Command Dedup
 
-**Status:** ❌ PENDING
+**Status:** ✅ DONE
 **Last updated:** 2026-10-07
 
 ## Goal
@@ -15,18 +15,18 @@ Wire 7 collision-pair commands to their SKILL.md with `$ARGUMENTS` passthrough i
 
 ## Tasks
 
-- [ ] In `opencode.jsonc` `command{}`, set template `{file:skills/<name>/SKILL.md}\n\n$ARGUMENTS` for the 7 collision pairs:
-  - [ ] `ask`
-  - [ ] `build-fix`
-  - [ ] `discuss`
-  - [ ] `git-workflow`
-  - [ ] `research`
-  - [ ] `update-docs`
-  - [ ] `update-codemaps` (command file deleted in P4 anyway — still wire skill first)
-- [ ] JSONC parse check
-- [ ] **User smoke-test gate:** confirm args pass through (sample `/plan`-style invocation resolves)
-- [ ] Delete dup `commands/*.md` for pairs that remain commands-only after P4
-- [ ] Verify: jsonc parses; `/plan` sample resolves
+- [x] In `opencode.jsonc` `command{}`, set template `{file:skills/<name>/SKILL.md}\n\n$ARGUMENTS` for the 7 collision pairs:
+  - [x] `ask`
+  - [x] `build-fix`
+  - [x] `discuss`
+  - [x] `git-workflow`
+  - [x] `research`
+  - [x] `update-docs`
+  - [x] `update-codemaps` (command file deleted in P4 anyway — still wire skill first)
+- [x] JSONC parse check
+- [x] **User smoke-test gate:** confirm args pass through (sample `/plan`-style invocation resolves)
+- [x] Delete dup `commands/*.md` for pairs that remain commands-only after P4
+- [x] Verify: jsonc parses; `/plan` sample resolves
 
 ## Decisions
 

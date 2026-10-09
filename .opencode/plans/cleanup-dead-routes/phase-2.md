@@ -1,6 +1,6 @@
 # Phase 2 — Routing Dedup
 
-**Status:** ❌ PENDING
+**Status:** ✅ DONE
 **Last updated:** 2026-10-07
 
 ## Goal
@@ -15,10 +15,10 @@ Make `prompts/agents/conductor.txt` the sole routing source. Three duplicate rou
 
 ## Tasks
 
-- [ ] Delete `.rules/common/agents.md` entirely (stale)
-- [ ] `instructions/subagent-routing.md`: strip routing table, replace with pointer: "canonical routing table: `prompts/agents/conductor.txt`" — keep dispatch rules/permission behavior
-- [ ] `README.md` routing table → pointer to conductor.txt / config
-- [ ] Verify: `opencode.jsonc` untouched (git diff empty for it); grep for duplicate routing tables = 0 (table markup only in conductor.txt)
+- [x] Delete `.rules/common/agents.md` entirely (stale)
+- [x] `instructions/subagent-routing.md`: strip routing table, replace with pointer: "canonical routing table: `prompts/agents/conductor.txt`" — keep dispatch rules/permission behavior
+- [x] `README.md` routing table → pointer to conductor.txt / config
+- [x] Verify: `opencode.jsonc` untouched (git diff empty for it); grep for duplicate routing tables = 0 (table markup only in conductor.txt)
 
 ## Decisions
 
