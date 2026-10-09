@@ -36,9 +36,6 @@
     "doc-updater": {
       "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
     },
-    "e2e-runner": {
-      "fallback": ["ling-3.0-flash-fin-free", "google-ai/gemini-3.7-flash"]
-    },
     "git-specialist": {
       "fallback": ["google-ai/gemini-3.5-flash-lite"]
     },

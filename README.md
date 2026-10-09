@@ -38,11 +38,11 @@ This project reorients the upstream config from a .NET + frontend shop toward a 
 
 ## What's inside
 
-A hardened primary `conductor` agent backed by **16 specialist sub-agents** (planner, architect, coder, writer, reviewer, security-reviewer, database-reviewer, tdd-guide, build-error-resolver, e2e-runner, doc-updater, debt-cleanup, git-specialist, ask, researcher), wired together by:
+A hardened primary `conductor` agent backed by **15 specialist sub-agents** (planner, architect, coder, writer, reviewer, security-reviewer, database-reviewer, tdd-guide, build-error-resolver, doc-updater, debt-cleanup, git-specialist, ask, researcher), wired together by:
 
 - **Mandatory sub-agent delegation** from `conductor`: the primary has `write` and `edit` denied at the permission layer. The orchestrator cannot patch files — every change MUST go through `coder` (source code), `writer` (docs/markdown/HTML), `tdd-guide` (tests), or `git-specialist` (commits/PRs). This makes routing **model-agnostic**: even open-weight models that ignore prose rules are mechanically forced to delegate.
 - **Front-loaded first-tool gate** in `prompts/agents/conductor.txt`: hard rules at the top, routing table second, six few-shot User → `task` examples (with explicit wrong-way contrasts) so literal models copy the right pattern.
-- **Slash commands** that force routing to the right specialist (`/plan`, `/security`, `/review`, `/fix`, …).
+- **Slash commands** that force routing to the right specialist (`/plan`, `/review`, `/fix`, `/tune`, …).
 - **Always-on skills** loaded at session start — Socratic design, security review, coding standards, git workflow, Serena bootstrap.
 - **OpenCode plugins** — auto-compact, caveman ultra mode, macOS notifications, startup bootstrap, persistent memory blocks (`opencode-agent-memory`).
 - **Custom tools** — `run-tests`, `check-coverage`, `security-audit`, plus a codemap generator.
@@ -292,7 +292,6 @@ Defined in `opencode.jsonc` under `agent`:
 | `debt-cleanup`         | subagent | Dead-code removal, tech debt cleanup, duplication consolidation. |
 | `tdd-guide`            | subagent | RED -> GREEN -> REFACTOR + 80% coverage. Writes tests; delegates GREEN impl to `coder` via scoped Task perm. |
 | `build-error-resolver` | subagent | Build/TS error fixes with minimal diffs.                                            |
-| `e2e-runner`           | subagent | Playwright E2E tests.                                                               |
 | `doc-updater`          | subagent | Generated docs + codemaps.                                                          |
 
 | `database-reviewer`    | subagent | PostgreSQL / Supabase schema, perf, security.                                       |
@@ -311,7 +310,7 @@ Use these paths depending on how much control you want:
 
 - Plain request: `conductor` consults the routing table and dispatches the matching specialist via Task.
 - `@agent` mention: manually invokes a specific subagent in the conversation.
-- Slash command: forces a subtask with a configured template, e.g. `/plan`, `/security`.
+- Slash command: forces a subtask with a configured template, e.g. `/plan`, `/review`.
 
 Why this exists: GPT/Claude often infer delegation from short descriptions, but open-source/open-weight models are more literal and tend to inspect or edit first. Permissions + the hook + the front-loaded gate make delegation **mechanically enforced** rather than instruction-dependent.
 
@@ -325,9 +324,7 @@ Templates in `commands/`. Most run as `subtask: true` (delegated to a specialist
 | `/git-workflow`          | git-specialist        | Full git workflow: create branch → commit → push → PR. Subcommands: bcps, bscps, cps, mrsq. |
 | `/plan`                  | planner               | Implementation plan.                             |
 | `/review`                | reviewer              | Code review or pre-merge review (with target branch). |
-| `/security`              | security-reviewer     | Security audit.                                  |
 | `/build-fix`             | build-error-resolver  | Build/TS error resolution.                       |
-| `/e2e`                   | e2e-runner            | E2E test generation/run.                         |
 | `/fix`                   | debt-cleanup          | Dead-code cleanup, tech debt, duplicates.        |
 | `/update-docs`           | doc-updater           | Doc updates.                                     |
 | `/update-codemaps`       | doc-updater           | Generates `docs/CODEMAPS/`.                      |
@@ -383,5 +380,5 @@ Reusable OpenCode tools exposed via `tools/index.ts`:
 1. Startup: OpenCode loads `opencode.jsonc` -> always-on instructions -> `caveman-server` adds caveman preamble if active.
 2. First user action: `startup-bootstrap` triggers `serena_activate_project`.
 3. Dev: `conductor` executes — it cannot write files; it dispatches Task calls to specialists.
-4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/security`, etc. force the same routing explicitly.
+4. Workflow: `conductor` routes to specialists through Task (perm-enforced); `/plan`, `/review`, etc. force the same routing explicitly.
 5. Idle: `auto-compact` triggers when the tool-call threshold is reached; `notification` pings macOS.

@@ -11,8 +11,8 @@ Stale agent names, unwired commands, orphan files, dead configs — removed phas
 | 1. Stale names | Fix 9 stale agent-name sites | `phase-1.md` | ✅ Done |
 | 2. Routing dedup | conductor.txt = sole routing source; delete 3 copies | `phase-2.md` | ✅ Done |
 | 3. Skills params + command dedup | Wire 7 command templates to SKILL.md + $ARGUMENTS, then delete dup command files | `phase-3.md` | ✅ Done |
-| 4. Command prune | Delete 0-use commands + orphan files (keep /probe) | `phase-4.md` | ❌ PENDING |
-| 5. .archived/ consolidation | Create gitignored .archived/; move skills-store, plugins-stash, e2e-runner | `phase-5.md` | ❌ PENDING |
+| 4. Command prune | Delete 0-use commands + orphan files (keep /probe) | `phase-4.md` | ✅ Done |
+| 5. .archived/ consolidation | Create gitignored .archived/; move skills-store, plugins-stash, e2e-runner | `phase-5.md` | ✅ Done |
 | 6. Config cleanup | service.json purge, register update-deps, archive ocx/dcp | `phase-6.md` | ❌ PENDING |
 | 7. Pattern wiring | Inline KISSME+SOC into coder.txt; per-agent pattern matrix | `phase-7.md` | ❌ PENDING |
 | 8. Deferred trio | apply-postcheck into plan flows; archive opsx:ff + opsx:bulk-archive; opsx:flow explore/verify prompts; trim unused opsx | `phase-8.md` | ❌ PENDING |

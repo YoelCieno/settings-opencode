@@ -1,6 +1,6 @@
 # Phase 4 — Command Prune
 
-**Status:** ❌ PENDING
+**Status:** ✅ DONE
 **Last updated:** 2026-10-07
 
 ## Goal
@@ -16,14 +16,14 @@ Remove 0-use commands (per 1265-dispatch db audit) from `opencode.jsonc` `comman
 
 ## Tasks
 
-- [ ] Delete from config `command{}` + files: `security`
-- [ ] Delete from config `command{}` + file: `build-fix` (skill stays)
-- [ ] Delete from config `command{}` + file: `update-codemaps` (skill stays)
-- [ ] Delete config entry: `apply` (file `apply-postcheck.md` ARCHIVED, not deleted — reused P8)
-- [ ] Orphans: delete `commands/e2e.md`, `commands/memory-status.md` (skill stays)
-- [ ] `commands/update-deps.md` → **NOT deleted: register it** (see P6)
-- [ ] **KEEP:** `/probe` (user uses it), `plan`, `git`, `review`, `fix`, `tune`, `learn`, `skill-plus`, `discuss`, etc.
-- [ ] Verify: jsonc parses; no config entry points to missing file
+- [x] Delete from config `command{}` + files: `security`
+- [x] ~~Delete from config `command{}` + file: `build-fix`~~ — SUPERSEDED by P3 (rewired to skill, entry stays)
+- [x] ~~Delete from config `command{}` + file: `update-codemaps`~~ — SUPERSEDED by P3 (rewired to skill, entry stays)
+- [x] Delete config entry: `apply` (file `apply-postcheck.md` ARCHIVED, not deleted — reused P8)
+- [x] Orphans: delete `commands/e2e.md`, `commands/memory-status.md` (skill stays)
+- [x] `commands/update-deps.md` → **NOT deleted: register it** (see P6)
+- [x] **KEEP:** `/probe` (user uses it), `plan`, `git`, `review`, `fix`, `tune`, `learn`, `skill-plus`, `discuss`, etc.
+- [x] Verify: jsonc parses; no config entry points to missing file
 
 ## Decisions
 

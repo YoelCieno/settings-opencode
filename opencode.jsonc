@@ -103,7 +103,6 @@
           "database-reviewer": "allow",
           "debt-cleanup": "allow",
           "doc-updater": "allow",
-          "e2e-runner": "allow",
           "git-specialist": "allow",
           "planner": "allow",
           "researcher": "allow",
@@ -157,20 +156,6 @@
       "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
       "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/doc-updater.txt",
       "reasoningEffort": "{env:OPENCODE_REASONING_SECONDARY}",
-      "tools": {
-        "bash": true,
-        "edit": true,
-        "glob": true,
-        "grep": true,
-        "read": true,
-        "write": true,
-      },
-    },
-    "e2e-runner": {
-      "description": "MUST delegate for browser automation, Playwright work, and critical user-flow E2E tests. Generates, runs, and reports artifacts.",
-      "mode": "subagent",
-      "model": "{env:OPENCODE_MODEL_SUBAGENT_PLANNER}",
-      "prompt": "{env:OPENCODE_SRC_ROUTE}/opencode/prompts/agents/e2e-runner.txt",
       "tools": {
         "bash": true,
         "edit": true,
@@ -316,10 +301,6 @@
     },
   },
   "command": {
-    "apply": {
-      "description": "Implement tasks from an OpenSpec change + browser postcheck",
-      "template": "{file:.opencode/references/opsx/opsx-apply.md}\n\n{file:commands/apply-postcheck.md}\n\n$ARGUMENTS",
-    },
     "ask": {
       "agent": "ask",
       "description": "Ask questions about the project, editor, technologies, or improve plans",
@@ -432,12 +413,6 @@
       "subtask": true,
       "template": "{file:commands/review.md}\n\n$ARGUMENTS",
     },
-    "security": {
-      "agent": "security-reviewer",
-      "description": "Run comprehensive security review",
-      "subtask": true,
-      "template": "{file:commands/security.md}\n\n$ARGUMENTS",
-    },
     "skill-plus": {
       "description": "Create, improve, or generate skills from history — /skill-plus --create|--from-history|--improve",
       "template": "{file:commands/skill-plus.md}\n\n$ARGUMENTS",
@@ -478,10 +453,7 @@
       },
     },
   },
-  "plugin": [
-    "opencode-agent-memory",
-    "model-fallback",
-  ],
+  "plugin": ["opencode-agent-memory", "model-fallback"],
   "provider": {
     "llama.cpp (local)": {
       "models": {

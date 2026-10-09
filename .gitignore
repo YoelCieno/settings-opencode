@@ -37,3 +37,6 @@ skills/opencode-skill-creator/*
 skills/learned/*.draft.md
 skills/learned/learned-*.md
 
+
+# graveyard — tracked files stay tracked (git mv); ignore guards new junk
+.archived/

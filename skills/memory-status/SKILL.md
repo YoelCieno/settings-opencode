@@ -1,40 +1,34 @@
 ---
 name: memory-status
 description: >
-  Summarize active memory blocks, loaded skills, and project context. Invoked when
-  user says "memory status", "check memory", "what do you know". Inspects Qwen Code's
-  file-based memory system and available skills/MCP servers.
+  Summarize active memory blocks, loaded skills, and MCP servers. Invoked when user
+  says "memory status", "check memory", "what do you know", or runs /memory-status.
+  Read-only diagnostic/introspection tool — never modifies memory or configuration.
 ---
 
 # Memory Status Skill
 
-Generate a structured summary of current agent memory, loaded skills, and project context.
+Generate a structured summary of the current agent memory, loaded skills, and MCP configuration.
 
 ## When to Activate
 
 - User says "memory status", "check memory", "what do you know", "context check"
-- Wanting to understand what the agent remembers and has access to
 - Before starting a complex task to verify context availability
 
 ## Procedure
 
 1. **Memory Blocks**
-   - Read `/home/fer/.qwen/projects/*/memory/MEMORY.md` (the index file)
-   - For each memory file referenced in the index, report: name, type, key content summary (2-3 sentences)
+   - Call `memory_list` to enumerate all active blocks (try `scope="all"` if the default is empty)
+   - For each block report: label, description, `chars_current` / `chars_limit`, key content summary (2–3 sentences)
 
 2. **Loaded Skills**
-   - Reference the `<available_skills>` section in the current system instructions (built-in skills)
-   - Scan `~/.qwen/skills/` for user-installed skills (symlinked directories)
-   - List each: name, description from SKILL.md frontmatter, symlink status
+   - Reference the `<available_skills>` section in system instructions
+   - List each: name, description, trigger scenarios
+   - Note which are preloaded vs loaded-on-demand
 
-3. **Project Context**
-   - Check `AGENTS.md` at project root (auto-loaded every turn)
-   - Check `.opencode/references/` for reference docs (WebAwesome skill, etc.)
-   - Check `docs/` for project documentation
-
-4. **MCP Servers**
-   - Check `/data/sites/ai/settings-opencode/opencode.jsonc` → `mcp` section
-   - For each server: name, type (local/remote), command or URL, enabled status
+3. **MCP Servers**
+   - Read `opencode.jsonc` and extract the `mcp` section
+   - For each server: name, type (local/remote), enabled/disabled status, command or URL
 
 ## Output Format
 
@@ -42,16 +36,16 @@ Present as clean sections with markdown headings and tables. Be concise but comp
 
 ### Memory Section
 ```
-| Name | Type | File | Summary |
-|------|------|------|---------|
-| ...  | ...  | ...  | ...     |
+| Block | Chars | Summary |
+|-------|-------|---------|
+| ...   | ...   | ...     |
 ```
 
 ### Skills Section
 ```
-| Name | Type (built-in/user) | Description | Status |
-|------|----------------------|-------------|--------|
-| ...  | ...                  | ...         | ...    |
+| Skill | Loaded | Trigger |
+|-------|--------|---------|
+| ...   | ...    | ...     |
 ```
 
 ### MCP Section
@@ -61,6 +55,8 @@ Present as clean sections with markdown headings and tables. Be concise but comp
 | ...    | ...  | ...         | ...     |
 ```
 
----
+## Notes
 
-**NOTE**: This is a read-only diagnostic tool. It does not modify memory or configuration.
+- If `memory_list` returns unexpected results, adapt gracefully and report what you found
+- If `opencode.jsonc` isn't directly readable from the shell, read it via the Read tool
+- Read-only: never write to memory blocks or config from this skill
