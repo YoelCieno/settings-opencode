@@ -240,8 +240,7 @@ You can also pass extra instructions: `/init Pay special attention to TypeScript
 
 ### Repository layout
 
-- Configs: `opencode.jsonc`, `ocx.jsonc` (OCX registries), `tui.json` (TUI theme).
-- Profiles: `profiles/<name>/` (per-profile overrides + `AGENTS.md`, run with `ocx opencode -p <name>`).
+- Configs: `opencode.jsonc`, `tui.json` (TUI theme). `ocx.jsonc`, `dcp.jsonc`, `profiles/` archived in `.archived/` (ocx CLI not installed; DCP overlaps `plugins/auto-compact.js`).
 - Skills: `skills/*/SKILL.md` (plus auxiliary docs).
 - Agent prompts: `prompts/agents/*.txt`.
 - Slash commands: `commands/*.md` — includes `ask`, `research`, `git-workflow`, `review`, `skill-plus` variants.
@@ -273,8 +272,6 @@ Six concerns wired in one file:
 4. `command`: maps `/<name>` -> template + sub-agent + `subtask`.
 5. `mcp`: serena, context7, Figma (disabled).
 6. `plugin`: external marketplace plugins (`opencode-agent-memory`).
-
-`ocx.jsonc` registers OCX [registries](https://ocx.kdco.dev).
 
 ### Agents
 

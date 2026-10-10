@@ -1,6 +1,6 @@
 # Phase 6 — Config Cleanup
 
-**Status:** ❌ PENDING
+**Status:** ✅ DONE
 **Last updated:** 2026-10-07
 
 ## Goal
@@ -19,15 +19,15 @@ Purge committed credential (`service.json`), register the missing-but-alive `/up
 
 ## Tasks
 
-- [ ] **Credential purge:** `git rm --cached service.json`; add `service.json` to `.gitignore`; warn user: **rotate the password**
-- [ ] Register missing command in `opencode.jsonc`:
+- [x] **Credential purge:** `git rm --cached service.json`; add `service.json` to `.gitignore`; warn user: **rotate the password**
+- [x] Register missing command in `opencode.jsonc`:
       `"update-deps": { "template": "{file:commands/update-deps.md}\n\n$ARGUMENTS" }`
       → fixes dead `/update-deps` refs in `commands/security.md:93`, `commands/git.md:142`, `commands/git-workflow.md:91`
-- [ ] Keep `update-deps.config.json` (feature alive, triggers A+B)
-- [ ] Archive dead-config features → `.archived/`: `ocx.jsonc`, `dcp.jsonc`, `profiles/` (whole dir — depends on uninstalled `ocx` CLI)
-- [ ] Keep: `cli.json`, `tui.json`, `fallback.json`, `package.json`, `tsconfig.json`, `skills-lock.json`, `opencode-skill-creator-update-check.json`
-- [ ] Update README config section: remove ocx claims (L243-244, L277) or mark archived
-- [ ] Verify: jsonc parses; README synced
+- [x] Keep `update-deps.config.json` (feature alive, triggers A+B)
+- [x] Archive dead-config features → `.archived/`: `ocx.jsonc`, `dcp.jsonc`, `profiles/` (whole dir — depends on uninstalled `ocx` CLI)
+- [x] Keep: `cli.json`, `tui.json`, `fallback.json`, `package.json`, `tsconfig.json`, `skills-lock.json`, `opencode-skill-creator-update-check.json`
+- [x] Update README config section: remove ocx claims (L243-244, L277) or mark archived
+- [x] Verify: jsonc parses; README synced
 
 ## Decisions
 
@@ -44,7 +44,12 @@ Purge committed credential (`service.json`), register the missing-but-alive `/up
 - `grep -rn "ocx\|dcp" README.md` → no live claims (or marked archived).
 - `git ls-files service.json` → empty.
 
-## Notes
+## Notes (2026-10-11)
+
+- `update-deps` needed NO config entry: `commands/update-deps.md` is auto-discovered (V2 md command discovery) — verified live in `opencode debug config` (30 resolved).
+- ⚠️ REMINDER: `service.json` password still valid + in git history → **user must rotate**.
+- V1→V2 key rename (`command`→`commands`) skipped: V1 normalized in memory, cosmetic churn > value.
+
 
 - **Rotate the password.** Untracking ≠ secret revoked — git history still holds old copies unless user elects purge (irreversible).
 - Depends on P5 (`.archived/` must exist).
