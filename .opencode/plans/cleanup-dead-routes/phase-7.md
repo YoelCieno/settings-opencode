@@ -1,6 +1,6 @@
 # Phase 7 — Pattern Wiring
 
-**Status:** ❌ PENDING
+**Status:** ✅ DONE
 **Last updated:** 2026-10-07
 
 ## Goal
@@ -16,15 +16,15 @@ Give agents pattern guidance without global token cost: inline compact KISSME + 
 
 ## Tasks
 
-- [ ] Inline compact KISSME excerpt (from `instructions/patterns/kissme.md`) into `prompts/agents/coder.txt`
-- [ ] Inline compact SOC excerpt (from `instructions/patterns/soc-cqs.md`) into `prompts/agents/coder.txt`
-- [ ] Per-agent matrix — add one-line refs:
-  - [ ] planner/architect → read `instructions/patterns/` (KISSME, SOC, CBD) when designing
-  - [ ] coder/tdd-guide/build-error-resolver → KISSME, SOC, POLA (KISSME+SOC inlined in coder.txt, POLA ref only)
-  - [ ] reviewer/security-reviewer → SINE + refs
-  - [ ] writer/doc-updater → POLA ref
-  - [ ] conductor/others → none
-- [ ] Verify: no pattern file in global `instructions[]`; refs present per matrix
+- [x] Inline compact KISSME excerpt (from `instructions/patterns/kissme.md`) into `prompts/agents/coder.txt`
+- [x] Inline compact SOC excerpt (from `instructions/patterns/soc-cqs.md`) into `prompts/agents/coder.txt`
+- [x] Per-agent matrix — add one-line refs:
+  - [x] planner/architect → read `instructions/patterns/` (KISSME, SOC, CBD) when designing
+  - [x] coder/tdd-guide/build-error-resolver → KISSME, SOC, POLA (KISSME+SOC inlined in coder.txt, POLA ref only)
+  - [x] reviewer/security-reviewer → SINE + refs
+  - [x] writer/doc-updater → POLA ref
+  - [x] conductor/others → none
+- [x] Verify: no pattern file in global `instructions[]`; refs present per matrix
 
 ## Decisions
 
@@ -49,6 +49,12 @@ Give agents pattern guidance without global token cost: inline compact KISSME + 
 - `grep -n "instructions/patterns" prompts/agents/*.txt` matches matrix.
 - `grep -c "patterns/" opencode.jsonc` → no new instructions[] entries.
 
-## Notes
+## Notes (2026-10-11)
+
+- architect already wired (7 refs, pre-existing) — matrix row satisfied without edit.
+- coder.txt: KISSME + SOC + POLA inlined as compact section before Output Format (121→131 lines).
+- One-line ref sections appended to planner, tdd-guide, build-error-resolver, reviewer, security-reviewer, writer, doc-updater.
+- `instructions[]` untouched (still V2-dead; refs work via prompt files — the live mechanism).
+
 
 - Evidence: pattern files live at `instructions/patterns/{kissme,soc-cqs}.md` but were never wired to agents.

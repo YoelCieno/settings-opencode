@@ -207,3 +207,7 @@ await db.transaction(async (trx) => {
 ```
 
 **Remember**: Security is not optional, especially for platforms handling real money. One vulnerability can cost users real financial losses. Be thorough, be paranoid, be proactive.
+
+## Patterns
+
+**Review lens:** SINE — `instructions/patterns/sine.md` (Simple ≠ Easy).

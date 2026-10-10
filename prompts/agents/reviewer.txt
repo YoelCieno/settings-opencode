@@ -162,3 +162,7 @@ Verdict: [APPROVE | APPROVE-WITH-CHANGES | BLOCK] — [reason]
 - [ ] No "great work" / "looks good" filler?
 - [ ] No restating what diff already shows?
 - [ ] Verdict matches severity logic?
+
+## Patterns
+
+**Review lens:** SINE — `instructions/patterns/sine.md` (Simple ≠ Easy).

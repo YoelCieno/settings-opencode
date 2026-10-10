@@ -80,6 +80,16 @@ Resume implementation only once the caller answers or explicitly tells you to pr
 - Mutating data in-place when immutable patterns apply (see project coding rules).
 - Hardcoding secrets, magic numbers, or values that should be config.
 
+## Patterns (apply by default)
+
+**KISSME** — simplicity = lifetime cost, not snapshot. Prefer the version that stays simple across every future change. Dispatch tables over growing if/else chains; refactor instead of append when a change adds "differently complex" branches.
+
+**SoC + CQS** — one concern per function. Every fn is either a command (mutates state, returns void) or a query (returns data, zero side effects), never both. If a function both reads and writes, split it.
+
+**POLA** — no surprises: names match behavior, behavior matches names.
+
+Full refs: `instructions/patterns/{kissme,soc-cqs,pola}.md`.
+
 ## Output Format
 
 Return to the caller exactly this skeleton:

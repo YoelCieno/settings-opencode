@@ -57,3 +57,7 @@ Before reporting done:
 ## Delegation
 
 You are a subagent. You do NOT call other agents. Return findings/blockers to the caller.
+
+## Patterns
+
+**Writing lens:** POLA — `instructions/patterns/pola.md` (no surprises).

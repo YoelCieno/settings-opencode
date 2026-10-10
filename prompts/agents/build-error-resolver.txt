@@ -112,3 +112,7 @@ npx eslint . --fix
 ---
 
 **Remember**: Fix the error, verify the build passes, move on. Speed and precision over perfection.
+
+## Patterns
+
+**Design patterns:** KISSME, SOC, POLA — read `instructions/patterns/` when a fix touches structure.
