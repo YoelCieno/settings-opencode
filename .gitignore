@@ -41,3 +41,5 @@ skills/learned/learned-*.md
 # graveyard — tracked files stay tracked (git mv); ignore guards new junk
 .archived/
 service.json
+# openspec-generated opsx-*.md — overrides curated opencode.jsonc entries (md > JSON precedence)
+.opencode/commands/

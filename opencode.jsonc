@@ -348,7 +348,7 @@
       "template": "{file:.opencode/references/opsx/opsx-archive.md}",
     },
     "opsx:bulk-archive": {
-      "description": "Archive multiple completed changes at once",
+      "description": "Archive multiple completed changes in one operation",
       "template": "{file:.opencode/references/opsx/opsx-bulk-archive.md}",
     },
     "opsx:continue": {
@@ -359,17 +359,9 @@
       "description": "Enter explore mode - think through ideas, investigate problems, clarify requirements",
       "template": "{file:.opencode/references/opsx/opsx-explore.md}",
     },
-    "opsx:ff": {
-      "description": "Create a change and generate all artifacts needed for implementation in one go",
-      "template": "{file:.opencode/references/opsx/opsx-ff.md}",
-    },
     "opsx:flow": {
       "description": "Run the full OpenSpec lifecycle — propose, apply, archive — with git checkpoints between steps",
       "template": "{file:.opencode/references/opsx/opsx-flow.md}",
-    },
-    "opsx:new": {
-      "description": "Start a new change using the experimental artifact workflow (OPSX)",
-      "template": "{file:.opencode/references/opsx/opsx-new.md}",
     },
     "opsx:onboard": {
       "description": "Guided onboarding - walk through a complete OpenSpec workflow cycle with narration",

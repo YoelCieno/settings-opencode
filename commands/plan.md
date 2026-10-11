@@ -80,6 +80,7 @@ When approved, save plan files via `writer` subagent:
 You lack write/edit — use Task to delegate file creation to `writer`.
 
 Templates at `.opencode/plans/templates/` only. Plans are git-committed for shared context.
+- Final phase should end with a browser postcheck step when the change is UI-affecting (probe changed routes via `/probe`, include errors + screenshot in report; non-UI → `Postcheck: N/A`).
 
 **WAITING FOR CONFIRMATION**: Proceed with this plan? (yes/no/modify)
 
@@ -141,6 +142,7 @@ When approved, save plan files via `writer` subagent:
 You lack write/edit — use Task to delegate file creation to `writer`.
 
 Templates at `.opencode/plans/templates/`. Plans are git-committed for shared context.
+- Final phase should end with a browser postcheck step when the change is UI-affecting (probe changed routes via `/probe`, include errors + screenshot in report; non-UI → `Postcheck: N/A`).
 
 ### Source Citation
 

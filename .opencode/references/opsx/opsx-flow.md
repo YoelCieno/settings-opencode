@@ -1,9 +1,9 @@
 ---
-description: "Run the full OpenSpec lifecycle — propose, apply, archive — with git checkpoints between steps"
+description: "Run the full OpenSpec lifecycle — explore, propose, apply, verify, archive — with git checkpoints between steps"
 ---
 
 
-Run the full OpenSpec lifecycle: propose → apply → archive.
+Run the full OpenSpec lifecycle: explore (opt) → propose → apply → verify (opt) → archive.
 
 **Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
 
@@ -11,6 +11,17 @@ Run the full OpenSpec lifecycle: propose → apply → archive.
 **Provided arguments**: $ARGUMENTS
 
 **Steps**
+
+0. **Phase 0: Explore (optional)**
+
+   Ask the user:
+
+   ```
+   Run `/opsx-explore` first? (Y/n)
+   ```
+
+   - Yes → run the `/opsx-explore` workflow inline for the given change name (or description), then continue to Phase 1
+   - No → continue directly to Phase 1
 
 1. **Phase 1: Propose**
 
@@ -65,7 +76,18 @@ Run the full OpenSpec lifecycle: propose → apply → archive.
    - Run `/git` to commit → continue to Phase 3
    - Skip and continue directly to Phase 3
 
-3. **Phase 3: Archive**
+3. **Phase 3: Verify (optional)**
+
+   Ask the user:
+
+   ```
+   Run `/opsx-verify` before archiving? (Y/n)
+   ```
+
+   - Yes → run the `/opsx-verify` workflow inline for the same change name (validate change, check spec sync), then continue to Phase 4
+   - No → continue directly to Phase 4
+
+4. **Phase 4: Archive**
 
    Run the `/opsx-archive` workflow inline for the same change name. Follow the archive command's steps exactly: select change, check completion, assess delta spec sync, perform archive, display summary.
 
@@ -83,7 +105,7 @@ Run the full OpenSpec lifecycle: propose → apply → archive.
    - Run `/git` to commit → flow complete
    - Skip — flow complete
 
-4. **Flow complete**
+5. **Flow complete**
 
    ```
    ## Flow Complete
@@ -92,15 +114,17 @@ Run the full OpenSpec lifecycle: propose → apply → archive.
    **Schema:** <schema-name>
 
    **Phases completed:**
+   0. ✓ Explore — context loaded (if run)
    1. ✓ Propose — planning artifacts created
    2. ✓ Apply — all tasks implemented
-   3. ✓ Archive — change archived
+   3. ✓ Verify — change validated (if run)
+   4. ✓ Archive — change archived
 
    Git commits may still be pending. Review with `git log --oneline -10`.
    ```
 
 **Guardrails**
-- Each phase delegates to the full existing command workflow (propose/apply/archive) — do not duplicate their logic
+- Each phase delegates to the full existing command workflow (explore/propose/apply/verify/archive) — do not duplicate their logic
 - Never auto-commit. Always suggest `/git` and wait for user action
 - Respect all guardrails from the individual commands (planning boundary, artifact checks, store selection, etc.)
 - If any phase fails or is blocked, stop the flow and report — do not skip to next phase
@@ -133,7 +157,12 @@ Suggested: Run `/git` to commit.
 🎉 All tasks complete!
 Suggested: Run `/git` before archiving.
 
-### Phase 3: Archive
+### Phase 3: Verify (optional)
+Run `/opsx-verify` before archiving? (Y/n) → [user answers]
+[...verify workflow...]
+✓ Verify complete
+
+### Phase 4: Archive
 [...archive workflow...]
 ✓ Archive complete
 

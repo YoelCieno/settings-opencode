@@ -492,9 +492,9 @@ This same rhythm works for any size change—a small fix or a major feature.
  | `/opsx-explore` | Think through problems before/during work  |
  | `/opsx-apply`   | Implement tasks from a change              |
  | `/opsx-archive` | Archive a completed change                 |
- | `/opsx-new`     | Start a new change, one artifact at a time |
+ | `/opsx-propose`  | Start a new change, all artifacts in dependency order |
  | `/opsx-continue` | Continue working on an existing change    |
- | `/opsx-ff`      | Fast-forward: create all artifacts at once |
+ | `/opsx-propose` | Start a new change, all artifacts in dependency order |
  | `/opsx-verify`  | Verify implementation matches artifacts    |
 
 ---
@@ -539,9 +539,9 @@ If the user says they just want to see the commands or skip the tutorial:
  | `/opsx-explore`         | Think through problems (no code changes)   |
  | `/opsx-apply <name>`    | Implement tasks                            |
  | `/opsx-archive <name>`  | Archive when done                          |
- | `/opsx-new <name>`      | Start a new change, step by step           |
+ | `/opsx-propose <name>`  | Start a new change, all artifacts in dependency order           |
  | `/opsx-continue <name>` | Continue an existing change                |
- | `/opsx-ff <name>`       | Fast-forward: all artifacts at once        |
+ | `/opsx-propose <name>`  | Start a new change, all artifacts in dependency order |
  | `/opsx-verify <name>`   | Verify implementation                      |
 
 Try `/opsx-propose` to start your first change.
